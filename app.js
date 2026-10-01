@@ -57,7 +57,7 @@ async function apiFetch(endpoint, options = {}) {
   }
 }
 
-// Password eye toggle
+// Password Eye Toggle
 window.togglePasswordVisibility = (inputId, iconId) => {
   const input = document.getElementById(inputId);
   const icon = document.getElementById(iconId);
@@ -71,12 +71,16 @@ window.togglePasswordVisibility = (inputId, iconId) => {
   }
 };
 
-// Copy Discord Handle Helper
+// Copy Discord Handle Helper & 1-Click Launch
 window.copyDiscordHandle = () => {
-  navigator.clipboard.writeText("_kofs_").then(() => {
-    showToast("Discord handle '_kofs_' copied to clipboard!");
+  const handle = "_kofs_";
+  navigator.clipboard.writeText(handle).then(() => {
+    showToast(`Discord ID '${handle}' copied to clipboard! Opening Discord...`);
+    setTimeout(() => {
+      window.open("https://discord.com/users", "_blank");
+    }, 600);
   }).catch(() => {
-    prompt("Copy Discord handle:", "_kofs_");
+    prompt("Copy Discord handle:", handle);
   });
 };
 
@@ -110,22 +114,25 @@ const modalAddFunds = document.getElementById("modalAddFunds");
 const modalLentHistory = document.getElementById("modalLentHistory");
 
 // Open Modal Triggers
-document.getElementById("btnOpenTxModal").onclick = () => { resetTxForm(); openModal(modalTx); };
-document.getElementById("btnOpenAccountModal").onclick = () => { resetAccountForm(); openModal(modalAccount); };
-document.getElementById("btnOpenProjectModal").onclick = () => { resetProjectForm(); openModal(modalProject); };
-document.getElementById("btnOpenLoanModal").onclick = () => openModal(modalLoan);
-document.getElementById("btnOpenTransferModal").onclick = () => openModal(modalTransfer);
-document.getElementById("btnOpenProfileModal").onclick = () => openProfileModal();
+if (document.getElementById("btnOpenTxModal")) document.getElementById("btnOpenTxModal").onclick = () => { resetTxForm(); openModal(modalTx); };
+if (document.getElementById("btnOpenAccountModal")) document.getElementById("btnOpenAccountModal").onclick = () => { resetAccountForm(); openModal(modalAccount); };
+if (document.getElementById("btnOpenProjectModal")) document.getElementById("btnOpenProjectModal").onclick = () => { resetProjectForm(); openModal(modalProject); };
+if (document.getElementById("btnOpenLoanModal")) document.getElementById("btnOpenLoanModal").onclick = () => openModal(modalLoan);
+if (document.getElementById("btnOpenTransferModal")) document.getElementById("btnOpenTransferModal").onclick = () => openModal(modalTransfer);
+if (document.getElementById("btnOpenProfileModal")) document.getElementById("btnOpenProfileModal").onclick = () => openProfileModal();
 
-document.getElementById("btnForgotPassTrigger").onclick = () => {
-  openModal(modalForgotPass);
-};
+if (document.getElementById("btnForgotPassTrigger")) {
+  document.getElementById("btnForgotPassTrigger").onclick = () => {
+    openModal(modalForgotPass);
+  };
+}
 
 document.querySelectorAll(".modal-close").forEach(btn => {
   btn.onclick = (e) => e.target.closest(".modal-backdrop").classList.add("hidden");
 });
 
 function openModal(modal) {
+  if (!modal) return;
   modal.classList.remove("hidden");
   const today = new Date().toISOString().split("T")[0];
   const txDate = document.getElementById("txDate");
@@ -142,6 +149,7 @@ function openModal(modal) {
 
 function showToast(msg, type = "success") {
   const container = document.getElementById("toastContainer");
+  if (!container) return;
   const t = document.createElement("div");
   const bg = type === "success" ? "bg-emerald-600 text-white" : type === "error" ? "bg-rose-600 text-white" : "bg-brand-500 text-slate-950 font-bold";
   t.className = `${bg} px-4 py-2.5 rounded-2xl shadow-xl text-xs font-bold flex items-center gap-2 transform transition-all duration-300 translate-y-2 opacity-0 pointer-events-auto border border-white/10`;
@@ -159,7 +167,7 @@ function formatBDT(amount) {
   return "৳" + num.toLocaleString("en-BD", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 }
 
-// Brand Visual Badge Helper for BD Banks & MFS
+// Provider visual badge helper
 function getProviderBadge(type) {
   const mfsTypes = ["bKash", "Nagad", "Rocket", "Upay", "Cellfin", "Tap", "mCash"];
   if (type === "bKash") return { bg: "bg-pink-500/10 text-pink-500 border border-pink-500/20", icon: "fa-mobile-screen" };
@@ -167,7 +175,7 @@ function getProviderBadge(type) {
   if (type === "Rocket") return { bg: "bg-purple-500/10 text-purple-500 border border-purple-500/20", icon: "fa-mobile-screen" };
   if (type === "Upay") return { bg: "bg-sky-500/10 text-sky-500 border border-sky-500/20", icon: "fa-mobile-screen" };
   if (mfsTypes.includes(type)) return { bg: "bg-cyan-500/10 text-cyan-400 border border-cyan-500/20", icon: "fa-mobile-screen" };
-  if (type.includes("Bank")) return { bg: "bg-indigo-500/10 text-indigo-400 border border-indigo-500/20", icon: "fa-building-columns" };
+  if (type && type.includes("Bank")) return { bg: "bg-indigo-500/10 text-indigo-400 border border-indigo-500/20", icon: "fa-building-columns" };
   if (type === "Cash") return { bg: "bg-emerald-500/10 text-emerald-400 border border-emerald-500/20", icon: "fa-money-bill-wave" };
   return { bg: "bg-slate-500/10 text-slate-400 border border-slate-500/20", icon: "fa-wallet" };
 }
@@ -181,127 +189,113 @@ const tabRegister = document.getElementById("tabRegister");
 const authNameGroup = document.getElementById("authNameGroup");
 const btnAuthSubmit = document.getElementById("btnAuthSubmit");
 
-tabLogin.onclick = () => setAuthMode(false);
-tabRegister.onclick = () => setAuthMode(true);
+if (tabLogin) tabLogin.onclick = () => setAuthMode(false);
+if (tabRegister) tabRegister.onclick = () => setAuthMode(true);
 
 function setAuthMode(register) {
   isRegisterMode = register;
   if (register) {
-    tabRegister.className = "flex-1 py-2 text-xs font-bold rounded-lg transition bg-white dark:bg-brand-500 dark:text-slate-950 text-brand-600 shadow-sm";
-    tabLogin.className = "flex-1 py-2 text-xs font-bold rounded-lg transition text-slate-500 dark:text-slate-400";
-    authNameGroup.classList.remove("hidden");
-    btnAuthSubmit.querySelector("span").textContent = "Register";
+    if (tabRegister) tabRegister.className = "flex-1 py-2 text-xs font-bold rounded-lg transition bg-white dark:bg-brand-500 dark:text-slate-950 text-brand-600 shadow-sm";
+    if (tabLogin) tabLogin.className = "flex-1 py-2 text-xs font-bold rounded-lg transition text-slate-500 dark:text-slate-400";
+    if (authNameGroup) authNameGroup.classList.remove("hidden");
+    if (btnAuthSubmit) btnAuthSubmit.querySelector("span").textContent = "Register";
   } else {
-    tabLogin.className = "flex-1 py-2 text-xs font-bold rounded-lg transition bg-white dark:bg-brand-500 dark:text-slate-950 text-brand-600 shadow-sm";
-    tabRegister.className = "flex-1 py-2 text-xs font-bold rounded-lg transition text-slate-500 dark:text-slate-400";
-    authNameGroup.classList.add("hidden");
-    btnAuthSubmit.querySelector("span").textContent = "Login";
+    if (tabLogin) tabLogin.className = "flex-1 py-2 text-xs font-bold rounded-lg transition bg-white dark:bg-brand-500 dark:text-slate-950 text-brand-600 shadow-sm";
+    if (tabRegister) tabRegister.className = "flex-1 py-2 text-xs font-bold rounded-lg transition text-slate-500 dark:text-slate-400";
+    if (authNameGroup) authNameGroup.classList.add("hidden");
+    if (btnAuthSubmit) btnAuthSubmit.querySelector("span").textContent = "Login";
   }
 }
 
-document.getElementById("formAuth").onsubmit = async (e) => {
-  e.preventDefault();
-  const email = document.getElementById("authEmail").value.trim();
-  const password = document.getElementById("authPassword").value.trim();
-  const name = document.getElementById("authName").value.trim();
+const formAuth = document.getElementById("formAuth");
+if (formAuth) {
+  formAuth.onsubmit = async (e) => {
+    e.preventDefault();
+    const email = document.getElementById("authEmail").value.trim();
+    const password = document.getElementById("authPassword").value.trim();
+    const name = document.getElementById("authName") ? document.getElementById("authName").value.trim() : "";
 
-  const endpoint = isRegisterMode ? `${API_URL}/register?action=register` : `${API_URL}/login?action=login`;
-  const body = isRegisterMode ? { name, email, password } : { email, password };
+    const endpoint = isRegisterMode ? `${API_URL}/register?action=register` : `${API_URL}/login?action=login`;
+    const body = isRegisterMode ? { name, email, password } : { email, password };
 
-  btnAuthSubmit.disabled = true;
-  btnAuthSubmit.querySelector("span").textContent = "Authenticating...";
+    if (btnAuthSubmit) {
+      btnAuthSubmit.disabled = true;
+      btnAuthSubmit.querySelector("span").textContent = "Authenticating...";
+    }
 
-  try {
-    const data = await apiFetch(endpoint, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(body)
-    });
+    try {
+      const data = await apiFetch(endpoint, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(body)
+      });
 
-    token = data.token;
-    currentUser = data.user;
-    localStorage.setItem("KOFS_AUTH_TOKEN", token);
-    localStorage.setItem("KOFS_AUTH_USER", JSON.stringify(currentUser));
+      token = data.token;
+      currentUser = data.user;
+      localStorage.setItem("KOFS_AUTH_TOKEN", token);
+      localStorage.setItem("KOFS_AUTH_USER", JSON.stringify(currentUser));
 
-    unlockApplication();
-    showToast(`Welcome back, ${currentUser.name}!`);
-    loadUserData();
-  } catch (err) {
-    alert(err.message);
-  } finally {
-    btnAuthSubmit.disabled = false;
-    btnAuthSubmit.querySelector("span").textContent = isRegisterMode ? "Register" : "Login";
-  }
-};
+      unlockApplication();
+      showToast(`Welcome back, ${currentUser.name}!`);
+      loadUserData();
+    } catch (err) {
+      alert(err.message);
+    } finally {
+      if (btnAuthSubmit) {
+        btnAuthSubmit.disabled = false;
+        btnAuthSubmit.querySelector("span").textContent = isRegisterMode ? "Register" : "Login";
+      }
+    }
+  };
+}
 
 function unlockApplication() {
-  authGatekeeper.classList.add("hidden");
-  appContainer.classList.remove("hidden");
+  if (authGatekeeper) authGatekeeper.classList.add("hidden");
+  if (appContainer) appContainer.classList.remove("hidden");
   updateUserDisplay();
   window.switchView("overview");
 }
 
 function lockApplication() {
-  authGatekeeper.classList.remove("hidden");
-  appContainer.classList.add("hidden");
+  if (authGatekeeper) authGatekeeper.classList.remove("hidden");
+  if (appContainer) appContainer.classList.add("hidden");
 }
 
-document.getElementById("btnLogout").onclick = () => {
-  if (confirm("Logout from KofsLedger?")) {
-    localStorage.removeItem("KOFS_AUTH_TOKEN");
-    localStorage.removeItem("KOFS_AUTH_USER");
-    token = null;
-    currentUser = null;
-    lockApplication();
-  }
-};
+const btnLogout = document.getElementById("btnLogout");
+if (btnLogout) {
+  btnLogout.onclick = () => {
+    if (confirm("Logout from KofsLedger?")) {
+      localStorage.removeItem("KOFS_AUTH_TOKEN");
+      localStorage.removeItem("KOFS_AUTH_USER");
+      token = null;
+      currentUser = null;
+      lockApplication();
+    }
+  };
+}
 
 function updateUserDisplay() {
   const storedUser = localStorage.getItem("KOFS_AUTH_USER");
   if (storedUser) currentUser = JSON.parse(storedUser);
   if (!currentUser) return;
 
-  displayUserNameEl.textContent = currentUser.name;
-  document.getElementById("printUserName").textContent = currentUser.name;
-  document.getElementById("printDate").textContent = new Date().toLocaleDateString("en-BD");
-
-  // Populate Developer Contact form sender email
-  const contactSenderEmail = document.getElementById("contactSenderEmail");
-  if (contactSenderEmail) contactSenderEmail.value = currentUser.email || "";
+  if (displayUserNameEl) displayUserNameEl.textContent = currentUser.name;
+  const printUserName = document.getElementById("printUserName");
+  if (printUserName) printUserName.textContent = currentUser.name;
+  const printDate = document.getElementById("printDate");
+  if (printDate) printDate.textContent = new Date().toLocaleDateString("en-BD");
 
   const headerAvatarContainer = document.getElementById("headerAvatarContainer");
   const modalAvatarPreview = document.getElementById("modalAvatarPreview");
 
   if (currentUser.avatar) {
-    headerAvatarContainer.innerHTML = `<img src="${currentUser.avatar}" class="w-full h-full object-cover" />`;
-    modalAvatarPreview.innerHTML = `<img src="${currentUser.avatar}" class="w-full h-full object-cover" />`;
+    if (headerAvatarContainer) headerAvatarContainer.innerHTML = `<img src="${currentUser.avatar}" class="w-full h-full object-cover" />`;
+    if (modalAvatarPreview) modalAvatarPreview.innerHTML = `<img src="${currentUser.avatar}" class="w-full h-full object-cover" />`;
   } else {
     const initial = (currentUser.name || "U").charAt(0).toUpperCase();
-    headerAvatarContainer.innerHTML = `<span>${initial}</span>`;
-    modalAvatarPreview.innerHTML = `<span>${initial}</span>`;
+    if (headerAvatarContainer) headerAvatarContainer.innerHTML = `<span>${initial}</span>`;
+    if (modalAvatarPreview) modalAvatarPreview.innerHTML = `<span>${initial}</span>`;
   }
-}
-
-// ==========================================
-// CONTACT DEVELOPER FORM (mailto handler)
-// ==========================================
-const formContactDev = document.getElementById("formContactDev");
-if (formContactDev) {
-  formContactDev.onsubmit = (e) => {
-    e.preventDefault();
-    const sender = document.getElementById("contactSenderEmail").value;
-    const subject = document.getElementById("contactSubject").value.trim();
-    const message = document.getElementById("contactMessage").value.trim();
-
-    const recipient = "omrfys@gmail.com";
-    const fullBody = `From: ${currentUser?.name || 'User'} (${sender})\n\nMessage:\n${message}\n\nSent via KofsLedger Financial OS`;
-    const mailtoUrl = `mailto:${recipient}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(fullBody)}`;
-
-    window.open(mailtoUrl, "_blank");
-    showToast("Launching your email client to send to omrfys@gmail.com!");
-    document.getElementById("contactSubject").value = "";
-    document.getElementById("contactMessage").value = "";
-  };
 }
 
 // ==========================================
@@ -318,86 +312,104 @@ function openProfileModal() {
   openModal(modalProfile);
 }
 
-document.getElementById("profAvatarInput").onchange = (e) => {
-  const file = e.target.files[0];
-  if (!file) return;
+const profAvatarInput = document.getElementById("profAvatarInput");
+if (profAvatarInput) {
+  profAvatarInput.onchange = (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
 
-  if (file.size > 1.5 * 1024 * 1024) {
-    return alert("Image size must be under 1.5MB");
-  }
+    if (file.size > 1.5 * 1024 * 1024) {
+      return alert("Image size must be under 1.5MB");
+    }
 
-  const reader = new FileReader();
-  reader.onload = (event) => {
-    const base64 = event.target.result;
-    document.getElementById("profAvatarBase64").value = base64;
-    document.getElementById("modalAvatarPreview").innerHTML = `<img src="${base64}" class="w-full h-full object-cover" />`;
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      const base64 = event.target.result;
+      document.getElementById("profAvatarBase64").value = base64;
+      const modalAvatarPreview = document.getElementById("modalAvatarPreview");
+      if (modalAvatarPreview) modalAvatarPreview.innerHTML = `<img src="${base64}" class="w-full h-full object-cover" />`;
+    };
+    reader.readAsDataURL(file);
   };
-  reader.readAsDataURL(file);
-};
+}
 
-document.getElementById("formProfile").onsubmit = async (e) => {
-  e.preventDefault();
-  const name = document.getElementById("profName").value.trim();
-  const phone = document.getElementById("profPhone").value.trim();
-  const address = document.getElementById("profAddress").value.trim();
-  const recoveryPin = document.getElementById("profRecoveryPin").value.trim();
-  const avatar = document.getElementById("profAvatarBase64").value;
+const formProfile = document.getElementById("formProfile");
+if (formProfile) {
+  formProfile.onsubmit = async (e) => {
+    e.preventDefault();
+    const name = document.getElementById("profName").value.trim();
+    const phone = document.getElementById("profPhone").value.trim();
+    const address = document.getElementById("profAddress").value.trim();
+    const recoveryPin = document.getElementById("profRecoveryPin").value.trim();
+    const avatar = document.getElementById("profAvatarBase64").value;
 
-  const btnSave = document.getElementById("btnSaveProfile");
-  btnSave.disabled = true;
-  btnSave.textContent = "Saving...";
+    const btnSave = document.getElementById("btnSaveProfile");
+    if (btnSave) {
+      btnSave.disabled = true;
+      btnSave.textContent = "Saving...";
+    }
 
-  try {
-    const data = await apiFetch(`${API_URL}/profile?action=profile`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization": `Bearer ${token}`
-      },
-      body: JSON.stringify({ name, phone, address, recoveryPin, avatar })
-    });
+    try {
+      const data = await apiFetch(`${API_URL}/profile?action=profile`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`
+        },
+        body: JSON.stringify({ name, phone, address, recoveryPin, avatar })
+      });
 
-    currentUser = data.user;
-    localStorage.setItem("KOFS_AUTH_USER", JSON.stringify(currentUser));
-    updateUserDisplay();
-    showToast("Profile & Photo updated successfully!");
-    modalProfile.classList.add("hidden");
-  } catch (err) {
-    alert(err.message);
-  } finally {
-    btnSave.disabled = false;
-    btnSave.textContent = "Save Profile Changes";
-  }
-};
+      currentUser = data.user;
+      localStorage.setItem("KOFS_AUTH_USER", JSON.stringify(currentUser));
+      updateUserDisplay();
+      showToast("Profile & Photo updated successfully!");
+      if (modalProfile) modalProfile.classList.add("hidden");
+    } catch (err) {
+      alert(err.message);
+    } finally {
+      if (btnSave) {
+        btnSave.disabled = false;
+        btnSave.textContent = "Save Profile Changes";
+      }
+    }
+  };
+}
 
-document.getElementById("formForgotPass").onsubmit = async (e) => {
-  e.preventDefault();
-  const email = document.getElementById("resetEmail").value.trim();
-  const recoveryPin = document.getElementById("resetPin").value.trim();
-  const newPassword = document.getElementById("resetNewPass").value.trim();
+const formForgotPass = document.getElementById("formForgotPass");
+if (formForgotPass) {
+  formForgotPass.onsubmit = async (e) => {
+    e.preventDefault();
+    const email = document.getElementById("resetEmail").value.trim();
+    const recoveryPin = document.getElementById("resetPin").value.trim();
+    const newPassword = document.getElementById("resetNewPass").value.trim();
 
-  const btnReset = document.getElementById("btnSubmitReset");
-  btnReset.disabled = true;
-  btnReset.textContent = "Resetting...";
+    const btnReset = document.getElementById("btnSubmitReset");
+    if (btnReset) {
+      btnReset.disabled = true;
+      btnReset.textContent = "Resetting...";
+    }
 
-  try {
-    const res = await apiFetch(`${API_URL}/reset-password?action=reset-password`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email, recoveryPin, newPassword })
-    });
+    try {
+      const res = await apiFetch(`${API_URL}/reset-password?action=reset-password`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, recoveryPin, newPassword })
+      });
 
-    showToast(res.message);
-    modalForgotPass.classList.add("hidden");
-    setAuthMode(false);
-    document.getElementById("authEmail").value = email;
-  } catch (err) {
-    alert(err.message);
-  } finally {
-    btnReset.disabled = false;
-    btnReset.textContent = "Reset Password";
-  }
-};
+      showToast(res.message);
+      if (modalForgotPass) modalForgotPass.classList.add("hidden");
+      setAuthMode(false);
+      document.getElementById("authEmail").value = email;
+    } catch (err) {
+      alert(err.message);
+    } finally {
+      if (btnReset) {
+        btnReset.disabled = false;
+        btnReset.textContent = "Reset Password";
+      }
+    }
+  };
+}
 
 // ==========================================
 // MONGODB DATA SYNC
@@ -420,7 +432,7 @@ async function loadUserData() {
     updateDropdowns();
     render();
   } catch (err) {
-    if (err.message.includes("401") || err.message.includes("Unauthorized")) {
+    if (err.message && (err.message.includes("401") || err.message.includes("Unauthorized"))) {
       localStorage.removeItem("KOFS_AUTH_TOKEN");
       lockApplication();
     } else {
@@ -470,29 +482,32 @@ function renderCharts() {
 
   if (projectChartInstance) projectChartInstance.destroy();
 
-  if (labels.length === 0) {
-    if (noChartMsg) noChartMsg.classList.remove("hidden");
-  } else {
-    if (noChartMsg) noChartMsg.classList.add("hidden");
-    const ctx = document.getElementById("projectChart").getContext("2d");
-    projectChartInstance = new Chart(ctx, {
-      type: "doughnut",
-      data: {
-        labels,
-        datasets: [{
-          data,
-          backgroundColor: ["#00d2ff", "#f43f5e", "#10b981", "#f59e0b", "#8b5cf6", "#ec4899"],
-          borderWidth: 0
-        }]
-      },
-      options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        plugins: {
-          legend: { position: "bottom", labels: { boxWidth: 10, color: textColor, font: { size: 10 } } }
+  const canvasPie = document.getElementById("projectChart");
+  if (canvasPie) {
+    if (labels.length === 0) {
+      if (noChartMsg) noChartMsg.classList.remove("hidden");
+    } else {
+      if (noChartMsg) noChartMsg.classList.add("hidden");
+      const ctx = canvasPie.getContext("2d");
+      projectChartInstance = new Chart(ctx, {
+        type: "doughnut",
+        data: {
+          labels,
+          datasets: [{
+            data,
+            backgroundColor: ["#00d2ff", "#f43f5e", "#10b981", "#f59e0b", "#8b5cf6", "#ec4899"],
+            borderWidth: 0
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: { position: "bottom", labels: { boxWidth: 10, color: textColor, font: { size: 10 } } }
+          }
         }
-      }
-    });
+      });
+    }
   }
 
   const last6Months = [];
@@ -510,32 +525,36 @@ function renderCharts() {
   });
 
   if (trendChartInstance) trendChartInstance.destroy();
-  const trendCtx = document.getElementById("trendChart").getContext("2d");
-  trendChartInstance = new Chart(trendCtx, {
-    type: "bar",
-    data: {
-      labels: monthLabels,
-      datasets: [
-        { label: "Income", data: incomeData, backgroundColor: "#10b981", borderRadius: 6 },
-        { label: "Expense", data: expenseData, backgroundColor: "#f43f5e", borderRadius: 6 }
-      ]
-    },
-    options: {
-      responsive: true,
-      maintainAspectRatio: false,
-      plugins: { legend: { labels: { color: textColor, font: { size: 11, weight: 'bold' } } } },
-      scales: {
-        y: { ticks: { color: textColor, callback: v => "৳" + v }, grid: { color: gridColor } },
-        x: { ticks: { color: textColor }, grid: { display: false } }
+  const canvasTrend = document.getElementById("trendChart");
+  if (canvasTrend) {
+    const trendCtx = canvasTrend.getContext("2d");
+    trendChartInstance = new Chart(trendCtx, {
+      type: "bar",
+      data: {
+        labels: monthLabels,
+        datasets: [
+          { label: "Income", data: incomeData, backgroundColor: "#10b981", borderRadius: 6 },
+          { label: "Expense", data: expenseData, backgroundColor: "#f43f5e", borderRadius: 6 }
+        ]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: { legend: { labels: { color: textColor, font: { size: 11, weight: 'bold' } } } },
+        scales: {
+          y: { ticks: { color: textColor, callback: v => "৳" + v }, grid: { color: gridColor } },
+          x: { ticks: { color: textColor }, grid: { display: false } }
+        }
       }
-    }
-  });
+    });
+  }
 }
 
 function render() {
   const netWorth = appData.accounts.reduce((acc, a) => acc + (Number(a.balance) || 0), 0);
-  totalNetWorthEl.textContent = formatBDT(netWorth);
-  document.getElementById("accountCountLabel").textContent = `Across ${appData.accounts.length} accounts`;
+  if (totalNetWorthEl) totalNetWorthEl.textContent = formatBDT(netWorth);
+  const accountCountLabel = document.getElementById("accountCountLabel");
+  if (accountCountLabel) accountCountLabel.textContent = `Across ${appData.accounts.length} accounts`;
 
   let projIn = 0, projOut = 0;
   appData.transactions.forEach(t => {
@@ -544,13 +563,13 @@ function render() {
       if (t.type === "EXPENSE") projOut += Number(t.amount);
     }
   });
-  totalProjectInflowEl.textContent = formatBDT(projIn);
-  totalProjectExpenseEl.textContent = formatBDT(projOut);
+  if (totalProjectInflowEl) totalProjectInflowEl.textContent = formatBDT(projIn);
+  if (totalProjectExpenseEl) totalProjectExpenseEl.textContent = formatBDT(projOut);
 
   const pendingLent = appData.loans
     .filter(l => l.status !== "REPAID")
     .reduce((acc, l) => acc + (Number(l.remainingAmount ?? l.amount) || 0), 0);
-  totalLentPendingEl.textContent = formatBDT(pendingLent);
+  if (totalLentPendingEl) totalLentPendingEl.textContent = formatBDT(pendingLent);
 
   renderAccounts();
   renderProjects();
@@ -563,33 +582,47 @@ function render() {
 
 function updateDropdowns() {
   const accOpts = appData.accounts.map(a => `<option value="${a.id}">${a.name} [${a.type}] (${formatBDT(a.balance)})</option>`).join("");
-  document.getElementById("txAccount").innerHTML = accOpts;
-  document.getElementById("loanAccount").innerHTML = accOpts;
-  document.getElementById("transferFrom").innerHTML = accOpts;
-  document.getElementById("settleDepositAccount").innerHTML = accOpts;
+  const txAccount = document.getElementById("txAccount");
+  if (txAccount) txAccount.innerHTML = accOpts;
+  const loanAccount = document.getElementById("loanAccount");
+  if (loanAccount) loanAccount.innerHTML = accOpts;
+  const transferFrom = document.getElementById("transferFrom");
+  if (transferFrom) transferFrom.innerHTML = accOpts;
+  const settleDepositAccount = document.getElementById("settleDepositAccount");
+  if (settleDepositAccount) settleDepositAccount.innerHTML = accOpts;
 
-  document.getElementById("transferTo").innerHTML = accOpts + `<option value="EXTERNAL">+ Send to External Recipient</option>`;
-  filterAccountEl.innerHTML = `<option value="ALL">All Accounts</option>` + appData.accounts.map(a => `<option value="${a.id}">${a.name}</option>`).join("");
+  const transferTo = document.getElementById("transferTo");
+  if (transferTo) transferTo.innerHTML = accOpts + `<option value="EXTERNAL">+ Send to External Recipient</option>`;
+  if (filterAccountEl) filterAccountEl.innerHTML = `<option value="ALL">All Accounts</option>` + appData.accounts.map(a => `<option value="${a.id}">${a.name}</option>`).join("");
 
   const projOpts = `<option value="NONE">General / Personal (No Project)</option>` + 
     appData.projects.map(p => `<option value="${p.id}">${p.name}</option>`).join("");
-  document.getElementById("txProject").innerHTML = projOpts;
-  filterProjectEl.innerHTML = `<option value="ALL">All Projects</option>` + appData.projects.map(p => `<option value="${p.id}">${p.name}</option>`).join("");
+  const txProject = document.getElementById("txProject");
+  if (txProject) txProject.innerHTML = projOpts;
+  if (filterProjectEl) filterProjectEl.innerHTML = `<option value="ALL">All Projects</option>` + appData.projects.map(p => `<option value="${p.id}">${p.name}</option>`).join("");
 }
 
-document.getElementById("transferTo").onchange = (e) => {
-  const extGroup = document.getElementById("externalRecipientGroup");
-  if (e.target.value === "EXTERNAL") {
-    extGroup.classList.remove("hidden");
-    document.getElementById("transferExternalName").required = true;
-  } else {
-    extGroup.classList.add("hidden");
-    document.getElementById("transferExternalName").required = false;
-  }
-};
+const transferToEl = document.getElementById("transferTo");
+if (transferToEl) {
+  transferToEl.onchange = (e) => {
+    const extGroup = document.getElementById("externalRecipientGroup");
+    const extNameInput = document.getElementById("transferExternalName");
+    if (!extGroup) return;
+    if (e.target.value === "EXTERNAL") {
+      extGroup.classList.remove("hidden");
+      if (extNameInput) extNameInput.required = true;
+    } else {
+      extGroup.classList.add("hidden");
+      if (extNameInput) extNameInput.required = false;
+    }
+  };
+}
 
-// Render Accounts with Direct Deposit and Edit
+// ==========================================
+// ACCOUNTS & DIRECT DEPOSIT
+// ==========================================
 function renderAccounts() {
+  if (!accountsGridEl) return;
   if (appData.accounts.length === 0) {
     accountsGridEl.innerHTML = `<div class="col-span-full py-6 text-center text-slate-400 bg-slate-50 dark:bg-darkbg-elevated border border-dashed border-slate-200 dark:border-darkbg-border rounded-2xl text-xs">No accounts added yet. Click "+ Add Account".</div>`;
     return;
@@ -628,7 +661,6 @@ function renderAccounts() {
   }).join("");
 }
 
-// Quick Deposit / Add Funds Handlers
 window.openDepositModal = (accId) => {
   const acc = appData.accounts.find(a => a.id === accId);
   if (!acc) return;
@@ -639,36 +671,99 @@ window.openDepositModal = (accId) => {
   openModal(modalAddFunds);
 };
 
-document.getElementById("formAddFunds").onsubmit = async (e) => {
-  e.preventDefault();
-  const accId = document.getElementById("depositTargetAccountId").value;
-  const amount = parseFloat(document.getElementById("depositAmount").value) || 0;
-  const note = document.getElementById("depositNote").value.trim();
-  const date = document.getElementById("depositDate").value;
+const formAddFunds = document.getElementById("formAddFunds");
+if (formAddFunds) {
+  formAddFunds.onsubmit = async (e) => {
+    e.preventDefault();
+    const accId = document.getElementById("depositTargetAccountId").value;
+    const amount = parseFloat(document.getElementById("depositAmount").value) || 0;
+    const note = document.getElementById("depositNote").value.trim();
+    const date = document.getElementById("depositDate").value;
 
-  const target = appData.accounts.find(a => a.id === accId);
-  if (!target) return alert("Target account not found");
-  if (amount <= 0) return alert("Enter a valid deposit amount");
+    const target = appData.accounts.find(a => a.id === accId);
+    if (!target) return alert("Target account not found");
+    if (amount <= 0) return alert("Enter a valid deposit amount");
 
-  target.balance = Number(target.balance) + amount;
+    target.balance = Number(target.balance) + amount;
 
-  appData.transactions.unshift({
-    id: "tx_" + Date.now(),
-    type: "INCOME",
-    accountId: accId,
-    projectId: "NONE",
-    amount,
-    note: `Deposit: ${note}`,
-    date
-  });
+    appData.transactions.unshift({
+      id: "tx_" + Date.now(),
+      type: "INCOME",
+      accountId: accId,
+      projectId: "NONE",
+      amount,
+      note: `Deposit: ${note}`,
+      date
+    });
 
-  await syncToMongoDB();
-  showToast(`Added ${formatBDT(amount)} to ${target.name}!`);
-  modalAddFunds.classList.add("hidden");
+    await syncToMongoDB();
+    showToast(`Added ${formatBDT(amount)} to ${target.name}!`);
+    if (modalAddFunds) modalAddFunds.classList.add("hidden");
+  };
+}
+
+const formAccount = document.getElementById("formAccount");
+if (formAccount) {
+  formAccount.onsubmit = async (e) => {
+    e.preventDefault();
+    const editId = document.getElementById("editAccountId").value;
+    const name = document.getElementById("accName").value.trim();
+    const type = document.getElementById("accType").value;
+    const balance = parseFloat(document.getElementById("accBalance").value) || 0;
+
+    if (editId) {
+      const acc = appData.accounts.find(a => a.id === editId);
+      if (acc) {
+        acc.name = name;
+        acc.type = type;
+        acc.balance = balance;
+      }
+      showToast("Account details updated!");
+    } else {
+      appData.accounts.push({ id: "acc_" + Date.now(), name, type, balance });
+      showToast("Account created successfully!");
+    }
+
+    updateDropdowns();
+    await syncToMongoDB();
+    if (modalAccount) modalAccount.classList.add("hidden");
+    resetAccountForm();
+  };
+}
+
+function resetAccountForm() {
+  const form = document.getElementById("formAccount");
+  if (form) form.reset();
+  const editId = document.getElementById("editAccountId");
+  if (editId) editId.value = "";
+  const title = document.getElementById("accountModalTitle");
+  if (title) title.textContent = "Add Account / Wallet";
+}
+
+window.editAccount = (id) => {
+  const acc = appData.accounts.find(a => a.id === id);
+  if (!acc) return;
+  document.getElementById("editAccountId").value = acc.id;
+  document.getElementById("accName").value = acc.name;
+  document.getElementById("accType").value = acc.type;
+  document.getElementById("accBalance").value = acc.balance;
+  document.getElementById("accountModalTitle").textContent = "Edit Account Details";
+  openModal(modalAccount);
 };
 
-// Projects
+window.deleteAccount = async (id) => {
+  if (!confirm("Delete this account?")) return;
+  appData.accounts = appData.accounts.filter(a => a.id !== id);
+  updateDropdowns();
+  await syncToMongoDB();
+  showToast("Account removed");
+};
+
+// ==========================================
+// PROJECTS & LEDGER
+// ==========================================
 function renderProjects() {
+  if (!projectsGridEl) return;
   if (appData.projects.length === 0) {
     projectsGridEl.innerHTML = `<div class="col-span-full py-6 text-center text-slate-400 bg-slate-50 dark:bg-darkbg-elevated border border-dashed border-slate-200 dark:border-darkbg-border rounded-2xl text-xs">No projects created yet.</div>`;
     return;
@@ -762,13 +857,17 @@ function refreshProjectDetails(projectId) {
   netEl.textContent = `${pNet >= 0 ? '+' : ''}${formatBDT(pNet)}`;
   netEl.className = `text-lg font-black mt-1 ${pNet >= 0 ? 'text-emerald-500' : 'text-rose-500'}`;
 
-  document.getElementById("pDetailBtnAddTx").onclick = () => {
-    resetTxForm();
-    document.getElementById("txProject").value = p.id;
-    openModal(modalTx);
-  };
+  const btnAddTx = document.getElementById("pDetailBtnAddTx");
+  if (btnAddTx) {
+    btnAddTx.onclick = () => {
+      resetTxForm();
+      document.getElementById("txProject").value = p.id;
+      openModal(modalTx);
+    };
+  }
 
   const tbody = document.getElementById("pDetailTxTableBody");
+  if (!tbody) return;
   if (pTxs.length === 0) {
     tbody.innerHTML = `<tr><td colspan="6" class="p-4 text-center text-slate-400">No project transactions recorded.</td></tr>`;
     return;
@@ -803,8 +902,133 @@ function refreshProjectDetails(projectId) {
   }).join("");
 }
 
-// Render Lent Records with Borrower Phone & History Ledger View
+const formProject = document.getElementById("formProject");
+if (formProject) {
+  formProject.onsubmit = async (e) => {
+    e.preventDefault();
+    const editId = document.getElementById("editProjectId").value;
+    const name = document.getElementById("projName").value.trim();
+    const budget = parseFloat(document.getElementById("projBudget").value) || 0;
+    const notes = document.getElementById("projNotes").value.trim();
+
+    if (editId) {
+      const proj = appData.projects.find(p => p.id === editId);
+      if (proj) {
+        proj.name = name;
+        proj.budget = budget;
+        proj.notes = notes;
+      }
+      showToast("Project updated!");
+    } else {
+      appData.projects.push({ id: "proj_" + Date.now(), name, budget, notes });
+      showToast("Project created!");
+    }
+
+    updateDropdowns();
+    await syncToMongoDB();
+    if (modalProject) modalProject.classList.add("hidden");
+    resetProjectForm();
+  };
+}
+
+function resetProjectForm() {
+  const form = document.getElementById("formProject");
+  if (form) form.reset();
+  const editId = document.getElementById("editProjectId");
+  if (editId) editId.value = "";
+  const title = document.getElementById("projectModalTitle");
+  if (title) title.textContent = "Create Project";
+}
+
+window.editProject = (id) => {
+  const proj = appData.projects.find(p => p.id === id);
+  if (!proj) return;
+  document.getElementById("editProjectId").value = proj.id;
+  document.getElementById("projName").value = proj.name;
+  document.getElementById("projBudget").value = proj.budget;
+  document.getElementById("projNotes").value = proj.notes || "";
+  document.getElementById("projectModalTitle").textContent = "Edit Project";
+  openModal(modalProject);
+};
+
+window.deleteProject = async (id) => {
+  if (!confirm("Delete this project?")) return;
+  appData.projects = appData.projects.filter(p => p.id !== id);
+  updateDropdowns();
+  await syncToMongoDB();
+  showToast("Project removed");
+};
+
+// ==========================================
+// TRANSFERS
+// ==========================================
+const formTransfer = document.getElementById("formTransfer");
+if (formTransfer) {
+  formTransfer.onsubmit = async (e) => {
+    e.preventDefault();
+    const fromId = document.getElementById("transferFrom").value;
+    const toVal = document.getElementById("transferTo").value;
+    const amount = parseFloat(document.getElementById("transferAmount").value) || 0;
+    const date = document.getElementById("transferDate").value;
+
+    const fromAcc = appData.accounts.find(a => a.id === fromId);
+    if (!fromAcc) return alert("Select source account");
+
+    if (toVal === "EXTERNAL") {
+      const extName = document.getElementById("transferExternalName").value.trim();
+      fromAcc.balance = Number(fromAcc.balance) - amount;
+      appData.transactions.unshift({
+        id: "tx_" + Date.now(),
+        type: "EXPENSE",
+        accountId: fromId,
+        projectId: "NONE",
+        amount,
+        note: `Transfer to: ${extName}`,
+        date
+      });
+      showToast(`Transferred ${formatBDT(amount)} to ${extName}!`);
+    } else {
+      if (fromId === toVal) return alert("Source and destination accounts cannot be identical!");
+      const toAcc = appData.accounts.find(a => a.id === toVal);
+      if (!toAcc) return;
+
+      fromAcc.balance = Number(fromAcc.balance) - amount;
+      toAcc.balance = Number(toAcc.balance) + amount;
+
+      appData.transactions.unshift({
+        id: "tx_" + Date.now(),
+        type: "EXPENSE",
+        accountId: fromId,
+        projectId: "NONE",
+        amount,
+        note: `Transfer to ${toAcc.name}`,
+        date
+      });
+      appData.transactions.unshift({
+        id: "tx_" + (Date.now() + 1),
+        type: "INCOME",
+        accountId: toVal,
+        projectId: "NONE",
+        amount,
+        note: `Transfer from ${fromAcc.name}`,
+        date
+      });
+      showToast(`Transferred ${formatBDT(amount)} from ${fromAcc.name} to ${toAcc.name}!`);
+    }
+
+    await syncToMongoDB();
+    if (modalTransfer) modalTransfer.classList.add("hidden");
+    formTransfer.reset();
+    const extGroup = document.getElementById("externalRecipientGroup");
+    if (extGroup) extGroup.classList.add("hidden");
+  };
+}
+
+// ==========================================
+// LENT (DEBT TRACKER & PHONE LEDGER)
+// ==========================================
 function renderLoans() {
+  if (!loansTableBodyEl) return;
   if (appData.loans.length === 0) {
     loansTableBodyEl.innerHTML = `<tr><td colspan="7" class="p-6 text-center text-slate-400 text-xs">No debt records. Click "+ Lend Money".</td></tr>`;
     return;
@@ -851,7 +1075,7 @@ function renderLoans() {
           </span>
         </td>
         <td class="p-3.5 pr-4 text-right space-x-1.5">
-          <button onclick="window.viewLentPersonHistory('${l.phone || ''}', '${l.friendName}')" class="text-xs bg-slate-100 dark:bg-darkbg-elevated hover:text-brand-500 text-slate-700 dark:text-slate-300 font-bold px-2.5 py-1.5 rounded-xl border border-slate-200 dark:border-darkbg-border transition" title="View Full History with this person">
+          <button onclick="window.viewLentPersonHistory('${l.phone || ''}', '${l.friendName}')" class="text-xs bg-slate-100 dark:bg-darkbg-elevated hover:text-brand-500 text-slate-700 dark:text-slate-300 font-bold px-2.5 py-1.5 rounded-xl border border-slate-200 dark:border-darkbg-border transition" title="View History with this person">
             <i class="fa-solid fa-clock-rotate-left"></i> History
           </button>
           ${!isRepaid ? `
@@ -868,7 +1092,6 @@ function renderLoans() {
   }).join("");
 }
 
-// Person Lent History Modal
 window.viewLentPersonHistory = (phone, name) => {
   const matchingLoans = appData.loans.filter(l => (phone && l.phone === phone) || l.friendName.toLowerCase() === name.toLowerCase());
   
@@ -883,6 +1106,7 @@ window.viewLentPersonHistory = (phone, name) => {
   document.getElementById("lentHistDue").textContent = formatBDT(totalDue);
 
   const tbody = document.getElementById("lentHistTableBody");
+  if (!tbody) return;
   if (matchingLoans.length === 0) {
     tbody.innerHTML = `<tr><td colspan="5" class="p-4 text-center text-slate-400">No records found.</td></tr>`;
   } else {
@@ -925,68 +1149,123 @@ window.openLoanSettle = (loanId) => {
   openModal(modalLoanSettle);
 };
 
-document.getElementById("radioFullSettle").onchange = () => {
-  document.getElementById("partialAmountGroup").classList.add("hidden");
-};
-document.getElementById("radioPartialSettle").onchange = () => {
-  const group = document.getElementById("partialAmountGroup");
-  group.classList.remove("hidden");
-  const loanId = document.getElementById("settleLoanId").value;
-  const loan = appData.loans.find(l => l.id === loanId);
-  const remainingDue = Number(loan?.remainingAmount ?? loan?.amount) || 0;
-  document.getElementById("settleReceivedAmount").value = Math.floor(remainingDue / 2) || 1;
-};
+const radioFullSettle = document.getElementById("radioFullSettle");
+if (radioFullSettle) {
+  radioFullSettle.onchange = () => {
+    const group = document.getElementById("partialAmountGroup");
+    if (group) group.classList.add("hidden");
+  };
+}
 
-document.getElementById("formLoanSettle").onsubmit = async (e) => {
-  e.preventDefault();
-  const loanId = document.getElementById("settleLoanId").value;
-  const settleType = document.querySelector('input[name="settleType"]:checked').value;
-  const depositAccId = document.getElementById("settleDepositAccount").value;
-  const date = document.getElementById("settleDate").value;
+const radioPartialSettle = document.getElementById("radioPartialSettle");
+if (radioPartialSettle) {
+  radioPartialSettle.onchange = () => {
+    const group = document.getElementById("partialAmountGroup");
+    if (group) group.classList.remove("hidden");
+    const loanId = document.getElementById("settleLoanId").value;
+    const loan = appData.loans.find(l => l.id === loanId);
+    const remainingDue = Number(loan?.remainingAmount ?? loan?.amount) || 0;
+    const receivedInput = document.getElementById("settleReceivedAmount");
+    if (receivedInput) receivedInput.value = Math.floor(remainingDue / 2) || 1;
+  };
+}
 
-  const loan = appData.loans.find(l => l.id === loanId);
-  const targetAcc = appData.accounts.find(a => a.id === depositAccId);
-  if (!loan || !targetAcc) return alert("Invalid account or loan selection");
+const formLoanSettle = document.getElementById("formLoanSettle");
+if (formLoanSettle) {
+  formLoanSettle.onsubmit = async (e) => {
+    e.preventDefault();
+    const loanId = document.getElementById("settleLoanId").value;
+    const settleType = document.querySelector('input[name="settleType"]:checked').value;
+    const depositAccId = document.getElementById("settleDepositAccount").value;
+    const date = document.getElementById("settleDate").value;
 
-  const remainingDue = Number(loan.remainingAmount ?? loan.amount) || 0;
-  let receivedAmount = remainingDue;
+    const loan = appData.loans.find(l => l.id === loanId);
+    const targetAcc = appData.accounts.find(a => a.id === depositAccId);
+    if (!loan || !targetAcc) return alert("Invalid account or loan selection");
 
-  if (settleType === "PARTIAL") {
-    receivedAmount = parseFloat(document.getElementById("settleReceivedAmount").value) || 0;
-    if (receivedAmount <= 0 || receivedAmount > remainingDue) {
-      return alert(`Enter valid amount between ৳1 and ${formatBDT(remainingDue)}`);
+    const remainingDue = Number(loan.remainingAmount ?? loan.amount) || 0;
+    let receivedAmount = remainingDue;
+
+    if (settleType === "PARTIAL") {
+      receivedAmount = parseFloat(document.getElementById("settleReceivedAmount").value) || 0;
+      if (receivedAmount <= 0 || receivedAmount > remainingDue) {
+        return alert(`Enter valid amount between ৳1 and ${formatBDT(remainingDue)}`);
+      }
     }
-  }
 
-  targetAcc.balance = Number(targetAcc.balance) + receivedAmount;
+    targetAcc.balance = Number(targetAcc.balance) + receivedAmount;
 
-  const newDue = remainingDue - receivedAmount;
-  loan.remainingAmount = newDue;
-  if (newDue <= 0) {
-    loan.status = "REPAID";
-    loan.remainingAmount = 0;
-  } else {
-    loan.status = "PARTIALLY_PAID";
-  }
+    const newDue = remainingDue - receivedAmount;
+    loan.remainingAmount = newDue;
+    if (newDue <= 0) {
+      loan.status = "REPAID";
+      loan.remainingAmount = 0;
+    } else {
+      loan.status = "PARTIALLY_PAID";
+    }
 
-  appData.transactions.unshift({
-    id: "tx_" + Date.now(),
-    type: "INCOME",
-    accountId: depositAccId,
-    projectId: "NONE",
-    amount: receivedAmount,
-    note: `Debt received from ${loan.friendName} (${settleType === 'PARTIAL' ? 'Partial' : 'Full'})`,
-    date
-  });
+    appData.transactions.unshift({
+      id: "tx_" + Date.now(),
+      type: "INCOME",
+      accountId: depositAccId,
+      projectId: "NONE",
+      amount: receivedAmount,
+      note: `Debt received from ${loan.friendName} (${settleType === 'PARTIAL' ? 'Partial' : 'Full'})`,
+      date
+    });
 
+    await syncToMongoDB();
+    showToast(`Received ${formatBDT(receivedAmount)} from ${loan.friendName}!`);
+    if (modalLoanSettle) modalLoanSettle.classList.add("hidden");
+  };
+}
+
+const formLoan = document.getElementById("formLoan");
+if (formLoan) {
+  formLoan.onsubmit = async (e) => {
+    e.preventDefault();
+    const friendName = document.getElementById("loanFriendName").value.trim();
+    const phone = document.getElementById("loanFriendPhone") ? document.getElementById("loanFriendPhone").value.trim() : "";
+    const amount = parseFloat(document.getElementById("loanAmount").value) || 0;
+    const accountId = document.getElementById("loanAccount").value;
+    const date = document.getElementById("loanDate").value;
+
+    const targetAccount = appData.accounts.find(a => a.id === accountId);
+    if (!targetAccount) return alert("Select source account");
+
+    targetAccount.balance = Number(targetAccount.balance) - amount;
+    appData.loans.unshift({ 
+      id: "loan_" + Date.now(), 
+      friendName, 
+      phone,
+      amount, 
+      remainingAmount: amount, 
+      accountId, 
+      date, 
+      status: "PENDING" 
+    });
+
+    await syncToMongoDB();
+    showToast("Lent transaction recorded successfully!");
+    if (modalLoan) modalLoan.classList.add("hidden");
+    formLoan.reset();
+  };
+}
+
+window.deleteLoan = async (id) => {
+  if (!confirm("Delete debt record?")) return;
+  appData.loans = appData.loans.filter(l => l.id !== id);
   await syncToMongoDB();
-  showToast(`Received ${formatBDT(receivedAmount)} from ${loan.friendName}!`);
-  modalLoanSettle.classList.add("hidden");
+  showToast("Debt deleted");
 };
 
+// ==========================================
+// TRANSACTIONS
+// ==========================================
 function renderTransactions() {
-  const pFilter = filterProjectEl.value;
-  const aFilter = filterAccountEl.value;
+  if (!txTableBodyEl) return;
+  const pFilter = filterProjectEl ? filterProjectEl.value : "ALL";
+  const aFilter = filterAccountEl ? filterAccountEl.value : "ALL";
   const search = (txSearchEl ? txSearchEl.value.trim().toLowerCase() : "");
 
   const filtered = appData.transactions.filter(t => {
@@ -1033,54 +1312,59 @@ function renderTransactions() {
   }).join("");
 }
 
-filterProjectEl.onchange = renderTransactions;
-filterAccountEl.onchange = renderTransactions;
-txSearchEl.oninput = renderTransactions;
+if (filterProjectEl) filterProjectEl.onchange = renderTransactions;
+if (filterAccountEl) filterAccountEl.onchange = renderTransactions;
+if (txSearchEl) txSearchEl.oninput = renderTransactions;
 
-// Form Submit Handlers
-document.getElementById("formTx").onsubmit = async (e) => {
-  e.preventDefault();
-  const editId = document.getElementById("editTxId").value;
-  const type = document.getElementById("txType").value;
-  const accountId = document.getElementById("txAccount").value;
-  const projectId = document.getElementById("txProject").value;
-  const amount = parseFloat(document.getElementById("txAmount").value) || 0;
-  const note = document.getElementById("txNote").value.trim();
-  const date = document.getElementById("txDate").value;
+const formTx = document.getElementById("formTx");
+if (formTx) {
+  formTx.onsubmit = async (e) => {
+    e.preventDefault();
+    const editId = document.getElementById("editTxId").value;
+    const type = document.getElementById("txType").value;
+    const accountId = document.getElementById("txAccount").value;
+    const projectId = document.getElementById("txProject").value;
+    const amount = parseFloat(document.getElementById("txAmount").value) || 0;
+    const note = document.getElementById("txNote").value.trim();
+    const date = document.getElementById("txDate").value;
 
-  const targetAccount = appData.accounts.find(a => a.id === accountId);
-  if (!targetAccount) return alert("Select an account");
+    const targetAccount = appData.accounts.find(a => a.id === accountId);
+    if (!targetAccount) return alert("Select an account");
 
-  if (editId) {
-    const oldTx = appData.transactions.find(t => t.id === editId);
-    if (oldTx) {
-      const oldAcc = appData.accounts.find(a => a.id === oldTx.accountId);
-      if (oldAcc) {
-        oldAcc.balance = oldTx.type === "INCOME" ? Number(oldAcc.balance) - Number(oldTx.amount) : Number(oldAcc.balance) + Number(oldTx.amount);
+    if (editId) {
+      const oldTx = appData.transactions.find(t => t.id === editId);
+      if (oldTx) {
+        const oldAcc = appData.accounts.find(a => a.id === oldTx.accountId);
+        if (oldAcc) {
+          oldAcc.balance = oldTx.type === "INCOME" ? Number(oldAcc.balance) - Number(oldTx.amount) : Number(oldAcc.balance) + Number(oldTx.amount);
+        }
+        oldTx.type = type;
+        oldTx.accountId = accountId;
+        oldTx.projectId = projectId;
+        oldTx.amount = amount;
+        oldTx.note = note;
+        oldTx.date = date;
       }
-      oldTx.type = type;
-      oldTx.accountId = accountId;
-      oldTx.projectId = projectId;
-      oldTx.amount = amount;
-      oldTx.note = note;
-      oldTx.date = date;
+    } else {
+      appData.transactions.unshift({ id: "tx_" + Date.now(), type, accountId, projectId, amount, note, date });
     }
-  } else {
-    appData.transactions.unshift({ id: "tx_" + Date.now(), type, accountId, projectId, amount, note, date });
-  }
 
-  targetAccount.balance = type === "INCOME" ? Number(targetAccount.balance) + amount : Number(targetAccount.balance) - amount;
+    targetAccount.balance = type === "INCOME" ? Number(targetAccount.balance) + amount : Number(targetAccount.balance) - amount;
 
-  await syncToMongoDB();
-  showToast(editId ? "Transaction updated!" : "Transaction saved!");
-  modalTx.classList.add("hidden");
-  resetTxForm();
-};
+    await syncToMongoDB();
+    showToast(editId ? "Transaction updated!" : "Transaction saved!");
+    if (modalTx) modalTx.classList.add("hidden");
+    resetTxForm();
+  };
+}
 
 function resetTxForm() {
-  document.getElementById("formTx").reset();
-  document.getElementById("editTxId").value = "";
-  document.getElementById("txModalTitle").textContent = "Add Transaction";
+  const form = document.getElementById("formTx");
+  if (form) form.reset();
+  const editId = document.getElementById("editTxId");
+  if (editId) editId.value = "";
+  const title = document.getElementById("txModalTitle");
+  if (title) title.textContent = "Add Transaction";
 }
 
 window.editTransaction = (id) => {
@@ -1097,183 +1381,6 @@ window.editTransaction = (id) => {
   openModal(modalTx);
 };
 
-// Account Form Handler with Edit & Provider select
-document.getElementById("formAccount").onsubmit = async (e) => {
-  e.preventDefault();
-  const editId = document.getElementById("editAccountId").value;
-  const name = document.getElementById("accName").value.trim();
-  const type = document.getElementById("accType").value;
-  const balance = parseFloat(document.getElementById("accBalance").value) || 0;
-
-  if (editId) {
-    const acc = appData.accounts.find(a => a.id === editId);
-    if (acc) {
-      acc.name = name;
-      acc.type = type;
-      acc.balance = balance;
-    }
-    showToast("Account details updated!");
-  } else {
-    appData.accounts.push({ id: "acc_" + Date.now(), name, type, balance });
-    showToast("Account created successfully!");
-  }
-
-  updateDropdowns();
-  await syncToMongoDB();
-  modalAccount.classList.add("hidden");
-  resetAccountForm();
-};
-
-function resetAccountForm() {
-  document.getElementById("formAccount").reset();
-  document.getElementById("editAccountId").value = "";
-  document.getElementById("accountModalTitle").textContent = "Add Account / Wallet";
-}
-
-window.editAccount = (id) => {
-  const acc = appData.accounts.find(a => a.id === id);
-  if (!acc) return;
-  document.getElementById("editAccountId").value = acc.id;
-  document.getElementById("accName").value = acc.name;
-  document.getElementById("accType").value = acc.type;
-  document.getElementById("accBalance").value = acc.balance;
-  document.getElementById("accountModalTitle").textContent = "Edit Account Details";
-  openModal(modalAccount);
-};
-
-// Project Form
-document.getElementById("formProject").onsubmit = async (e) => {
-  e.preventDefault();
-  const editId = document.getElementById("editProjectId").value;
-  const name = document.getElementById("projName").value.trim();
-  const budget = parseFloat(document.getElementById("projBudget").value) || 0;
-  const notes = document.getElementById("projNotes").value.trim();
-
-  if (editId) {
-    const proj = appData.projects.find(p => p.id === editId);
-    if (proj) {
-      proj.name = name;
-      proj.budget = budget;
-      proj.notes = notes;
-    }
-    showToast("Project updated!");
-  } else {
-    appData.projects.push({ id: "proj_" + Date.now(), name, budget, notes });
-    showToast("Project created!");
-  }
-
-  updateDropdowns();
-  await syncToMongoDB();
-  modalProject.classList.add("hidden");
-  resetProjectForm();
-};
-
-function resetProjectForm() {
-  document.getElementById("formProject").reset();
-  document.getElementById("editProjectId").value = "";
-  document.getElementById("projectModalTitle").textContent = "Create Project";
-}
-
-window.editProject = (id) => {
-  const proj = appData.projects.find(p => p.id === id);
-  if (!proj) return;
-  document.getElementById("editProjectId").value = proj.id;
-  document.getElementById("projName").value = proj.name;
-  document.getElementById("projBudget").value = proj.budget;
-  document.getElementById("projNotes").value = proj.notes || "";
-  document.getElementById("projectModalTitle").textContent = "Edit Project";
-  openModal(modalProject);
-};
-
-// Transfer Form
-document.getElementById("formTransfer").onsubmit = async (e) => {
-  e.preventDefault();
-  const fromId = document.getElementById("transferFrom").value;
-  const toVal = document.getElementById("transferTo").value;
-  const amount = parseFloat(document.getElementById("transferAmount").value) || 0;
-  const date = document.getElementById("transferDate").value;
-
-  const fromAcc = appData.accounts.find(a => a.id === fromId);
-  if (!fromAcc) return alert("Select source account");
-
-  if (toVal === "EXTERNAL") {
-    const extName = document.getElementById("transferExternalName").value.trim();
-    fromAcc.balance = Number(fromAcc.balance) - amount;
-    appData.transactions.unshift({
-      id: "tx_" + Date.now(),
-      type: "EXPENSE",
-      accountId: fromId,
-      projectId: "NONE",
-      amount,
-      note: `Transfer to: ${extName}`,
-      date
-    });
-    showToast(`Transferred ${formatBDT(amount)} to ${extName}!`);
-  } else {
-    if (fromId === toVal) return alert("Source and destination accounts cannot be identical!");
-    const toAcc = appData.accounts.find(a => a.id === toVal);
-    if (!toAcc) return;
-
-    fromAcc.balance = Number(fromAcc.balance) - amount;
-    toAcc.balance = Number(toAcc.balance) + amount;
-
-    appData.transactions.unshift({
-      id: "tx_" + Date.now(),
-      type: "EXPENSE",
-      accountId: fromId,
-      projectId: "NONE",
-      amount,
-      note: `Transfer to ${toAcc.name}`,
-      date
-    });
-    appData.transactions.unshift({
-      id: "tx_" + (Date.now() + 1),
-      type: "INCOME",
-      accountId: toVal,
-      projectId: "NONE",
-      amount,
-      note: `Transfer from ${fromAcc.name}`,
-      date
-    });
-    showToast(`Transferred ${formatBDT(amount)} from ${fromAcc.name} to ${toAcc.name}!`);
-  }
-
-  await syncToMongoDB();
-  modalTransfer.classList.add("hidden");
-  document.getElementById("formTransfer").reset();
-  document.getElementById("externalRecipientGroup").classList.add("hidden");
-};
-
-// Lent Money Form with Phone Number
-document.getElementById("formLoan").onsubmit = async (e) => {
-  e.preventDefault();
-  const friendName = document.getElementById("loanFriendName").value.trim();
-  const phone = document.getElementById("loanFriendPhone").value.trim();
-  const amount = parseFloat(document.getElementById("loanAmount").value) || 0;
-  const accountId = document.getElementById("loanAccount").value;
-  const date = document.getElementById("loanDate").value;
-
-  const targetAccount = appData.accounts.find(a => a.id === accountId);
-  if (!targetAccount) return alert("Select source account");
-
-  targetAccount.balance = Number(targetAccount.balance) - amount;
-  appData.loans.unshift({ 
-    id: "loan_" + Date.now(), 
-    friendName, 
-    phone,
-    amount, 
-    remainingAmount: amount, 
-    accountId, 
-    date, 
-    status: "PENDING" 
-  });
-
-  await syncToMongoDB();
-  showToast("Lent transaction recorded successfully!");
-  modalLoan.classList.add("hidden");
-  document.getElementById("formLoan").reset();
-};
-
 window.deleteTransaction = async (txId, type, amount, accountId) => {
   if (!confirm("Delete transaction? Account balance will revert.")) return;
   const target = appData.accounts.find(a => a.id === accountId);
@@ -1283,29 +1390,6 @@ window.deleteTransaction = async (txId, type, amount, accountId) => {
   appData.transactions = appData.transactions.filter(t => t.id !== txId);
   await syncToMongoDB();
   showToast("Transaction deleted");
-};
-
-window.deleteAccount = async (id) => {
-  if (!confirm("Delete this account?")) return;
-  appData.accounts = appData.accounts.filter(a => a.id !== id);
-  updateDropdowns();
-  await syncToMongoDB();
-  showToast("Account removed");
-};
-
-window.deleteProject = async (id) => {
-  if (!confirm("Delete this project?")) return;
-  appData.projects = appData.projects.filter(p => p.id !== id);
-  updateDropdowns();
-  await syncToMongoDB();
-  showToast("Project removed");
-};
-
-window.deleteLoan = async (id) => {
-  if (!confirm("Delete debt record?")) return;
-  appData.loans = appData.loans.filter(l => l.id !== id);
-  await syncToMongoDB();
-  showToast("Debt deleted");
 };
 
 // ==========================================
@@ -1343,7 +1427,7 @@ window.switchView = (viewName) => {
   window.scrollTo({ top: 0, behavior: "smooth" });
 };
 
-// Sidebar Handlers
+// Sidebar Handlers (Declared exactly once)
 const appSidebar = document.getElementById("appSidebar");
 const sidebarBackdrop = document.getElementById("sidebarBackdrop");
 const btnOpenSidebar = document.getElementById("btnOpenSidebar");
