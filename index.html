@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>KofsLedger • Smart Financial & Project OS</title>
   
-  <!-- Custom KofsLedger Favicon -->
+  <!-- Custom KofsLedger Brand SVG Favicon -->
   <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 200'%3E%3Crect width='200' height='200' rx='45' fill='%230b0f19'/%3E%3Cpath d='M40 30 L85 30 L85 170 L40 170 Z' fill='%23334155'/%3E%3Cpath d='M75 105 L145 35 L175 35 L105 105 Z' fill='%2300d2ff'/%3E%3Cpath d='M95 100 L170 175 L135 175 L65 105 Z' fill='%230284c7'/%3E%3C/svg%3E" />
 
   <script src="https://cdn.tailwindcss.com"></script>
@@ -42,7 +42,9 @@
 </head>
 <body class="bg-slate-50 dark:bg-darkbg text-slate-800 dark:text-slate-100 min-h-screen selection:bg-brand-500 selection:text-slate-900 transition-colors duration-200 flex flex-col justify-between">
 
-  <!-- STRICT FULL-SCREEN AUTHENTICATION GATEKEEPER -->
+  <!-- ============================================== -->
+  <!-- STRICT FULL-SCREEN AUTHENTICATION GATEKEEPER   -->
+  <!-- ============================================== -->
   <div id="authGatekeeper" class="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/95 dark:bg-[#060911]/98 backdrop-blur-2xl p-4 overflow-y-auto">
     <div class="bg-white dark:bg-darkbg-card border border-slate-200 dark:border-darkbg-border rounded-3xl p-6 sm:p-9 w-full max-w-md shadow-2xl shadow-cyan-500/10 transition-all">
       
@@ -94,34 +96,61 @@
     </div>
   </div>
 
-  <!-- MAIN APP CONTAINER -->
+  <!-- ============================================== -->
+  <!-- MAIN APP CONTAINER                             -->
+  <!-- ============================================== -->
   <div id="appContainer" class="hidden flex-1 flex flex-col justify-between">
     
-    <!-- Printable Header -->
-    <div class="print-only hidden p-8 border-b border-slate-300">
-      <div class="flex justify-between items-center">
+    <!-- Printable Official Financial Statement Header & Balance Summary -->
+    <div class="print-only hidden p-8 border-b-2 border-slate-900 mb-6 bg-white text-slate-900">
+      <div class="flex justify-between items-start pb-6 border-b border-slate-200">
         <div>
           <h1 class="text-3xl font-black tracking-tight text-slate-900">KOFS<span class="text-cyan-600">Ledger</span></h1>
-          <p class="text-xs font-bold text-slate-500 uppercase tracking-widest mt-0.5">Transaction Statement Ledger</p>
+          <p class="text-xs font-bold text-slate-500 uppercase tracking-widest mt-0.5">Official Financial Statement</p>
         </div>
         <div class="text-right text-xs space-y-1">
-          <p><strong>Account Holder:</strong> <span id="printUserName">User</span></p>
-          <p><strong>Date Generated:</strong> <span id="printDate"></span></p>
+          <p><strong>Generated Date:</strong> <span id="printDate"></span></p>
+          <p><strong>Currency:</strong> BDT (৳)</p>
+        </div>
+      </div>
+
+      <!-- User Details & Statement Balance Summary -->
+      <div class="grid grid-cols-2 gap-8 pt-6 text-xs">
+        <div class="space-y-1.5 border-l-2 border-cyan-500 pl-4">
+          <p class="text-[10px] uppercase font-bold text-slate-400 tracking-wider">Account Holder Information</p>
+          <p class="text-base font-black text-slate-900" id="printUserName">User Name</p>
+          <p><strong>Phone:</strong> <span id="printUserPhone" class="text-slate-700">N/A</span></p>
+          <p><strong>Email:</strong> <span id="printUserEmail" class="text-slate-700">user@example.com</span></p>
+          <p><strong>Address:</strong> <span id="printUserAddress" class="text-slate-700">N/A</span></p>
+        </div>
+
+        <div class="bg-slate-50 p-4 rounded-2xl border border-slate-200 space-y-2">
+          <p class="text-[10px] uppercase font-bold text-slate-400 tracking-wider">Statement Balance Summary</p>
+          <div class="flex justify-between items-center text-xs">
+            <span class="text-slate-600 font-semibold">Available Net Balance:</span>
+            <span id="printTotalBalance" class="text-sm font-black text-slate-900">৳0.00</span>
+          </div>
+          <div class="flex justify-between items-center text-xs">
+            <span class="text-slate-600 font-semibold">Total Expenses (Debited):</span>
+            <span id="printTotalExpense" class="text-sm font-black text-rose-600">৳0.00</span>
+          </div>
+          <div class="flex justify-between items-center text-xs">
+            <span class="text-slate-600 font-semibold">Total Inflow (Credited):</span>
+            <span id="printTotalInflow" class="text-sm font-black text-emerald-600">৳0.00</span>
+          </div>
         </div>
       </div>
     </div>
 
-    <!-- Mobile-Optimized App Header -->
+    <!-- App Header (Compact Mobile Design) -->
     <header class="no-print bg-white/80 dark:bg-darkbg-card/80 backdrop-blur-xl border-b border-slate-200/80 dark:border-darkbg-border sticky top-0 z-40 px-3 sm:px-6 md:px-8 py-2.5 transition-colors">
       <div class="max-w-7xl mx-auto flex justify-between items-center">
         
         <div class="flex items-center space-x-2 sm:space-x-3">
-          <!-- Menu Toggle Button -->
           <button id="btnOpenSidebar" class="w-9 h-9 sm:w-10 sm:h-10 rounded-xl sm:rounded-2xl bg-slate-100 dark:bg-darkbg-elevated hover:bg-slate-200 dark:hover:bg-slate-700/60 text-slate-700 dark:text-brand-400 flex items-center justify-center text-sm border border-slate-200 dark:border-darkbg-border transition active:scale-95">
             <i class="fa-solid fa-bars-staggered"></i>
           </button>
 
-          <!-- Brand Logo & Name -->
           <div onclick="window.switchView('overview')" class="flex items-center space-x-2 sm:space-x-3 cursor-pointer group">
             <div class="w-8 h-8 sm:w-10 sm:h-10 rounded-xl sm:rounded-2xl bg-gradient-to-tr from-slate-900 to-slate-950 flex items-center justify-center border border-brand-500/30 shadow-md">
               <svg class="w-5 h-5 sm:w-6 sm:h-6 text-brand-400" viewBox="0 0 200 200" fill="currentColor">
@@ -142,13 +171,12 @@
           </div>
         </div>
 
-        <!-- Right Quick Controls -->
+        <!-- Header Actions -->
         <div class="flex items-center space-x-1.5 sm:space-x-2.5">
           <button id="btnToggleTheme" class="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-slate-100 dark:bg-darkbg-elevated hover:bg-slate-200 text-slate-700 dark:text-brand-400 flex items-center justify-center text-xs sm:text-sm border border-slate-200 dark:border-darkbg-border transition">
             <i id="themeIcon" class="fa-solid fa-moon"></i>
           </button>
 
-          <!-- User Avatar Pill (Compact on Mobile) -->
           <button id="btnOpenProfileModal" class="flex items-center gap-1.5 bg-slate-100 dark:bg-darkbg-elevated hover:border-brand-500/50 border border-slate-200 dark:border-darkbg-border p-1 sm:px-2.5 sm:py-1 rounded-full text-xs font-bold transition group">
             <div id="headerAvatarContainer" class="w-6 h-6 rounded-full overflow-hidden bg-brand-500 text-slate-950 flex items-center justify-center font-black text-[10px]">
               <span id="headerAvatarInitial">U</span>
@@ -161,7 +189,6 @@
             <i class="fa-solid fa-power-off text-xs sm:text-sm"></i>
           </button>
 
-          <!-- Add Tx Button (Icon on mobile, Full on desktop) -->
           <button id="btnOpenTxModal" class="bg-gradient-to-r from-brand-500 to-cyan-400 hover:from-brand-600 hover:to-cyan-500 text-slate-950 px-2.5 py-1.5 sm:px-3.5 sm:py-2 rounded-xl text-xs sm:text-sm font-black transition shadow-md shadow-brand-500/20 flex items-center gap-1 active:scale-95">
             <i class="fa-solid fa-plus text-xs"></i>
             <span class="hidden sm:inline">Add Tx</span>
@@ -170,7 +197,7 @@
       </div>
     </header>
 
-    <!-- COLLAPSIBLE SIDEBAR MENU DRAWER -->
+    <!-- COLLAPSIBLE SIDEBAR MENU DRAWER (SPA ROUTER) -->
     <div id="sidebarBackdrop" class="fixed inset-0 z-50 bg-slate-950/70 backdrop-blur-sm hidden transition-opacity duration-300"></div>
     <aside id="appSidebar" class="fixed top-0 left-0 bottom-0 z-50 w-72 sm:w-80 bg-white dark:bg-darkbg-card border-r border-slate-200 dark:border-darkbg-border p-6 transform -translate-x-full transition-transform duration-300 ease-out flex flex-col justify-between shadow-2xl">
       <div class="space-y-6">
@@ -238,13 +265,10 @@
     <!-- DYNAMIC MAIN VIEWS -->
     <main class="max-w-7xl mx-auto p-3.5 sm:p-6 lg:p-8 space-y-6 sm:space-y-8 flex-1 w-full">
 
-      <!-- VIEW 1: DASHBOARD OVERVIEW (Mobile 2x2 Clean Grid) -->
+      <!-- VIEW 1: DASHBOARD OVERVIEW (2x2 Mobile Grid) -->
       <div id="viewOverview" class="app-view space-y-6 sm:space-y-8">
         
-        <!-- 2x2 on Mobile, 4 Cols on Desktop -->
         <div class="grid grid-cols-2 lg:grid-cols-4 gap-2.5 sm:gap-4 lg:gap-5">
-          
-          <!-- Net Worth -->
           <div onclick="window.switchView('accounts')" class="cursor-pointer group bg-white dark:bg-darkbg-card p-3.5 sm:p-5 lg:p-6 rounded-2xl sm:rounded-3xl border border-slate-200/80 dark:border-darkbg-border shadow-sm hover:border-brand-500/40 transition-all">
             <div class="flex justify-between items-start">
               <span class="text-[10px] sm:text-xs font-bold uppercase tracking-wider text-slate-400 truncate">Net Worth</span>
@@ -259,7 +283,6 @@
             </div>
           </div>
 
-          <!-- Project Inflow -->
           <div onclick="window.switchView('projects')" class="cursor-pointer group bg-white dark:bg-darkbg-card p-3.5 sm:p-5 lg:p-6 rounded-2xl sm:rounded-3xl border border-slate-200/80 dark:border-darkbg-border shadow-sm hover:border-emerald-500/40 transition-all">
             <div class="flex justify-between items-start">
               <span class="text-[10px] sm:text-xs font-bold uppercase tracking-wider text-slate-400 truncate">Inflow</span>
@@ -274,7 +297,6 @@
             </p>
           </div>
 
-          <!-- Project Cost -->
           <div onclick="window.switchView('projects')" class="cursor-pointer group bg-white dark:bg-darkbg-card p-3.5 sm:p-5 lg:p-6 rounded-2xl sm:rounded-3xl border border-slate-200/80 dark:border-darkbg-border shadow-sm hover:border-rose-500/40 transition-all">
             <div class="flex justify-between items-start">
               <span class="text-[10px] sm:text-xs font-bold uppercase tracking-wider text-slate-400 truncate">Cost</span>
@@ -289,7 +311,6 @@
             </p>
           </div>
 
-          <!-- Lent (Debts) -->
           <div onclick="window.switchView('loans')" class="cursor-pointer group bg-white dark:bg-darkbg-card p-3.5 sm:p-5 lg:p-6 rounded-2xl sm:rounded-3xl border border-slate-200/80 dark:border-darkbg-border shadow-sm hover:border-amber-500/40 transition-all">
             <div class="flex justify-between items-start">
               <span class="text-[10px] sm:text-xs font-bold uppercase tracking-wider text-slate-400 truncate">Lent</span>
@@ -305,7 +326,6 @@
           </div>
         </div>
 
-        <!-- Charts Grid -->
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6">
           <div class="bg-white dark:bg-darkbg-card p-4 sm:p-6 rounded-2xl sm:rounded-3xl border border-slate-200/80 dark:border-darkbg-border shadow-sm">
             <div class="flex items-center justify-between mb-3">
@@ -412,7 +432,7 @@
           <div class="no-print flex flex-wrap items-center gap-2">
             <div class="relative">
               <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-xs"></i>
-              <input type="text" id="txSearch" placeholder="Search..." class="pl-8 bg-slate-50 dark:bg-darkbg-elevated border border-slate-200 dark:border-darkbg-border text-xs rounded-xl px-3 py-2 text-slate-800 dark:text-white focus:ring-2 focus:ring-brand-500 w-32 sm:w-44 font-medium transition" />
+              <input type="text" id="txSearch" placeholder="Search notes..." class="pl-8 bg-slate-50 dark:bg-darkbg-elevated border border-slate-200 dark:border-darkbg-border text-xs rounded-xl px-3 py-2 text-slate-800 dark:text-white focus:ring-2 focus:ring-brand-500 w-32 sm:w-44 font-medium transition" />
             </div>
             <select id="filterProject" class="bg-slate-50 dark:bg-darkbg-elevated border border-slate-200 dark:border-darkbg-border text-xs rounded-xl px-3 py-2 font-medium text-slate-800 dark:text-white"></select>
             <select id="filterAccount" class="bg-slate-50 dark:bg-darkbg-elevated border border-slate-200 dark:border-darkbg-border text-xs rounded-xl px-3 py-2 font-medium text-slate-800 dark:text-white"></select>
@@ -442,7 +462,7 @@
       </div>
     </main>
 
-    <!-- ULTRA-CLEAN ICON-ONLY FOOTER -->
+    <!-- ULTRA-CLEAN 1-CLICK ACTION FOOTER -->
     <footer class="no-print mt-8 py-5 border-t border-slate-200/80 dark:border-darkbg-border bg-white/50 dark:bg-darkbg-card/50 backdrop-blur-md">
       <div class="max-w-7xl mx-auto px-4 md:px-8 flex flex-col sm:flex-row items-center justify-between gap-3">
         
@@ -458,25 +478,21 @@
           <span class="text-[10px] text-slate-400 font-medium">© 2026 Developed by Kofs</span>
         </div>
 
-        <!-- 1-Click Launch Icons (No Text) -->
+        <!-- 1-Click Launch Icons -->
         <div class="flex items-center gap-2.5">
-          <!-- WhatsApp: instant chat -->
           <a href="https://wa.me/8801621110120" target="_blank" rel="noopener noreferrer" class="w-9 h-9 rounded-xl bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-500 border border-emerald-500/30 flex items-center justify-center transition active:scale-90" title="Message on WhatsApp">
             <i class="fa-brands fa-whatsapp text-lg"></i>
           </a>
 
-          <!-- Telegram: instant chat -->
           <a href="https://t.me/+8801621110120" target="_blank" rel="noopener noreferrer" class="w-9 h-9 rounded-xl bg-sky-500/10 hover:bg-sky-500/20 text-sky-400 border border-sky-500/30 flex items-center justify-center transition active:scale-90" title="Message on Telegram">
             <i class="fa-brands fa-telegram text-lg"></i>
           </a>
 
-          <!-- Discord: copy handle -->
           <button onclick="window.copyDiscordHandle()" class="w-9 h-9 rounded-xl bg-indigo-500/10 hover:bg-indigo-500/20 text-indigo-400 border border-indigo-500/30 flex items-center justify-center transition active:scale-90" title="Copy Discord ID (_kofs_)">
             <i class="fa-brands fa-discord text-lg"></i>
           </button>
 
-          <!-- Email: instant composer -->
-          <a href="mailto:omrfys@gmail.com?subject=Inquiry%20via%20KofsLedger" class="w-9 h-9 rounded-xl bg-brand-500/10 hover:bg-brand-500/20 text-brand-400 border border-brand-500/30 flex items-center justify-center transition active:scale-90" title="Send Email">
+          <a href="mailto:omrfys@gmail.com?subject=Inquiry%20via%20KofsLedger" class="w-9 h-9 rounded-xl bg-brand-500/10 hover:bg-brand-500/20 text-brand-400 border border-brand-500/30 flex items-center justify-center transition active:scale-90" title="Send Email to omrfys@gmail.com">
             <i class="fa-solid fa-envelope text-base"></i>
           </a>
         </div>
@@ -485,7 +501,7 @@
     </footer>
   </div>
 
-  <!-- Toast Notification -->
+  <!-- Toast Notification Container -->
   <div id="toastContainer" class="fixed bottom-6 right-6 z-50 flex flex-col space-y-2 pointer-events-none"></div>
 
   <!-- MODAL: QUICK DEPOSIT -->
@@ -507,7 +523,7 @@
         </div>
         <div>
           <label class="block text-xs font-bold text-slate-600 dark:text-slate-300 mb-1">Source / Note</label>
-          <input type="text" id="depositNote" placeholder="e.g. Cash In, Salary, Direct Transfer" class="w-full bg-slate-50 dark:bg-darkbg-elevated border border-slate-200 dark:border-darkbg-border rounded-xl p-3 text-sm font-medium text-slate-800 dark:text-white" required />
+          <input type="text" id="depositNote" placeholder="e.g. Cash In, Salary, Bank Transfer" class="w-full bg-slate-50 dark:bg-darkbg-elevated border border-slate-200 dark:border-darkbg-border rounded-xl p-3 text-sm font-medium text-slate-800 dark:text-white" required />
         </div>
         <div>
           <label class="block text-xs font-bold text-slate-600 dark:text-slate-300 mb-1">Date</label>
@@ -527,7 +543,7 @@
         <div>
           <span class="text-[10px] font-black uppercase tracking-wider text-amber-500 bg-amber-500/10 px-2.5 py-1 rounded-full border border-amber-500/30">Borrower Statement</span>
           <h3 class="text-2xl font-black text-slate-900 dark:text-white mt-2" id="lentHistFriendName">Person Name</h3>
-          <p class="text-xs text-slate-400 mt-0.5">Unique Phone: <strong id="lentHistPhone" class="text-brand-500"></strong></p>
+          <p class="text-xs text-slate-400 mt-0.5">Unique Phone Identifier: <strong id="lentHistPhone" class="text-brand-500"></strong></p>
         </div>
         <button class="modal-close w-8 h-8 rounded-full bg-slate-100 dark:bg-darkbg-elevated text-slate-400 hover:text-slate-200 flex items-center justify-center font-bold">&times;</button>
       </div>
@@ -625,7 +641,7 @@
     </div>
   </div>
 
-  <!-- MODAL: FORGOT PASSWORD -->
+  <!-- MODAL: FORGOT / RESET PASSWORD -->
   <div id="modalForgotPass" class="modal-backdrop hidden fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-md p-4">
     <div class="bg-white dark:bg-darkbg-card border border-slate-200 dark:border-darkbg-border rounded-3xl p-6 sm:p-8 w-full max-w-md shadow-2xl space-y-4">
       <div class="flex justify-between items-center pb-3 border-b border-slate-100 dark:border-darkbg-border">
@@ -859,7 +875,6 @@
         <div>
           <label class="block text-xs font-bold text-slate-600 dark:text-slate-300 mb-1">Provider Type (Banks & MFS)</label>
           <select id="accType" class="w-full bg-slate-50 dark:bg-darkbg-elevated border border-slate-200 dark:border-darkbg-border rounded-xl p-3 text-sm font-semibold text-slate-800 dark:text-white" required>
-            
             <optgroup label="Mobile Financial Services (MFS)">
               <option value="bKash">bKash</option>
               <option value="Nagad">Nagad</option>

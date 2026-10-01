@@ -167,7 +167,7 @@ function formatBDT(amount) {
   return "৳" + num.toLocaleString("en-BD", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 }
 
-// Provider visual badge helper
+// Brand visual badge helper
 function getProviderBadge(type) {
   const mfsTypes = ["bKash", "Nagad", "Rocket", "Upay", "Cellfin", "Tap", "mCash"];
   if (type === "bKash") return { bg: "bg-pink-500/10 text-pink-500 border border-pink-500/20", icon: "fa-mobile-screen" };
@@ -280,10 +280,28 @@ function updateUserDisplay() {
   if (!currentUser) return;
 
   if (displayUserNameEl) displayUserNameEl.textContent = currentUser.name;
+
+  // Print Statement Details
   const printUserName = document.getElementById("printUserName");
-  if (printUserName) printUserName.textContent = currentUser.name;
+  if (printUserName) printUserName.textContent = currentUser.name || "N/A";
+
+  const printUserEmail = document.getElementById("printUserEmail");
+  if (printUserEmail) printUserEmail.textContent = currentUser.email || "N/A";
+
+  const printUserPhone = document.getElementById("printUserPhone");
+  if (printUserPhone) printUserPhone.textContent = currentUser.phone || "N/A";
+
+  const printUserAddress = document.getElementById("printUserAddress");
+  if (printUserAddress) printUserAddress.textContent = currentUser.address || "N/A";
+
   const printDate = document.getElementById("printDate");
-  if (printDate) printDate.textContent = new Date().toLocaleDateString("en-BD");
+  if (printDate) {
+    printDate.textContent = new Date().toLocaleDateString("en-BD", { 
+      year: "numeric", 
+      month: "long", 
+      day: "numeric" 
+    });
+  }
 
   const headerAvatarContainer = document.getElementById("headerAvatarContainer");
   const modalAvatarPreview = document.getElementById("modalAvatarPreview");
@@ -565,6 +583,23 @@ function render() {
   });
   if (totalProjectInflowEl) totalProjectInflowEl.textContent = formatBDT(projIn);
   if (totalProjectExpenseEl) totalProjectExpenseEl.textContent = formatBDT(projOut);
+
+  // Print Statement Figures
+  const totalTxExpense = appData.transactions
+    .filter(t => t.type === "EXPENSE")
+    .reduce((sum, t) => sum + (Number(t.amount) || 0), 0);
+  const totalTxIncome = appData.transactions
+    .filter(t => t.type === "INCOME")
+    .reduce((sum, t) => sum + (Number(t.amount) || 0), 0);
+
+  const printTotalBalance = document.getElementById("printTotalBalance");
+  if (printTotalBalance) printTotalBalance.textContent = formatBDT(netWorth);
+
+  const printTotalExpense = document.getElementById("printTotalExpense");
+  if (printTotalExpense) printTotalExpense.textContent = formatBDT(totalTxExpense);
+
+  const printTotalInflow = document.getElementById("printTotalInflow");
+  if (printTotalInflow) printTotalInflow.textContent = formatBDT(totalTxIncome);
 
   const pendingLent = appData.loans
     .filter(l => l.status !== "REPAID")
@@ -1427,7 +1462,7 @@ window.switchView = (viewName) => {
   window.scrollTo({ top: 0, behavior: "smooth" });
 };
 
-// Sidebar Handlers (Declared exactly once)
+// Sidebar Handlers
 const appSidebar = document.getElementById("appSidebar");
 const sidebarBackdrop = document.getElementById("sidebarBackdrop");
 const btnOpenSidebar = document.getElementById("btnOpenSidebar");
