@@ -13,6 +13,41 @@ let appData = {
 
 let activeDetailProjectId = null;
 
+// Safe API Client
+async function apiFetch(endpoint, options = {}) {
+  try {
+    const res = await fetch(endpoint, options);
+    const text = await res.text();
+    let data;
+    try {
+      data = JSON.parse(text);
+    } catch (e) {
+      throw new Error(`Server Error (${res.status}): ${text || "Empty response from server. Check MongoDB IP Access."}`);
+    }
+    if (!res.ok) {
+      throw new Error(data.error || `Request failed with status ${res.status}`);
+    }
+    return data;
+  } catch (err) {
+    throw err;
+  }
+}
+
+// Eye Toggle Helper for Passwords
+window.togglePasswordVisibility = (inputId, iconId) => {
+  const input = document.getElementById(inputId);
+  const icon = document.getElementById(iconId);
+  if (!input || !icon) return;
+
+  if (input.type === "password") {
+    input.type = "text";
+    icon.className = "fa-regular fa-eye-slash";
+  } else {
+    input.type = "password";
+    icon.className = "fa-regular fa-eye";
+  }
+};
+
 // DOM Elements
 const totalNetWorthEl = document.getElementById("totalNetWorth");
 const totalProjectInflowEl = document.getElementById("totalProjectInflow");
@@ -29,6 +64,8 @@ const displayUserNameEl = document.getElementById("displayUserName");
 
 // Modals
 const modalAuth = document.getElementById("modalAuth");
+const modalProfile = document.getElementById("modalProfile");
+const modalForgotPass = document.getElementById("modalForgotPass");
 const modalTx = document.getElementById("modalTx");
 const modalAccount = document.getElementById("modalAccount");
 const modalProject = document.getElementById("modalProject");
@@ -37,12 +74,19 @@ const modalTransfer = document.getElementById("modalTransfer");
 const modalProjectDetails = document.getElementById("modalProjectDetails");
 const modalLoanSettle = document.getElementById("modalLoanSettle");
 
-// Modal Buttons
+// Open Modals
 document.getElementById("btnOpenTxModal").onclick = () => { resetTxForm(); openModal(modalTx); };
 document.getElementById("btnOpenAccountModal").onclick = () => { resetAccountForm(); openModal(modalAccount); };
 document.getElementById("btnOpenProjectModal").onclick = () => { resetProjectForm(); openModal(modalProject); };
 document.getElementById("btnOpenLoanModal").onclick = () => openModal(modalLoan);
 document.getElementById("btnOpenTransferModal").onclick = () => openModal(modalTransfer);
+
+// Profile & Forgot Password Open
+document.getElementById("btnOpenProfileModal").onclick = () => openProfileModal();
+document.getElementById("btnForgotPassTrigger").onclick = () => {
+  modalAuth.classList.add("hidden");
+  openModal(modalForgotPass);
+};
 
 document.querySelectorAll(".modal-close").forEach(btn => {
   btn.onclick = (e) => e.target.closest(".modal-backdrop").classList.add("hidden");
@@ -81,7 +125,7 @@ function formatBDT(amount) {
 }
 
 // ==========================================
-// USER AUTH
+// USER AUTHENTICATION & LOGIN/REGISTER
 // ==========================================
 let isRegisterMode = false;
 const tabLogin = document.getElementById("tabLogin");
@@ -96,17 +140,17 @@ tabRegister.onclick = () => setAuthMode(true);
 function setAuthMode(register) {
   isRegisterMode = register;
   if (register) {
-    tabRegister.className = "flex-1 pb-2 text-xs font-bold border-b-2 border-indigo-600 text-indigo-600";
-    tabLogin.className = "flex-1 pb-2 text-xs font-bold border-b-2 border-transparent text-slate-400 hover:text-slate-600";
+    tabRegister.className = "flex-1 py-1.5 text-xs font-bold rounded-lg transition bg-white text-indigo-600 shadow-sm";
+    tabLogin.className = "flex-1 py-1.5 text-xs font-bold rounded-lg transition text-slate-500";
     authNameGroup.classList.remove("hidden");
     btnAuthSubmit.textContent = "Register";
     authModalTitle.textContent = "Create an Account";
   } else {
-    tabLogin.className = "flex-1 pb-2 text-xs font-bold border-b-2 border-indigo-600 text-indigo-600";
-    tabRegister.className = "flex-1 pb-2 text-xs font-bold border-b-2 border-transparent text-slate-400 hover:text-slate-600";
+    tabLogin.className = "flex-1 py-1.5 text-xs font-bold rounded-lg transition bg-white text-indigo-600 shadow-sm";
+    tabRegister.className = "flex-1 py-1.5 text-xs font-bold rounded-lg transition text-slate-500";
     authNameGroup.classList.add("hidden");
     btnAuthSubmit.textContent = "Login";
-    authModalTitle.textContent = "Login to tracker by kofs";
+    authModalTitle.textContent = "Welcome Back";
   }
 }
 
@@ -116,17 +160,18 @@ document.getElementById("formAuth").onsubmit = async (e) => {
   const password = document.getElementById("authPassword").value.trim();
   const name = document.getElementById("authName").value.trim();
 
-  const endpoint = isRegisterMode ? `${API_URL}/register` : `${API_URL}/login`;
+  const endpoint = isRegisterMode ? `${API_URL}/register?action=register` : `${API_URL}/login?action=login`;
   const body = isRegisterMode ? { name, email, password } : { email, password };
 
+  btnAuthSubmit.disabled = true;
+  btnAuthSubmit.textContent = "Processing...";
+
   try {
-    const res = await fetch(endpoint, {
+    const data = await apiFetch(endpoint, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(body)
     });
-    const data = await res.json();
-    if (!res.ok) throw new Error(data.error || "Authentication failed");
 
     token = data.token;
     currentUser = data.user;
@@ -134,11 +179,14 @@ document.getElementById("formAuth").onsubmit = async (e) => {
     localStorage.setItem("KOFS_AUTH_USER", JSON.stringify(currentUser));
 
     modalAuth.classList.add("hidden");
-    showToast(`Welcome ${currentUser.name}!`);
+    showToast(`Welcome back, ${currentUser.name}!`);
     updateUserDisplay();
     loadUserData();
   } catch (err) {
     alert(err.message);
+  } finally {
+    btnAuthSubmit.disabled = false;
+    btnAuthSubmit.textContent = isRegisterMode ? "Register" : "Login";
   }
 };
 
@@ -163,6 +211,83 @@ function updateUserDisplay() {
 }
 
 // ==========================================
+// PROFILE UPDATE & PASSWORD RECOVERY
+// ==========================================
+function openProfileModal() {
+  if (!currentUser) return;
+  document.getElementById("profName").value = currentUser.name || "";
+  document.getElementById("profEmail").value = currentUser.email || "";
+  document.getElementById("profPhone").value = currentUser.phone || "";
+  document.getElementById("profAddress").value = currentUser.address || "";
+  document.getElementById("profRecoveryPin").value = currentUser.recoveryPin || "123456";
+  openModal(modalProfile);
+}
+
+document.getElementById("formProfile").onsubmit = async (e) => {
+  e.preventDefault();
+  const name = document.getElementById("profName").value.trim();
+  const phone = document.getElementById("profPhone").value.trim();
+  const address = document.getElementById("profAddress").value.trim();
+  const recoveryPin = document.getElementById("profRecoveryPin").value.trim();
+
+  const btnSave = document.getElementById("btnSaveProfile");
+  btnSave.disabled = true;
+  btnSave.textContent = "Saving...";
+
+  try {
+    const data = await apiFetch(`${API_URL}/profile?action=profile`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${token}`
+      },
+      body: JSON.stringify({ name, phone, address, recoveryPin })
+    });
+
+    currentUser = data.user;
+    localStorage.setItem("KOFS_AUTH_USER", JSON.stringify(currentUser));
+    updateUserDisplay();
+    showToast("Profile updated successfully!");
+    modalProfile.classList.add("hidden");
+  } catch (err) {
+    alert(err.message);
+  } finally {
+    btnSave.disabled = false;
+    btnSave.textContent = "Save Profile Changes";
+  }
+};
+
+document.getElementById("formForgotPass").onsubmit = async (e) => {
+  e.preventDefault();
+  const email = document.getElementById("resetEmail").value.trim();
+  const recoveryPin = document.getElementById("resetPin").value.trim();
+  const newPassword = document.getElementById("resetNewPass").value.trim();
+
+  const btnReset = document.getElementById("btnSubmitReset");
+  btnReset.disabled = true;
+  btnReset.textContent = "Resetting...";
+
+  try {
+    const res = await apiFetch(`${API_URL}/reset-password?action=reset-password`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email, recoveryPin, newPassword })
+    });
+
+    showToast(res.message);
+    modalForgotPass.classList.add("hidden");
+    setAuthMode(false);
+    document.getElementById("authEmail").value = email;
+    openModal(modalAuth);
+  } catch (err) {
+    alert(err.message);
+  } finally {
+    btnReset.disabled = false;
+    btnReset.textContent = "Reset Password";
+  }
+};
+
+// ==========================================
 // MONGODB DATA SYNC
 // ==========================================
 async function loadUserData() {
@@ -171,15 +296,9 @@ async function loadUserData() {
     return;
   }
   try {
-    const res = await fetch(`${API_URL}/data`, {
+    const data = await apiFetch(`${API_URL}/data?action=data`, {
       headers: { "Authorization": `Bearer ${token}` }
     });
-    if (res.status === 401) {
-      localStorage.removeItem("KOFS_AUTH_TOKEN");
-      openModal(modalAuth);
-      return;
-    }
-    const data = await res.json();
     appData = {
       accounts: data.accounts || [],
       projects: data.projects || [],
@@ -189,7 +308,12 @@ async function loadUserData() {
     updateDropdowns();
     render();
   } catch (err) {
-    console.error("Fetch data error:", err);
+    if (err.message.includes("401") || err.message.includes("Unauthorized")) {
+      localStorage.removeItem("KOFS_AUTH_TOKEN");
+      openModal(modalAuth);
+    } else {
+      console.error("Fetch data error:", err);
+    }
   }
 }
 
@@ -197,7 +321,7 @@ async function syncToMongoDB() {
   render();
   if (!token) return;
   try {
-    await fetch(`${API_URL}/data`, {
+    await apiFetch(`${API_URL}/data?action=data`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -253,7 +377,6 @@ function renderCharts() {
     });
   }
 
-  // Trend
   const last6Months = [];
   const now = new Date();
   for (let i = 5; i >= 0; i--) {
@@ -275,8 +398,8 @@ function renderCharts() {
     data: {
       labels: monthLabels,
       datasets: [
-        { label: "Income", data: incomeData, backgroundColor: "#10b981", borderRadius: 4 },
-        { label: "Expense", data: expenseData, backgroundColor: "#f43f5e", borderRadius: 4 }
+        { label: "Income", data: incomeData, backgroundColor: "#10b981", borderRadius: 6 },
+        { label: "Expense", data: expenseData, backgroundColor: "#f43f5e", borderRadius: 6 }
       ]
     },
     options: {
@@ -306,7 +429,6 @@ function render() {
   totalProjectInflowEl.textContent = formatBDT(projIn);
   totalProjectExpenseEl.textContent = formatBDT(projOut);
 
-  // Remaining loan due sum
   const pendingLent = appData.loans
     .filter(l => l.status !== "REPAID")
     .reduce((acc, l) => acc + (Number(l.remainingAmount ?? l.amount) || 0), 0);
@@ -352,21 +474,21 @@ document.getElementById("transferTo").onchange = (e) => {
 
 function renderAccounts() {
   if (appData.accounts.length === 0) {
-    accountsGridEl.innerHTML = `<div class="col-span-full py-6 text-center text-slate-400 bg-slate-50 border border-dashed border-slate-300 rounded-xl text-xs">No accounts added yet. Click "+ Add Account".</div>`;
+    accountsGridEl.innerHTML = `<div class="col-span-full py-6 text-center text-slate-400 bg-slate-50 border border-dashed border-slate-200 rounded-2xl text-xs">No accounts added yet. Click "+ Add Account".</div>`;
     return;
   }
   accountsGridEl.innerHTML = appData.accounts.map(a => `
-    <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex justify-between items-center hover:border-indigo-300 transition">
+    <div class="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-sm flex justify-between items-center hover:border-indigo-300 transition">
       <div>
         <span class="text-[10px] font-bold uppercase tracking-wider text-slate-500 bg-slate-100 px-2 py-0.5 rounded-full">${a.type}</span>
         <h4 class="font-bold text-slate-800 text-sm mt-1">${a.name}</h4>
         <p class="text-xl font-extrabold text-indigo-600 mt-1">${formatBDT(a.balance)}</p>
       </div>
       <div class="flex items-center gap-1">
-        <button onclick="window.editAccount('${a.id}')" class="p-1.5 text-slate-400 hover:text-indigo-600 transition text-xs" title="Edit">
+        <button onclick="window.editAccount('${a.id}')" class="p-2 text-slate-400 hover:text-indigo-600 transition text-xs" title="Edit">
           <i class="fa-regular fa-pen-to-square"></i>
         </button>
-        <button onclick="window.deleteAccount('${a.id}')" class="p-1.5 text-slate-400 hover:text-rose-600 transition text-xs" title="Delete">
+        <button onclick="window.deleteAccount('${a.id}')" class="p-2 text-slate-400 hover:text-rose-600 transition text-xs" title="Delete">
           <i class="fa-regular fa-trash-can"></i>
         </button>
       </div>
@@ -374,10 +496,9 @@ function renderAccounts() {
   `).join("");
 }
 
-// Render Projects with "View Ledger" Button
 function renderProjects() {
   if (appData.projects.length === 0) {
-    projectsGridEl.innerHTML = `<div class="col-span-full py-6 text-center text-slate-400 bg-slate-50 border border-dashed border-slate-300 rounded-xl text-xs">No projects created yet.</div>`;
+    projectsGridEl.innerHTML = `<div class="col-span-full py-6 text-center text-slate-400 bg-slate-50 border border-dashed border-slate-200 rounded-2xl text-xs">No projects created yet.</div>`;
     return;
   }
   projectsGridEl.innerHTML = appData.projects.map(p => {
@@ -389,7 +510,7 @@ function renderProjects() {
     const progressPercent = budget > 0 ? Math.min(Math.round((pOut / budget) * 100), 100) : 0;
 
     return `
-      <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex flex-col justify-between hover:border-indigo-300 transition">
+      <div class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-sm flex flex-col justify-between hover:border-indigo-300 transition">
         <div>
           <div class="flex justify-between items-start">
             <h4 class="font-bold text-slate-900 text-base">${p.name}</h4>
@@ -402,7 +523,7 @@ function renderProjects() {
               </button>
             </div>
           </div>
-          ${p.notes ? `<p class="text-xs text-slate-500 mt-0.5">${p.notes}</p>` : ""}
+          ${p.notes ? `<p class="text-xs text-slate-400 mt-1">${p.notes}</p>` : ""}
 
           ${budget > 0 ? `
             <div class="mt-3">
@@ -428,14 +549,14 @@ function renderProjects() {
           </div>
         </div>
         
-        <div class="mt-3 pt-3 border-t border-slate-100 flex justify-between items-center">
+        <div class="mt-4 pt-3 border-t border-slate-100 flex justify-between items-center">
           <div>
             <span class="text-[10px] text-slate-400 uppercase font-semibold">Net Balance</span>
             <p class="font-black text-sm ${pNet >= 0 ? 'text-emerald-600' : 'text-rose-600'}">
               ${pNet >= 0 ? '+' : ''}${formatBDT(pNet)}
             </p>
           </div>
-          <button onclick="window.openProjectDetails('${p.id}')" class="bg-indigo-50 hover:bg-indigo-100 text-indigo-700 text-xs font-bold px-3 py-1.5 rounded-lg border border-indigo-200 transition flex items-center gap-1.5">
+          <button onclick="window.openProjectDetails('${p.id}')" class="bg-indigo-50 hover:bg-indigo-100 text-indigo-700 text-xs font-bold px-3 py-1.5 rounded-xl border border-indigo-200/60 transition flex items-center gap-1.5">
             <i class="fa-solid fa-list-check"></i> View Ledger
           </button>
         </div>
@@ -444,7 +565,7 @@ function renderProjects() {
   }).join("");
 }
 
-// PROJECT DETAILS & PURPOSE LEDGER MODAL
+// Project Details & Purpose Ledger Modal
 window.openProjectDetails = (projectId) => {
   activeDetailProjectId = projectId;
   refreshProjectDetails(projectId);
@@ -470,7 +591,6 @@ function refreshProjectDetails(projectId) {
   netEl.textContent = `${pNet >= 0 ? '+' : ''}${formatBDT(pNet)}`;
   netEl.className = `text-lg font-black mt-0.5 ${pNet >= 0 ? 'text-emerald-600' : 'text-rose-600'}`;
 
-  // Quick button to add transaction directly to this project
   document.getElementById("pDetailBtnAddTx").onclick = () => {
     resetTxForm();
     document.getElementById("txProject").value = p.id;
@@ -512,7 +632,7 @@ function refreshProjectDetails(projectId) {
   }).join("");
 }
 
-// RENDER LOANS WITH REMAINING BALANCE & PARTIAL STATUS
+// Loans
 function renderLoans() {
   if (appData.loans.length === 0) {
     loansTableBodyEl.innerHTML = `<tr><td colspan="7" class="p-6 text-center text-slate-400 text-xs">কোনো ধারের রেকর্ড নেই (No debts recorded).</td></tr>`;
@@ -549,7 +669,7 @@ function renderLoans() {
         </td>
         <td class="p-3 text-right space-x-1.5">
           ${!isRepaid ? `
-            <button onclick="window.openLoanSettle('${l.id}')" class="text-xs bg-emerald-600 hover:bg-emerald-700 text-white font-medium px-2.5 py-1 rounded transition">
+            <button onclick="window.openLoanSettle('${l.id}')" class="text-xs bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-3 py-1.5 rounded-xl transition shadow-md shadow-emerald-600/20">
               <i class="fa-solid fa-hand-holding-dollar mr-1"></i> Receive Money
             </button>
           ` : ""}
@@ -562,7 +682,6 @@ function renderLoans() {
   }).join("");
 }
 
-// FULL & PARTIAL LOAN REPAYMENT LOGIC
 window.openLoanSettle = (loanId) => {
   const loan = appData.loans.find(l => l.id === loanId);
   if (!loan) return;
@@ -580,7 +699,6 @@ window.openLoanSettle = (loanId) => {
   openModal(modalLoanSettle);
 };
 
-// Radio toggle for Full / Partial
 document.getElementById("radioFullSettle").onchange = () => {
   document.getElementById("partialAmountGroup").classList.add("hidden");
 };
@@ -614,10 +732,8 @@ document.getElementById("formLoanSettle").onsubmit = async (e) => {
     }
   }
 
-  // 1. Credit the account with received money
   targetAcc.balance = Number(targetAcc.balance) + receivedAmount;
 
-  // 2. Update Loan State
   const newDue = remainingDue - receivedAmount;
   loan.remainingAmount = newDue;
   if (newDue <= 0) {
@@ -627,7 +743,6 @@ document.getElementById("formLoanSettle").onsubmit = async (e) => {
     loan.status = "PARTIALLY_PAID";
   }
 
-  // 3. Record repayment as an Income transaction
   appData.transactions.unshift({
     id: "tx_" + Date.now(),
     type: "INCOME",
@@ -696,11 +811,7 @@ filterProjectEl.onchange = renderTransactions;
 filterAccountEl.onchange = renderTransactions;
 txSearchEl.oninput = renderTransactions;
 
-// ==========================================
-// FORM SUBMIT HANDLERS
-// ==========================================
-
-// 1. Transaction Form
+// Form Handlers
 document.getElementById("formTx").onsubmit = async (e) => {
   e.preventDefault();
   const editId = document.getElementById("editTxId").value;
@@ -760,7 +871,6 @@ window.editTransaction = (id) => {
   openModal(modalTx);
 };
 
-// 2. Account Form
 document.getElementById("formAccount").onsubmit = async (e) => {
   e.preventDefault();
   const editId = document.getElementById("editAccountId").value;
@@ -804,7 +914,6 @@ window.editAccount = (id) => {
   openModal(modalAccount);
 };
 
-// 3. Project Form
 document.getElementById("formProject").onsubmit = async (e) => {
   e.preventDefault();
   const editId = document.getElementById("editProjectId").value;
@@ -848,7 +957,6 @@ window.editProject = (id) => {
   openModal(modalProject);
 };
 
-// 4. Transfer Form
 document.getElementById("formTransfer").onsubmit = async (e) => {
   e.preventDefault();
   const fromId = document.getElementById("transferFrom").value;
@@ -907,7 +1015,6 @@ document.getElementById("formTransfer").onsubmit = async (e) => {
   document.getElementById("externalRecipientGroup").classList.add("hidden");
 };
 
-// 5. Lend Loan Form
 document.getElementById("formLoan").onsubmit = async (e) => {
   e.preventDefault();
   const friendName = document.getElementById("loanFriendName").value.trim();

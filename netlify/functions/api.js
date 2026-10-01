@@ -11,10 +11,14 @@ const headers = {
   "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS"
 };
 
+// User Schema with Phone, Address and Recovery PIN
 const UserSchema = new mongoose.Schema({
   name: { type: String, required: true },
   email: { type: String, required: true, unique: true },
-  password: { type: String, required: true }
+  password: { type: String, required: true },
+  phone: { type: String, default: "" },
+  address: { type: String, default: "" },
+  recoveryPin: { type: String, default: "123456" }
 }, { timestamps: true });
 
 const UserDataSchema = new mongoose.Schema({
@@ -69,10 +73,12 @@ exports.handler = async (event, context) => {
     let action = "data";
     if (pathLower.includes("register") || queryAction === "register") action = "register";
     else if (pathLower.includes("login") || queryAction === "login") action = "login";
+    else if (pathLower.includes("profile") || queryAction === "profile") action = "profile";
+    else if (pathLower.includes("reset-password") || queryAction === "reset-password") action = "reset-password";
 
-    // Register
+    // 1. User Register
     if (event.httpMethod === "POST" && action === "register") {
-      const { name, email, password } = JSON.parse(event.body || "{}");
+      const { name, email, password, phone, address, recoveryPin } = JSON.parse(event.body || "{}");
       if (!email || !password) {
         return { statusCode: 400, headers, body: JSON.stringify({ error: "Email and password are required!" }) };
       }
@@ -82,7 +88,14 @@ exports.handler = async (event, context) => {
       }
 
       const hashedPassword = await bcrypt.hash(password, 10);
-      const user = await User.create({ name: name || "User", email: email.toLowerCase(), password: hashedPassword });
+      const user = await User.create({
+        name: name || "User",
+        email: email.toLowerCase(),
+        password: hashedPassword,
+        phone: phone || "",
+        address: address || "",
+        recoveryPin: recoveryPin || "123456"
+      });
 
       await UserData.create({
         userId: user._id,
@@ -102,11 +115,21 @@ exports.handler = async (event, context) => {
       return {
         statusCode: 201,
         headers,
-        body: JSON.stringify({ token, user: { id: user._id, name: user.name, email: user.email } })
+        body: JSON.stringify({
+          token,
+          user: {
+            id: user._id,
+            name: user.name,
+            email: user.email,
+            phone: user.phone,
+            address: user.address,
+            recoveryPin: user.recoveryPin
+          }
+        })
       };
     }
 
-    // Login
+    // 2. User Login
     if (event.httpMethod === "POST" && action === "login") {
       const { email, password } = JSON.parse(event.body || "{}");
       const user = await User.findOne({ email: email.toLowerCase() });
@@ -122,16 +145,84 @@ exports.handler = async (event, context) => {
       return {
         statusCode: 200,
         headers,
-        body: JSON.stringify({ token, user: { id: user._id, name: user.name, email: user.email } })
+        body: JSON.stringify({
+          token,
+          user: {
+            id: user._id,
+            name: user.name,
+            email: user.email,
+            phone: user.phone || "",
+            address: user.address || "",
+            recoveryPin: user.recoveryPin || "123456"
+          }
+        })
       };
     }
 
-    // Data API
+    // 3. Password Reset (Recovery using Secret PIN)
+    if (event.httpMethod === "POST" && action === "reset-password") {
+      const { email, recoveryPin, newPassword } = JSON.parse(event.body || "{}");
+      if (!email || !recoveryPin || !newPassword) {
+        return { statusCode: 400, headers, body: JSON.stringify({ error: "Email, Recovery PIN, and New Password are required!" }) };
+      }
+
+      const user = await User.findOne({ email: email.toLowerCase() });
+      if (!user) {
+        return { statusCode: 404, headers, body: JSON.stringify({ error: "No user found with this email!" }) };
+      }
+
+      if ((user.recoveryPin || "123456") !== recoveryPin.trim()) {
+        return { statusCode: 400, headers, body: JSON.stringify({ error: "Invalid Recovery PIN! Check your profile PIN." }) };
+      }
+
+      const hashedPassword = await bcrypt.hash(newPassword, 10);
+      user.password = hashedPassword;
+      await user.save();
+
+      return {
+        statusCode: 200,
+        headers,
+        body: JSON.stringify({ message: "Password reset successful! Please login with your new password." })
+      };
+    }
+
+    // 4. Authenticated Endpoints
     const authUser = authenticate(event);
     if (!authUser) {
       return { statusCode: 401, headers, body: JSON.stringify({ error: "Unauthorized! Please login." }) };
     }
 
+    // Profile Update (Name, Phone, Address, Recovery PIN)
+    if (event.httpMethod === "POST" && action === "profile") {
+      const { name, phone, address, recoveryPin } = JSON.parse(event.body || "{}");
+      const user = await User.findById(authUser.userId);
+      if (!user) {
+        return { statusCode: 404, headers, body: JSON.stringify({ error: "User not found!" }) };
+      }
+
+      if (name) user.name = name;
+      if (phone !== undefined) user.phone = phone;
+      if (address !== undefined) user.address = address;
+      if (recoveryPin) user.recoveryPin = recoveryPin;
+      await user.save();
+
+      return {
+        statusCode: 200,
+        headers,
+        body: JSON.stringify({
+          user: {
+            id: user._id,
+            name: user.name,
+            email: user.email,
+            phone: user.phone,
+            address: user.address,
+            recoveryPin: user.recoveryPin
+          }
+        })
+      };
+    }
+
+    // Financial Data Sync
     if (event.httpMethod === "GET") {
       let data = await UserData.findOne({ userId: authUser.userId });
       if (!data) {
