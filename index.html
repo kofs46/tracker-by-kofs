@@ -4,6 +4,10 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>KofsLedger • Smart Financial & Project OS</title>
+  
+  <!-- Custom KofsLedger Favicon (Replaces Netlify Logo) -->
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 200'%3E%3Crect width='200' height='200' rx='45' fill='%230b0f19'/%3E%3Cpath d='M40 30 L85 30 L85 170 L40 170 Z' fill='%23334155'/%3E%3Cpath d='M75 105 L145 35 L175 35 L105 105 Z' fill='%2300d2ff'/%3E%3Cpath d='M95 100 L170 175 L135 175 L65 105 Z' fill='%230284c7'/%3E%3C/svg%3E" />
+
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
     tailwind.config = {
@@ -39,12 +43,11 @@
 <body class="bg-slate-50 dark:bg-darkbg text-slate-800 dark:text-slate-100 min-h-screen selection:bg-brand-500 selection:text-slate-900 transition-colors duration-200">
 
   <!-- ============================================== -->
-  <!-- STRICT FULL-SCREEN AUTHENTICATION WALL GATE   -->
+  <!-- STRICT FULL-SCREEN AUTHENTICATION GATEKEEPER   -->
   <!-- ============================================== -->
   <div id="authGatekeeper" class="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/95 dark:bg-[#060911]/98 backdrop-blur-2xl p-4 overflow-y-auto">
     <div class="bg-white dark:bg-darkbg-card border border-slate-200 dark:border-darkbg-border rounded-3xl p-6 sm:p-9 w-full max-w-md shadow-2xl shadow-cyan-500/10 transition-all">
       
-      <!-- Brand Logo -->
       <div class="text-center mb-6">
         <div class="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-tr from-slate-900 via-slate-800 to-slate-950 border border-brand-500/40 shadow-xl shadow-brand-500/20 mb-3 group">
           <svg class="w-10 h-10 text-brand-400 group-hover:scale-105 transition-transform" viewBox="0 0 200 200" fill="currentColor">
@@ -59,13 +62,11 @@
         <p class="text-xs text-slate-400 mt-1" id="authSubTitle">Secure Financial & Project Operating System</p>
       </div>
 
-      <!-- Mode Selector -->
       <div class="flex bg-slate-100 dark:bg-darkbg-elevated p-1 rounded-xl mb-5">
         <button id="tabRegister" class="flex-1 py-2 text-xs font-bold rounded-lg transition text-slate-500 dark:text-slate-400">Create Account</button>
         <button id="tabLogin" class="flex-1 py-2 text-xs font-bold rounded-lg transition bg-white dark:bg-brand-500 dark:text-slate-950 text-brand-600 shadow-sm">Login</button>
       </div>
 
-      <!-- Form -->
       <form id="formAuth" class="space-y-4">
         <div id="authNameGroup" class="hidden">
           <label class="block text-xs font-bold text-slate-600 dark:text-slate-300 mb-1" data-i18n="your_name">Full Name</label>
@@ -100,7 +101,7 @@
   <!-- ============================================== -->
   <div id="appContainer" class="hidden">
     
-    <!-- Printable Header (Only for Transaction history prints) -->
+    <!-- Printable Header (Transaction History Print Statement) -->
     <div class="print-only hidden p-8 border-b border-slate-300">
       <div class="flex justify-between items-center">
         <div>
@@ -114,12 +115,17 @@
       </div>
     </div>
 
-    <!-- App Header -->
+    <!-- App Header with Left Menu Button -->
     <header class="no-print bg-white/80 dark:bg-darkbg-card/80 backdrop-blur-xl border-b border-slate-200/80 dark:border-darkbg-border sticky top-0 z-40 px-4 md:px-8 py-3 transition-colors">
       <div class="max-w-7xl mx-auto flex justify-between items-center">
         
-        <!-- Brand Logo & Name -->
-        <div class="flex items-center space-x-3">
+        <!-- Left: Menu Trigger + Brand Logo & Name -->
+        <div class="flex items-center space-x-3 sm:space-x-4">
+          <!-- Bampasher Menu Button -->
+          <button id="btnOpenSidebar" class="w-10 h-10 rounded-2xl bg-slate-100 dark:bg-darkbg-elevated hover:bg-slate-200 dark:hover:bg-slate-700/60 text-slate-700 dark:text-brand-400 flex items-center justify-center text-sm border border-slate-200 dark:border-darkbg-border transition active:scale-95" title="Open Navigation Menu">
+            <i class="fa-solid fa-bars-staggered"></i>
+          </button>
+
           <div class="w-10 h-10 rounded-2xl bg-gradient-to-tr from-slate-900 via-slate-800 to-slate-950 flex items-center justify-center border border-brand-500/30 shadow-md shadow-brand-500/20">
             <svg class="w-6 h-6 text-brand-400" viewBox="0 0 200 200" fill="currentColor">
               <path d="M40 30 L85 30 L85 170 L40 170 Z" fill="#94a3b8"/>
@@ -138,7 +144,7 @@
           </div>
         </div>
 
-        <!-- Controls: Language, Theme, Profile, Actions -->
+        <!-- Controls: Language, Theme, Profile, CTA -->
         <div class="flex items-center space-x-2 sm:space-x-3">
           
           <!-- Language Toggle Button -->
@@ -175,13 +181,81 @@
       </div>
     </header>
 
+    <!-- ============================================== -->
+    <!-- PROFESSIONAL COLLAPSIBLE SIDEBAR MENU DRAWER   -->
+    <!-- ============================================== -->
+    <div id="sidebarBackdrop" class="fixed inset-0 z-50 bg-slate-950/70 backdrop-blur-sm hidden transition-opacity duration-300"></div>
+    <aside id="appSidebar" class="fixed top-0 left-0 bottom-0 z-50 w-72 sm:w-80 bg-white dark:bg-darkbg-card border-r border-slate-200 dark:border-darkbg-border p-6 transform -translate-x-full transition-transform duration-300 ease-out flex flex-col justify-between shadow-2xl">
+      <div class="space-y-6">
+        <!-- Sidebar Brand Header -->
+        <div class="flex items-center justify-between pb-4 border-b border-slate-100 dark:border-darkbg-border">
+          <div class="flex items-center space-x-3">
+            <div class="w-10 h-10 rounded-2xl bg-gradient-to-tr from-slate-900 to-slate-950 flex items-center justify-center border border-brand-500/40">
+              <svg class="w-6 h-6 text-brand-400" viewBox="0 0 200 200" fill="currentColor">
+                <path d="M40 30 L85 30 L85 170 L40 170 Z" fill="#94a3b8"/>
+                <path d="M75 105 L145 35 L175 35 L105 105 Z" fill="#00d2ff"/>
+                <path d="M95 100 L170 175 L135 175 L65 105 Z" fill="#0284c7"/>
+              </svg>
+            </div>
+            <div>
+              <h2 class="font-black text-base text-slate-900 dark:text-white leading-tight">KOFS<span class="text-brand-500">Ledger</span></h2>
+              <span class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Navigation Center</span>
+            </div>
+          </div>
+          <button id="btnCloseSidebar" class="w-8 h-8 rounded-full bg-slate-100 dark:bg-darkbg-elevated text-slate-400 hover:text-slate-800 dark:hover:text-white flex items-center justify-center transition">
+            <i class="fa-solid fa-xmark text-sm"></i>
+          </button>
+        </div>
+
+        <!-- Quick Links -->
+        <nav class="space-y-1.5 text-xs font-bold">
+          <a href="#overviewSec" onclick="window.closeSidebar()" class="flex items-center gap-3 px-3.5 py-3 rounded-2xl text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-darkbg-elevated hover:text-brand-500 transition">
+            <i class="fa-solid fa-chart-pie w-4 text-center text-brand-500"></i>
+            <span>Dashboard Overview</span>
+          </a>
+          <a href="#sec-accounts" onclick="window.closeSidebar()" class="flex items-center gap-3 px-3.5 py-3 rounded-2xl text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-darkbg-elevated hover:text-brand-500 transition">
+            <i class="fa-solid fa-wallet w-4 text-center text-indigo-500"></i>
+            <span>Accounts & Wallets</span>
+          </a>
+          <a href="#sec-projects" onclick="window.closeSidebar()" class="flex items-center gap-3 px-3.5 py-3 rounded-2xl text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-darkbg-elevated hover:text-brand-500 transition">
+            <i class="fa-solid fa-folder-tree w-4 text-center text-cyan-500"></i>
+            <span>Active Projects & Ledger</span>
+          </a>
+          <a href="#sec-loans" onclick="window.closeSidebar()" class="flex items-center gap-3 px-3.5 py-3 rounded-2xl text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-darkbg-elevated hover:text-brand-500 transition">
+            <i class="fa-solid fa-hand-holding-dollar w-4 text-center text-amber-500"></i>
+            <span>Lent to Friends (Debts)</span>
+          </a>
+          <a href="#sec-transactions" onclick="window.closeSidebar()" class="flex items-center gap-3 px-3.5 py-3 rounded-2xl text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-darkbg-elevated hover:text-brand-500 transition">
+            <i class="fa-solid fa-receipt w-4 text-center text-emerald-500"></i>
+            <span>Transaction History</span>
+          </a>
+        </nav>
+
+        <div class="pt-3 border-t border-slate-100 dark:border-darkbg-border space-y-2">
+          <p class="text-[10px] font-black uppercase tracking-wider text-slate-400 px-3.5">Quick Actions</p>
+          <button onclick="window.closeSidebar(); document.getElementById('btnOpenTransferModal').click();" class="w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl bg-slate-100 dark:bg-darkbg-elevated text-slate-700 dark:text-slate-200 hover:text-brand-500 text-xs font-bold transition">
+            <i class="fa-solid fa-arrow-right-arrow-left text-brand-500"></i> Transfer Balance
+          </button>
+          <button onclick="window.closeSidebar(); document.getElementById('btnOpenProfileModal').click();" class="w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl bg-slate-100 dark:bg-darkbg-elevated text-slate-700 dark:text-slate-200 hover:text-brand-500 text-xs font-bold transition">
+            <i class="fa-solid fa-user-gear text-brand-500"></i> Profile & Security PIN
+          </button>
+        </div>
+      </div>
+
+      <!-- Sidebar Footer -->
+      <div class="pt-4 border-t border-slate-100 dark:border-darkbg-border flex items-center justify-between text-xs font-bold text-slate-400">
+        <span>KofsLedger v2.5</span>
+        <button onclick="window.closeSidebar(); document.getElementById('btnLogout').click();" class="text-rose-500 hover:text-rose-400 flex items-center gap-1 transition">
+          <i class="fa-solid fa-power-off"></i> Logout
+        </button>
+      </div>
+    </aside>
+
     <!-- Main Content Grid -->
     <main class="max-w-7xl mx-auto p-4 md:p-6 lg:p-8 space-y-8 pb-20">
 
       <!-- KPI Summary Cards -->
-      <div class="no-print grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5">
-        
-        <!-- Total Net Worth -->
+      <div id="overviewSec" class="no-print grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5">
         <div class="group bg-white dark:bg-darkbg-card p-6 rounded-3xl border border-slate-200/80 dark:border-darkbg-border shadow-sm hover:border-brand-500/40 transition-all duration-300">
           <div class="flex justify-between items-start">
             <span class="text-xs font-bold uppercase tracking-wider text-slate-400" data-i18n="net_worth">Total Net Worth</span>
@@ -196,7 +270,6 @@
           </div>
         </div>
 
-        <!-- Project Inflow -->
         <div class="group bg-white dark:bg-darkbg-card p-6 rounded-3xl border border-slate-200/80 dark:border-darkbg-border shadow-sm hover:border-emerald-500/40 transition-all duration-300">
           <div class="flex justify-between items-start">
             <span class="text-xs font-bold uppercase tracking-wider text-slate-400" data-i18n="proj_inflow">Project Inflow</span>
@@ -211,7 +284,6 @@
           </p>
         </div>
 
-        <!-- Project Cost -->
         <div class="group bg-white dark:bg-darkbg-card p-6 rounded-3xl border border-slate-200/80 dark:border-darkbg-border shadow-sm hover:border-rose-500/40 transition-all duration-300">
           <div class="flex justify-between items-start">
             <span class="text-xs font-bold uppercase tracking-wider text-slate-400" data-i18n="proj_cost">Project Cost</span>
@@ -226,7 +298,6 @@
           </p>
         </div>
 
-        <!-- Lent to Friends -->
         <div class="group bg-white dark:bg-darkbg-card p-6 rounded-3xl border border-slate-200/80 dark:border-darkbg-border shadow-sm hover:border-amber-500/40 transition-all duration-300">
           <div class="flex justify-between items-start">
             <span class="text-xs font-bold uppercase tracking-wider text-slate-400" data-i18n="lent_friends">Lent to Friends</span>
@@ -273,7 +344,7 @@
       </div>
 
       <!-- Accounts & Wallets -->
-      <section class="no-print bg-white dark:bg-darkbg-card p-6 rounded-3xl border border-slate-200/80 dark:border-darkbg-border shadow-sm space-y-5">
+      <section id="sec-accounts" class="no-print bg-white dark:bg-darkbg-card p-6 rounded-3xl border border-slate-200/80 dark:border-darkbg-border shadow-sm space-y-5">
         <div class="flex flex-col sm:flex-row justify-between sm:items-center gap-2">
           <div>
             <h2 class="text-base sm:text-lg font-extrabold text-slate-900 dark:text-white tracking-tight" data-i18n="sec_accounts">Accounts & Wallets</h2>
@@ -294,7 +365,7 @@
       </section>
 
       <!-- Active Projects Manager -->
-      <section class="no-print bg-white dark:bg-darkbg-card p-6 rounded-3xl border border-slate-200/80 dark:border-darkbg-border shadow-sm space-y-5">
+      <section id="sec-projects" class="no-print bg-white dark:bg-darkbg-card p-6 rounded-3xl border border-slate-200/80 dark:border-darkbg-border shadow-sm space-y-5">
         <div class="flex flex-col sm:flex-row justify-between sm:items-center gap-2">
           <div>
             <h2 class="text-base sm:text-lg font-extrabold text-slate-900 dark:text-white tracking-tight" data-i18n="sec_projects">Active Projects & Purpose Ledger</h2>
@@ -309,7 +380,7 @@
       </section>
 
       <!-- Lent to Friends (Personal Debts) -->
-      <section class="no-print bg-white dark:bg-darkbg-card p-6 rounded-3xl border border-slate-200/80 dark:border-darkbg-border shadow-sm space-y-5">
+      <section id="sec-loans" class="no-print bg-white dark:bg-darkbg-card p-6 rounded-3xl border border-slate-200/80 dark:border-darkbg-border shadow-sm space-y-5">
         <div class="flex flex-col sm:flex-row justify-between sm:items-center gap-2">
           <div>
             <h2 class="text-base sm:text-lg font-extrabold text-slate-900 dark:text-white tracking-tight" data-i18n="sec_loans">Lent to Friends (ধার/লোন)</h2>
@@ -338,8 +409,8 @@
         </div>
       </section>
 
-      <!-- Transaction History with Dedicated Print Button -->
-      <section class="bg-white dark:bg-darkbg-card p-6 rounded-3xl border border-slate-200/80 dark:border-darkbg-border shadow-sm space-y-5 print-section">
+      <!-- Transaction History with Sole Dedicated Print Button -->
+      <section id="sec-transactions" class="bg-white dark:bg-darkbg-card p-6 rounded-3xl border border-slate-200/80 dark:border-darkbg-border shadow-sm space-y-5 print-section">
         <div class="flex flex-col md:flex-row justify-between md:items-center gap-4">
           <div>
             <h2 class="text-base sm:text-lg font-extrabold text-slate-900 dark:text-white tracking-tight" data-i18n="sec_tx_history">Transaction History</h2>
@@ -353,7 +424,6 @@
             <select id="filterProject" class="bg-slate-50 dark:bg-darkbg-elevated border border-slate-200 dark:border-darkbg-border text-xs rounded-xl px-3 py-2 font-medium text-slate-800 dark:text-white"></select>
             <select id="filterAccount" class="bg-slate-50 dark:bg-darkbg-elevated border border-slate-200 dark:border-darkbg-border text-xs rounded-xl px-3 py-2 font-medium text-slate-800 dark:text-white"></select>
             
-            <!-- Sole Print Statement Button -->
             <button onclick="window.print()" class="bg-slate-900 dark:bg-slate-100 hover:bg-slate-800 dark:hover:bg-white text-white dark:text-slate-950 text-xs px-3.5 py-2 rounded-xl font-black flex items-center gap-2 transition shadow-sm active:scale-95" title="Print Transaction History">
               <i class="fa-solid fa-print"></i>
               <span data-i18n="btn_print_history">Print Statement</span>
@@ -383,9 +453,7 @@
   <!-- Toast Notification -->
   <div id="toastContainer" class="fixed bottom-6 right-6 z-50 flex flex-col space-y-2 pointer-events-none"></div>
 
-  <!-- ============================================== -->
-  <!-- MODAL: PROFILE & AVATAR PHOTO SETTINGS         -->
-  <!-- ============================================== -->
+  <!-- MODAL: PROFILE & AVATAR PHOTO SETTINGS -->
   <div id="modalProfile" class="modal-backdrop hidden fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-md p-4">
     <div class="bg-white dark:bg-darkbg-card border border-slate-200 dark:border-darkbg-border rounded-3xl p-6 sm:p-8 w-full max-w-lg shadow-2xl space-y-5">
       <div class="flex justify-between items-center pb-3 border-b border-slate-100 dark:border-darkbg-border">
@@ -402,7 +470,6 @@
       </div>
 
       <form id="formProfile" class="space-y-4">
-        <!-- Photo Upload Preview -->
         <div class="flex items-center gap-4 p-3 bg-slate-50 dark:bg-darkbg-elevated rounded-2xl border border-slate-200 dark:border-darkbg-border">
           <div id="modalAvatarPreview" class="w-16 h-16 rounded-2xl overflow-hidden bg-brand-500 text-slate-950 font-black text-xl flex items-center justify-center border-2 border-brand-500/50 shadow-md">
             <span id="modalAvatarInitial">U</span>
@@ -444,9 +511,7 @@
     </div>
   </div>
 
-  <!-- ============================================== -->
-  <!-- MODAL: FORGOT / RESET PASSWORD                 -->
-  <!-- ============================================== -->
+  <!-- MODAL: FORGOT / RESET PASSWORD -->
   <div id="modalForgotPass" class="modal-backdrop hidden fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-md p-4">
     <div class="bg-white dark:bg-darkbg-card border border-slate-200 dark:border-darkbg-border rounded-3xl p-6 sm:p-8 w-full max-w-md shadow-2xl space-y-4">
       <div class="flex justify-between items-center pb-3 border-b border-slate-100 dark:border-darkbg-border">

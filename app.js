@@ -1285,3 +1285,25 @@ if (token) {
 } else {
   lockApplication();
 }
+
+// Sidebar Drawer Handlers
+const appSidebar = document.getElementById("appSidebar");
+const sidebarBackdrop = document.getElementById("sidebarBackdrop");
+const btnOpenSidebar = document.getElementById("btnOpenSidebar");
+const btnCloseSidebar = document.getElementById("btnCloseSidebar");
+
+window.openSidebar = () => {
+  if (!appSidebar || !sidebarBackdrop) return;
+  sidebarBackdrop.classList.remove("hidden");
+  setTimeout(() => appSidebar.classList.remove("-translate-x-full"), 10);
+};
+
+window.closeSidebar = () => {
+  if (!appSidebar || !sidebarBackdrop) return;
+  appSidebar.classList.add("-translate-x-full");
+  setTimeout(() => sidebarBackdrop.classList.add("hidden"), 300);
+};
+
+if (btnOpenSidebar) btnOpenSidebar.onclick = window.openSidebar;
+if (btnCloseSidebar) btnCloseSidebar.onclick = window.closeSidebar;
+if (sidebarBackdrop) sidebarBackdrop.onclick = window.closeSidebar;
