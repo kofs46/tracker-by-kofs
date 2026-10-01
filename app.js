@@ -71,6 +71,15 @@ window.togglePasswordVisibility = (inputId, iconId) => {
   }
 };
 
+// Copy Discord Handle Helper
+window.copyDiscordHandle = () => {
+  navigator.clipboard.writeText("_kofs_").then(() => {
+    showToast("Discord handle '_kofs_' copied to clipboard!");
+  }).catch(() => {
+    prompt("Copy Discord handle:", "_kofs_");
+  });
+};
+
 // DOM Elements
 const authGatekeeper = document.getElementById("authGatekeeper");
 const appContainer = document.getElementById("appContainer");
@@ -97,6 +106,8 @@ const modalLoan = document.getElementById("modalLoan");
 const modalTransfer = document.getElementById("modalTransfer");
 const modalProjectDetails = document.getElementById("modalProjectDetails");
 const modalLoanSettle = document.getElementById("modalLoanSettle");
+const modalAddFunds = document.getElementById("modalAddFunds");
+const modalLentHistory = document.getElementById("modalLentHistory");
 
 // Open Modal Triggers
 document.getElementById("btnOpenTxModal").onclick = () => { resetTxForm(); openModal(modalTx); };
@@ -121,10 +132,12 @@ function openModal(modal) {
   const loanDate = document.getElementById("loanDate");
   const transferDate = document.getElementById("transferDate");
   const settleDate = document.getElementById("settleDate");
+  const depositDate = document.getElementById("depositDate");
   if (txDate && !txDate.value) txDate.value = today;
   if (loanDate && !loanDate.value) loanDate.value = today;
   if (transferDate && !transferDate.value) transferDate.value = today;
   if (settleDate && !settleDate.value) settleDate.value = today;
+  if (depositDate && !depositDate.value) depositDate.value = today;
 }
 
 function showToast(msg, type = "success") {
@@ -144,6 +157,19 @@ function showToast(msg, type = "success") {
 function formatBDT(amount) {
   const num = Number(amount) || 0;
   return "৳" + num.toLocaleString("en-BD", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+}
+
+// Brand Visual Badge Helper for BD Banks & MFS
+function getProviderBadge(type) {
+  const mfsTypes = ["bKash", "Nagad", "Rocket", "Upay", "Cellfin", "Tap", "mCash"];
+  if (type === "bKash") return { bg: "bg-pink-500/10 text-pink-500 border border-pink-500/20", icon: "fa-mobile-screen" };
+  if (type === "Nagad") return { bg: "bg-amber-500/10 text-amber-500 border border-amber-500/20", icon: "fa-mobile-screen" };
+  if (type === "Rocket") return { bg: "bg-purple-500/10 text-purple-500 border border-purple-500/20", icon: "fa-mobile-screen" };
+  if (type === "Upay") return { bg: "bg-sky-500/10 text-sky-500 border border-sky-500/20", icon: "fa-mobile-screen" };
+  if (mfsTypes.includes(type)) return { bg: "bg-cyan-500/10 text-cyan-400 border border-cyan-500/20", icon: "fa-mobile-screen" };
+  if (type.includes("Bank")) return { bg: "bg-indigo-500/10 text-indigo-400 border border-indigo-500/20", icon: "fa-building-columns" };
+  if (type === "Cash") return { bg: "bg-emerald-500/10 text-emerald-400 border border-emerald-500/20", icon: "fa-money-bill-wave" };
+  return { bg: "bg-slate-500/10 text-slate-400 border border-slate-500/20", icon: "fa-wallet" };
 }
 
 // ==========================================
@@ -239,6 +265,10 @@ function updateUserDisplay() {
   document.getElementById("printUserName").textContent = currentUser.name;
   document.getElementById("printDate").textContent = new Date().toLocaleDateString("en-BD");
 
+  // Populate Developer Contact form sender email
+  const contactSenderEmail = document.getElementById("contactSenderEmail");
+  if (contactSenderEmail) contactSenderEmail.value = currentUser.email || "";
+
   const headerAvatarContainer = document.getElementById("headerAvatarContainer");
   const modalAvatarPreview = document.getElementById("modalAvatarPreview");
 
@@ -250,6 +280,28 @@ function updateUserDisplay() {
     headerAvatarContainer.innerHTML = `<span>${initial}</span>`;
     modalAvatarPreview.innerHTML = `<span>${initial}</span>`;
   }
+}
+
+// ==========================================
+// CONTACT DEVELOPER FORM (mailto handler)
+// ==========================================
+const formContactDev = document.getElementById("formContactDev");
+if (formContactDev) {
+  formContactDev.onsubmit = (e) => {
+    e.preventDefault();
+    const sender = document.getElementById("contactSenderEmail").value;
+    const subject = document.getElementById("contactSubject").value.trim();
+    const message = document.getElementById("contactMessage").value.trim();
+
+    const recipient = "omrfys@gmail.com";
+    const fullBody = `From: ${currentUser?.name || 'User'} (${sender})\n\nMessage:\n${message}\n\nSent via KofsLedger Financial OS`;
+    const mailtoUrl = `mailto:${recipient}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(fullBody)}`;
+
+    window.open(mailtoUrl, "_blank");
+    showToast("Launching your email client to send to omrfys@gmail.com!");
+    document.getElementById("contactSubject").value = "";
+    document.getElementById("contactMessage").value = "";
+  };
 }
 
 // ==========================================
@@ -536,30 +588,86 @@ document.getElementById("transferTo").onchange = (e) => {
   }
 };
 
+// Render Accounts with Direct Deposit and Edit
 function renderAccounts() {
   if (appData.accounts.length === 0) {
-    accountsGridEl.innerHTML = `<div class="col-span-full py-6 text-center text-slate-400 bg-slate-50 dark:bg-darkbg-elevated border border-dashed border-slate-200 dark:border-darkbg-border rounded-2xl text-xs">No accounts added yet.</div>`;
+    accountsGridEl.innerHTML = `<div class="col-span-full py-6 text-center text-slate-400 bg-slate-50 dark:bg-darkbg-elevated border border-dashed border-slate-200 dark:border-darkbg-border rounded-2xl text-xs">No accounts added yet. Click "+ Add Account".</div>`;
     return;
   }
-  accountsGridEl.innerHTML = appData.accounts.map(a => `
-    <div class="bg-white dark:bg-darkbg-card p-4 rounded-2xl border border-slate-200/80 dark:border-darkbg-border shadow-sm flex justify-between items-center hover:border-brand-500/50 transition">
-      <div>
-        <span class="text-[10px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 bg-slate-100 dark:bg-darkbg-elevated px-2 py-0.5 rounded-full">${a.type}</span>
-        <h4 class="font-bold text-slate-800 dark:text-white text-sm mt-1">${a.name}</h4>
-        <p class="text-xl font-black text-brand-500 mt-1">${formatBDT(a.balance)}</p>
+  accountsGridEl.innerHTML = appData.accounts.map(a => {
+    const badge = getProviderBadge(a.type);
+    return `
+      <div class="bg-white dark:bg-darkbg-card p-5 rounded-2xl border border-slate-200/80 dark:border-darkbg-border shadow-sm flex flex-col justify-between hover:border-brand-500/50 transition">
+        <div>
+          <div class="flex justify-between items-start">
+            <span class="text-[10px] font-bold uppercase tracking-wider px-2.5 py-0.5 rounded-full flex items-center gap-1.5 ${badge.bg}">
+              <i class="fa-solid ${badge.icon}"></i>
+              <span>${a.type}</span>
+            </span>
+            <div class="flex items-center gap-1">
+              <button onclick="window.editAccount('${a.id}')" class="p-1.5 text-slate-400 hover:text-brand-400 transition text-xs" title="Edit Account">
+                <i class="fa-regular fa-pen-to-square"></i>
+              </button>
+              <button onclick="window.deleteAccount('${a.id}')" class="p-1.5 text-slate-400 hover:text-rose-500 transition text-xs" title="Delete Account">
+                <i class="fa-regular fa-trash-can"></i>
+              </button>
+            </div>
+          </div>
+          <h4 class="font-extrabold text-slate-800 dark:text-white text-base mt-2">${a.name}</h4>
+          <p class="text-2xl font-black text-brand-500 mt-1">${formatBDT(a.balance)}</p>
+        </div>
+
+        <div class="mt-4 pt-3 border-t border-slate-100 dark:border-darkbg-border flex items-center justify-between">
+          <span class="text-[10px] font-bold text-slate-400">Available Balance</span>
+          <button onclick="window.openDepositModal('${a.id}')" class="bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 text-xs font-black px-3 py-1.5 rounded-xl border border-emerald-500/30 transition flex items-center gap-1.5 active:scale-95">
+            <i class="fa-solid fa-circle-plus"></i> Add Money
+          </button>
+        </div>
       </div>
-      <div class="flex items-center gap-1">
-        <button onclick="window.editAccount('${a.id}')" class="p-2 text-slate-400 hover:text-brand-400 transition text-xs" title="Edit">
-          <i class="fa-regular fa-pen-to-square"></i>
-        </button>
-        <button onclick="window.deleteAccount('${a.id}')" class="p-2 text-slate-400 hover:text-rose-500 transition text-xs" title="Delete">
-          <i class="fa-regular fa-trash-can"></i>
-        </button>
-      </div>
-    </div>
-  `).join("");
+    `;
+  }).join("");
 }
 
+// Quick Deposit / Add Funds Handlers
+window.openDepositModal = (accId) => {
+  const acc = appData.accounts.find(a => a.id === accId);
+  if (!acc) return;
+  document.getElementById("depositTargetAccountId").value = acc.id;
+  document.getElementById("depositTargetAccountName").textContent = `${acc.name} [${acc.type}] (Current: ${formatBDT(acc.balance)})`;
+  document.getElementById("depositAmount").value = "";
+  document.getElementById("depositNote").value = "";
+  openModal(modalAddFunds);
+};
+
+document.getElementById("formAddFunds").onsubmit = async (e) => {
+  e.preventDefault();
+  const accId = document.getElementById("depositTargetAccountId").value;
+  const amount = parseFloat(document.getElementById("depositAmount").value) || 0;
+  const note = document.getElementById("depositNote").value.trim();
+  const date = document.getElementById("depositDate").value;
+
+  const target = appData.accounts.find(a => a.id === accId);
+  if (!target) return alert("Target account not found");
+  if (amount <= 0) return alert("Enter a valid deposit amount");
+
+  target.balance = Number(target.balance) + amount;
+
+  appData.transactions.unshift({
+    id: "tx_" + Date.now(),
+    type: "INCOME",
+    accountId: accId,
+    projectId: "NONE",
+    amount,
+    note: `Deposit: ${note}`,
+    date
+  });
+
+  await syncToMongoDB();
+  showToast(`Added ${formatBDT(amount)} to ${target.name}!`);
+  modalAddFunds.classList.add("hidden");
+};
+
+// Projects
 function renderProjects() {
   if (appData.projects.length === 0) {
     projectsGridEl.innerHTML = `<div class="col-span-full py-6 text-center text-slate-400 bg-slate-50 dark:bg-darkbg-elevated border border-dashed border-slate-200 dark:border-darkbg-border rounded-2xl text-xs">No projects created yet.</div>`;
@@ -695,9 +803,10 @@ function refreshProjectDetails(projectId) {
   }).join("");
 }
 
+// Render Lent Records with Borrower Phone & History Ledger View
 function renderLoans() {
   if (appData.loans.length === 0) {
-    loansTableBodyEl.innerHTML = `<tr><td colspan="7" class="p-6 text-center text-slate-400 text-xs">No debt records.</td></tr>`;
+    loansTableBodyEl.innerHTML = `<tr><td colspan="7" class="p-6 text-center text-slate-400 text-xs">No debt records. Click "+ Lend Money".</td></tr>`;
     return;
   }
   loansTableBodyEl.innerHTML = appData.loans.map(l => {
@@ -719,10 +828,22 @@ function renderLoans() {
 
     return `
       <tr class="hover:bg-slate-50 dark:hover:bg-darkbg-elevated/50 transition border-b border-slate-100 dark:border-darkbg-border">
-        <td class="p-3.5 pl-4 font-semibold text-slate-900 dark:text-white">${l.friendName}</td>
+        <td class="p-3.5 pl-4">
+          <div class="flex items-center gap-2">
+            <div class="w-8 h-8 rounded-full bg-brand-500/10 text-brand-400 flex items-center justify-center font-bold text-xs">
+              <i class="fa-solid fa-user"></i>
+            </div>
+            <div>
+              <h5 class="font-extrabold text-slate-900 dark:text-white">${l.friendName}</h5>
+              <p class="text-[11px] font-bold text-brand-500 flex items-center gap-1">
+                <i class="fa-solid fa-phone text-[9px]"></i> ${l.phone || 'N/A'}
+              </p>
+            </div>
+          </div>
+        </td>
         <td class="p-3.5 font-black text-rose-500">${formatBDT(remainingDue)}</td>
         <td class="p-3.5 text-xs text-slate-400">${formatBDT(totalAmount)}</td>
-        <td class="p-3.5 text-xs text-slate-400">${acc ? acc.name : "N/A"}</td>
+        <td class="p-3.5 text-xs text-slate-400">${acc ? `${acc.name} [${acc.type}]` : "N/A"}</td>
         <td class="p-3.5 text-xs text-slate-400">${l.date}</td>
         <td class="p-3.5">
           <span class="px-2.5 py-0.5 rounded-full text-[10px] font-black ${badgeClass}">
@@ -730,6 +851,9 @@ function renderLoans() {
           </span>
         </td>
         <td class="p-3.5 pr-4 text-right space-x-1.5">
+          <button onclick="window.viewLentPersonHistory('${l.phone || ''}', '${l.friendName}')" class="text-xs bg-slate-100 dark:bg-darkbg-elevated hover:text-brand-500 text-slate-700 dark:text-slate-300 font-bold px-2.5 py-1.5 rounded-xl border border-slate-200 dark:border-darkbg-border transition" title="View Full History with this person">
+            <i class="fa-solid fa-clock-rotate-left"></i> History
+          </button>
           ${!isRepaid ? `
             <button onclick="window.openLoanSettle('${l.id}')" class="text-xs bg-gradient-to-r from-emerald-500 to-teal-500 text-slate-950 font-black px-3 py-1.5 rounded-xl transition shadow-md shadow-emerald-500/20">
               <i class="fa-solid fa-hand-holding-dollar mr-1"></i> Receive
@@ -744,13 +868,53 @@ function renderLoans() {
   }).join("");
 }
 
+// Person Lent History Modal
+window.viewLentPersonHistory = (phone, name) => {
+  const matchingLoans = appData.loans.filter(l => (phone && l.phone === phone) || l.friendName.toLowerCase() === name.toLowerCase());
+  
+  const totalLent = matchingLoans.reduce((sum, l) => sum + (Number(l.amount) || 0), 0);
+  const totalDue = matchingLoans.reduce((sum, l) => sum + (Number(l.remainingAmount ?? l.amount) || 0), 0);
+  const totalReturned = totalLent - totalDue;
+
+  document.getElementById("lentHistFriendName").textContent = name;
+  document.getElementById("lentHistPhone").textContent = phone || "Not Provided";
+  document.getElementById("lentHistTotal").textContent = formatBDT(totalLent);
+  document.getElementById("lentHistReturned").textContent = formatBDT(totalReturned);
+  document.getElementById("lentHistDue").textContent = formatBDT(totalDue);
+
+  const tbody = document.getElementById("lentHistTableBody");
+  if (matchingLoans.length === 0) {
+    tbody.innerHTML = `<tr><td colspan="5" class="p-4 text-center text-slate-400">No records found.</td></tr>`;
+  } else {
+    tbody.innerHTML = matchingLoans.map(l => {
+      const acc = appData.accounts.find(a => a.id === l.accountId);
+      const isRepaid = l.status === "REPAID" || (Number(l.remainingAmount ?? l.amount) <= 0);
+      return `
+        <tr class="hover:bg-slate-50 dark:hover:bg-darkbg-elevated/50 transition border-b border-slate-100 dark:border-darkbg-border">
+          <td class="p-3 pl-4 font-semibold text-slate-800 dark:text-slate-200">${acc ? `${acc.name} [${acc.type}]` : 'N/A'}</td>
+          <td class="p-3 font-bold text-slate-700 dark:text-slate-300">${formatBDT(l.amount)}</td>
+          <td class="p-3 font-black text-rose-500">${formatBDT(l.remainingAmount ?? l.amount)}</td>
+          <td class="p-3 text-slate-400">${l.date}</td>
+          <td class="p-3 pr-4 text-right">
+            <span class="px-2 py-0.5 rounded-full text-[10px] font-bold ${isRepaid ? 'bg-emerald-500/10 text-emerald-500' : 'bg-amber-500/10 text-amber-500'}">
+              ${isRepaid ? 'Fully Repaid' : 'Pending'}
+            </span>
+          </td>
+        </tr>
+      `;
+    }).join("");
+  }
+
+  openModal(modalLentHistory);
+};
+
 window.openLoanSettle = (loanId) => {
   const loan = appData.loans.find(l => l.id === loanId);
   if (!loan) return;
 
   const remainingDue = Number(loan.remainingAmount ?? loan.amount) || 0;
   document.getElementById("settleLoanId").value = loan.id;
-  document.getElementById("settleFriendName").textContent = loan.friendName;
+  document.getElementById("settleFriendName").textContent = `${loan.friendName} (${loan.phone || 'No phone'})`;
   document.getElementById("settleRemainingDue").textContent = formatBDT(remainingDue);
 
   document.getElementById("radioFullSettle").checked = true;
@@ -850,7 +1014,7 @@ function renderTransactions() {
           </span>
         </td>
         <td class="p-3.5 font-semibold text-slate-800 dark:text-slate-200">${t.note}</td>
-        <td class="p-3.5 text-xs text-slate-400">${acc ? `${acc.name} (${acc.type})` : "N/A"}</td>
+        <td class="p-3.5 text-xs text-slate-400">${acc ? `${acc.name} [${acc.type}]` : "N/A"}</td>
         <td class="p-3.5 text-xs text-slate-400">${proj ? proj.name : '<span class="text-slate-600">-</span>'}</td>
         <td class="p-3.5 font-black text-right ${isIncome ? 'text-emerald-500' : 'text-rose-500'}">
           ${isIncome ? '+' : '-'}${formatBDT(t.amount)}
@@ -933,6 +1097,7 @@ window.editTransaction = (id) => {
   openModal(modalTx);
 };
 
+// Account Form Handler with Edit & Provider select
 document.getElementById("formAccount").onsubmit = async (e) => {
   e.preventDefault();
   const editId = document.getElementById("editAccountId").value;
@@ -947,10 +1112,10 @@ document.getElementById("formAccount").onsubmit = async (e) => {
       acc.type = type;
       acc.balance = balance;
     }
-    showToast("Account updated!");
+    showToast("Account details updated!");
   } else {
     appData.accounts.push({ id: "acc_" + Date.now(), name, type, balance });
-    showToast("Account created!");
+    showToast("Account created successfully!");
   }
 
   updateDropdowns();
@@ -976,6 +1141,7 @@ window.editAccount = (id) => {
   openModal(modalAccount);
 };
 
+// Project Form
 document.getElementById("formProject").onsubmit = async (e) => {
   e.preventDefault();
   const editId = document.getElementById("editProjectId").value;
@@ -1019,6 +1185,7 @@ window.editProject = (id) => {
   openModal(modalProject);
 };
 
+// Transfer Form
 document.getElementById("formTransfer").onsubmit = async (e) => {
   e.preventDefault();
   const fromId = document.getElementById("transferFrom").value;
@@ -1077,9 +1244,11 @@ document.getElementById("formTransfer").onsubmit = async (e) => {
   document.getElementById("externalRecipientGroup").classList.add("hidden");
 };
 
+// Lent Money Form with Phone Number
 document.getElementById("formLoan").onsubmit = async (e) => {
   e.preventDefault();
   const friendName = document.getElementById("loanFriendName").value.trim();
+  const phone = document.getElementById("loanFriendPhone").value.trim();
   const amount = parseFloat(document.getElementById("loanAmount").value) || 0;
   const accountId = document.getElementById("loanAccount").value;
   const date = document.getElementById("loanDate").value;
@@ -1091,6 +1260,7 @@ document.getElementById("formLoan").onsubmit = async (e) => {
   appData.loans.unshift({ 
     id: "loan_" + Date.now(), 
     friendName, 
+    phone,
     amount, 
     remainingAmount: amount, 
     accountId, 
@@ -1099,7 +1269,7 @@ document.getElementById("formLoan").onsubmit = async (e) => {
   });
 
   await syncToMongoDB();
-  showToast("Debt recorded successfully!");
+  showToast("Lent transaction recorded successfully!");
   modalLoan.classList.add("hidden");
   document.getElementById("formLoan").reset();
 };
@@ -1173,7 +1343,7 @@ window.switchView = (viewName) => {
   window.scrollTo({ top: 0, behavior: "smooth" });
 };
 
-// Sidebar Handlers (Declared exactly once)
+// Sidebar Handlers
 const appSidebar = document.getElementById("appSidebar");
 const sidebarBackdrop = document.getElementById("sidebarBackdrop");
 const btnOpenSidebar = document.getElementById("btnOpenSidebar");

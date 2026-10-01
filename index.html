@@ -40,7 +40,7 @@
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <link rel="stylesheet" href="style.css" />
 </head>
-<body class="bg-slate-50 dark:bg-darkbg text-slate-800 dark:text-slate-100 min-h-screen selection:bg-brand-500 selection:text-slate-900 transition-colors duration-200">
+<body class="bg-slate-50 dark:bg-darkbg text-slate-800 dark:text-slate-100 min-h-screen selection:bg-brand-500 selection:text-slate-900 transition-colors duration-200 flex flex-col justify-between">
 
   <!-- ============================================== -->
   <!-- STRICT FULL-SCREEN AUTHENTICATION GATEKEEPER   -->
@@ -97,9 +97,9 @@
   </div>
 
   <!-- ============================================== -->
-  <!-- MAIN APP CONTAINER (LOCKED UNTIL AUTHENTICATED)-->
+  <!-- MAIN APP CONTAINER                             -->
   <!-- ============================================== -->
-  <div id="appContainer" class="hidden">
+  <div id="appContainer" class="hidden flex-1 flex flex-col justify-between">
     
     <!-- Printable Header (Transaction Statement Only) -->
     <div class="print-only hidden p-8 border-b border-slate-300">
@@ -115,17 +115,15 @@
       </div>
     </div>
 
-    <!-- App Header with Menu Button -->
+    <!-- App Header -->
     <header class="no-print bg-white/80 dark:bg-darkbg-card/80 backdrop-blur-xl border-b border-slate-200/80 dark:border-darkbg-border sticky top-0 z-40 px-4 md:px-8 py-3 transition-colors">
       <div class="max-w-7xl mx-auto flex justify-between items-center">
         
         <div class="flex items-center space-x-3 sm:space-x-4">
-          <!-- Bampasher Menu Button -->
           <button id="btnOpenSidebar" class="w-10 h-10 rounded-2xl bg-slate-100 dark:bg-darkbg-elevated hover:bg-slate-200 dark:hover:bg-slate-700/60 text-slate-700 dark:text-brand-400 flex items-center justify-center text-sm border border-slate-200 dark:border-darkbg-border transition active:scale-95" title="Open Navigation Menu">
             <i class="fa-solid fa-bars-staggered"></i>
           </button>
 
-          <!-- Brand Logo & Name (Clicking returns to Dashboard) -->
           <div onclick="window.switchView('overview')" class="flex items-center space-x-3 cursor-pointer group">
             <div class="w-10 h-10 rounded-2xl bg-gradient-to-tr from-slate-900 via-slate-800 to-slate-950 flex items-center justify-center border border-brand-500/30 shadow-md shadow-brand-500/20 group-hover:scale-105 transition-transform">
               <svg class="w-6 h-6 text-brand-400" viewBox="0 0 200 200" fill="currentColor">
@@ -148,7 +146,6 @@
 
         <!-- Controls: Theme, Profile, CTA -->
         <div class="flex items-center space-x-2 sm:space-x-3">
-          
           <button id="btnToggleTheme" class="w-9 h-9 rounded-xl bg-slate-100 dark:bg-darkbg-elevated hover:bg-slate-200 dark:hover:bg-slate-700/60 text-slate-700 dark:text-brand-400 flex items-center justify-center text-sm border border-slate-200 dark:border-darkbg-border transition" title="Toggle Theme">
             <i id="themeIcon" class="fa-solid fa-moon"></i>
           </button>
@@ -198,7 +195,6 @@
           </button>
         </div>
 
-        <!-- Navigation Links that Switch Views -->
         <nav class="space-y-1.5 text-xs font-bold">
           <button onclick="window.switchView('overview')" id="nav-overview" class="w-full flex items-center gap-3 px-3.5 py-3 rounded-2xl text-slate-700 dark:text-slate-200 hover:bg-brand-500/10 hover:text-brand-500 transition text-left">
             <i class="fa-solid fa-chart-pie w-4 text-center text-brand-500"></i>
@@ -214,7 +210,7 @@
           </button>
           <button onclick="window.switchView('loans')" id="nav-loans" class="w-full flex items-center gap-3 px-3.5 py-3 rounded-2xl text-slate-700 dark:text-slate-200 hover:bg-brand-500/10 hover:text-brand-500 transition text-left">
             <i class="fa-solid fa-hand-holding-dollar w-4 text-center text-amber-500"></i>
-            <span>Lent to Friends (Debts)</span>
+            <span>Lent (Debt Tracker)</span>
           </button>
           <button onclick="window.switchView('transactions')" id="nav-transactions" class="w-full flex items-center gap-3 px-3.5 py-3 rounded-2xl text-slate-700 dark:text-slate-200 hover:bg-brand-500/10 hover:text-brand-500 transition text-left">
             <i class="fa-solid fa-receipt w-4 text-center text-emerald-500"></i>
@@ -234,7 +230,7 @@
       </div>
 
       <div class="pt-4 border-t border-slate-100 dark:border-darkbg-border flex items-center justify-between text-xs font-bold text-slate-400">
-        <span>KofsLedger v2.5</span>
+        <span>KofsLedger v2.6</span>
         <button onclick="window.closeSidebar(); document.getElementById('btnLogout').click();" class="text-rose-500 hover:text-rose-400 flex items-center gap-1 transition">
           <i class="fa-solid fa-power-off"></i> Logout
         </button>
@@ -242,16 +238,12 @@
     </aside>
 
     <!-- ============================================== -->
-    <!-- DYNAMIC MAIN VIEWS (SWITCHED VIA SIDEBAR)      -->
+    <!-- DYNAMIC MAIN VIEWS                             -->
     <!-- ============================================== -->
-    <main class="max-w-7xl mx-auto p-4 md:p-6 lg:p-8 space-y-8 pb-20">
+    <main class="max-w-7xl mx-auto p-4 md:p-6 lg:p-8 space-y-8 flex-1 w-full">
 
-      <!-- ==================================================== -->
-      <!-- VIEW 1: DASHBOARD OVERVIEW (DEFAULT INITIAL VIEW)    -->
-      <!-- ==================================================== -->
+      <!-- VIEW 1: DASHBOARD OVERVIEW -->
       <div id="viewOverview" class="app-view space-y-8">
-        
-        <!-- KPI Cards -->
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5">
           <div onclick="window.switchView('accounts')" class="cursor-pointer group bg-white dark:bg-darkbg-card p-6 rounded-3xl border border-slate-200/80 dark:border-darkbg-border shadow-sm hover:border-brand-500/40 transition-all duration-300">
             <div class="flex justify-between items-start">
@@ -297,7 +289,7 @@
 
           <div onclick="window.switchView('loans')" class="cursor-pointer group bg-white dark:bg-darkbg-card p-6 rounded-3xl border border-slate-200/80 dark:border-darkbg-border shadow-sm hover:border-amber-500/40 transition-all duration-300">
             <div class="flex justify-between items-start">
-              <span class="text-xs font-bold uppercase tracking-wider text-slate-400">Lent to Friends</span>
+              <span class="text-xs font-bold uppercase tracking-wider text-slate-400">Lent (Debts)</span>
               <div class="w-10 h-10 rounded-2xl bg-amber-500/10 text-amber-500 flex items-center justify-center text-base group-hover:scale-110 transition-transform">
                 <i class="fa-solid fa-hand-holding-dollar"></i>
               </div>
@@ -341,14 +333,12 @@
         </div>
       </div>
 
-      <!-- ==================================================== -->
-      <!-- VIEW 2: ACCOUNTS & WALLETS                           -->
-      <!-- ==================================================== -->
+      <!-- VIEW 2: ACCOUNTS & WALLETS -->
       <div id="viewAccounts" class="app-view hidden space-y-6">
         <div class="flex items-center justify-between pb-3 border-b border-slate-200 dark:border-darkbg-border">
           <div>
             <h2 class="text-xl font-black text-slate-900 dark:text-white tracking-tight">Accounts & Wallets</h2>
-            <p class="text-xs text-slate-400">bKash, Nagad, Rocket, Bank accounts & Cash balances.</p>
+            <p class="text-xs text-slate-400">MFS, Bangladesh Govt & Private Banks, and Cash wallets.</p>
           </div>
           <div class="flex items-center gap-2">
             <button id="btnOpenTransferModal" class="inline-flex items-center gap-1.5 bg-slate-100 dark:bg-darkbg-elevated hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 px-3.5 py-2 rounded-xl text-xs font-bold border border-slate-200 dark:border-darkbg-border transition">
@@ -364,9 +354,7 @@
         <div id="accountsGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4"></div>
       </div>
 
-      <!-- ==================================================== -->
-      <!-- VIEW 3: ACTIVE PROJECTS                              -->
-      <!-- ==================================================== -->
+      <!-- VIEW 3: ACTIVE PROJECTS -->
       <div id="viewProjects" class="app-view hidden space-y-6">
         <div class="flex items-center justify-between pb-3 border-b border-slate-200 dark:border-darkbg-border">
           <div>
@@ -381,14 +369,12 @@
         <div id="projectsGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4"></div>
       </div>
 
-      <!-- ==================================================== -->
-      <!-- VIEW 4: LENT TO FRIENDS (DEBTS)                      -->
-      <!-- ==================================================== -->
+      <!-- VIEW 4: LENT (DEBT TRACKER) -->
       <div id="viewLoans" class="app-view hidden space-y-6">
         <div class="flex items-center justify-between pb-3 border-b border-slate-200 dark:border-darkbg-border">
           <div>
-            <h2 class="text-xl font-black text-slate-900 dark:text-white tracking-tight">Lent to Friends (Debts)</h2>
-            <p class="text-xs text-slate-400">Track personal debt balances with real-time partial or full repayment receipt.</p>
+            <h2 class="text-xl font-black text-slate-900 dark:text-white tracking-tight">Lent</h2>
+            <p class="text-xs text-slate-400">Personal debt ledger tracked uniquely by borrower phone numbers.</p>
           </div>
           <button id="btnOpenLoanModal" class="inline-flex items-center gap-1.5 bg-amber-500/10 hover:bg-amber-500/20 text-amber-600 dark:text-amber-400 px-3.5 py-2 rounded-xl text-xs font-bold border border-amber-500/30 transition">
             <i class="fa-solid fa-handshake"></i>
@@ -399,7 +385,7 @@
           <table class="w-full text-left text-sm">
             <thead class="text-[11px] uppercase tracking-wider text-slate-400 bg-slate-50/70 dark:bg-darkbg-elevated border-b border-slate-100 dark:border-darkbg-border">
               <tr>
-                <th class="p-3.5 pl-4 font-bold">Friend</th>
+                <th class="p-3.5 pl-4 font-bold">Borrower Details</th>
                 <th class="p-3.5 font-bold">Remaining Due</th>
                 <th class="p-3.5 font-bold">Total Lent</th>
                 <th class="p-3.5 font-bold">Source Account</th>
@@ -413,9 +399,7 @@
         </div>
       </div>
 
-      <!-- ==================================================== -->
-      <!-- VIEW 5: TRANSACTION HISTORY                          -->
-      <!-- ==================================================== -->
+      <!-- VIEW 5: TRANSACTION HISTORY -->
       <div id="viewTransactions" class="app-view hidden space-y-6 print-section">
         <div class="flex flex-col md:flex-row justify-between md:items-center gap-4 pb-3 border-b border-slate-200 dark:border-darkbg-border">
           <div>
@@ -454,10 +438,196 @@
         </div>
       </div>
     </main>
+
+    <!-- ============================================== -->
+    <!-- PROFESSIONAL DEVELOPER FOOTER & CONTACT SYSTEM -->
+    <!-- ============================================== -->
+    <footer class="no-print mt-12 bg-white dark:bg-darkbg-card border-t border-slate-200 dark:border-darkbg-border pt-10 pb-8 transition-colors">
+      <div class="max-w-7xl mx-auto px-4 md:px-8">
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 pb-8 border-b border-slate-200 dark:border-darkbg-border">
+          
+          <!-- Left: Developer Brand & Quick Social Channels -->
+          <div class="lg:col-span-5 space-y-4">
+            <div class="flex items-center space-x-3">
+              <div class="w-10 h-10 rounded-2xl bg-gradient-to-tr from-slate-900 to-slate-950 flex items-center justify-center border border-brand-500/40">
+                <svg class="w-6 h-6 text-brand-400" viewBox="0 0 200 200" fill="currentColor">
+                  <path d="M40 30 L85 30 L85 170 L40 170 Z" fill="#94a3b8"/>
+                  <path d="M75 105 L145 35 L175 35 L105 105 Z" fill="#00d2ff"/>
+                  <path d="M95 100 L170 175 L135 175 L65 105 Z" fill="#0284c7"/>
+                </svg>
+              </div>
+              <div>
+                <h3 class="font-black text-lg text-slate-900 dark:text-white leading-tight">KOFS<span class="text-brand-500">Ledger</span></h3>
+                <p class="text-xs text-slate-400">Developed with precision by <strong>Kofs</strong></p>
+              </div>
+            </div>
+            <p class="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">
+              Have a feature request, customized integration inquiry, or urgent support needed? Reach out directly via the direct channels below or send an instant message.
+            </p>
+
+            <!-- Direct Contact Badges -->
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 pt-2">
+              <!-- WhatsApp -->
+              <a href="https://wa.me/8801621110120" target="_blank" rel="noopener noreferrer" class="p-3 bg-emerald-500/10 hover:bg-emerald-500/20 border border-emerald-500/30 rounded-2xl flex flex-col items-center justify-center text-center transition group">
+                <i class="fa-brands fa-whatsapp text-emerald-500 text-xl group-hover:scale-110 transition-transform"></i>
+                <span class="text-[11px] font-bold text-emerald-600 dark:text-emerald-400 mt-1">WhatsApp</span>
+                <span class="text-[9px] text-slate-400">01621110120</span>
+              </a>
+
+              <!-- Telegram -->
+              <a href="https://t.me/+8801621110120" target="_blank" rel="noopener noreferrer" class="p-3 bg-sky-500/10 hover:bg-sky-500/20 border border-sky-500/30 rounded-2xl flex flex-col items-center justify-center text-center transition group">
+                <i class="fa-brands fa-telegram text-sky-500 text-xl group-hover:scale-110 transition-transform"></i>
+                <span class="text-[11px] font-bold text-sky-600 dark:text-sky-400 mt-1">Telegram</span>
+                <span class="text-[9px] text-slate-400">01621110120</span>
+              </a>
+
+              <!-- Discord -->
+              <div onclick="window.copyDiscordHandle()" class="cursor-pointer p-3 bg-indigo-500/10 hover:bg-indigo-500/20 border border-indigo-500/30 rounded-2xl flex flex-col items-center justify-center text-center transition group" title="Click to copy Discord handle">
+                <i class="fa-brands fa-discord text-indigo-500 text-xl group-hover:scale-110 transition-transform"></i>
+                <span class="text-[11px] font-bold text-indigo-600 dark:text-indigo-400 mt-1">Discord</span>
+                <span class="text-[9px] text-slate-400">_kofs_</span>
+              </div>
+
+              <!-- Direct Email -->
+              <a href="mailto:omrfys@gmail.com" class="p-3 bg-brand-500/10 hover:bg-brand-500/20 border border-brand-500/30 rounded-2xl flex flex-col items-center justify-center text-center transition group">
+                <i class="fa-solid fa-envelope text-brand-500 text-xl group-hover:scale-110 transition-transform"></i>
+                <span class="text-[11px] font-bold text-brand-600 dark:text-brand-400 mt-1">Email</span>
+                <span class="text-[9px] text-slate-400 truncate max-w-full">omrfys@gmail.com</span>
+              </a>
+            </div>
+          </div>
+
+          <!-- Right: Instant Feedback / Send Message to Developer -->
+          <div class="lg:col-span-7 bg-slate-50 dark:bg-darkbg-elevated p-5 sm:p-6 rounded-3xl border border-slate-200 dark:border-darkbg-border">
+            <div class="flex items-center justify-between mb-3">
+              <h4 class="text-sm font-extrabold text-slate-900 dark:text-white flex items-center gap-2">
+                <i class="fa-regular fa-paper-plane text-brand-500"></i>
+                <span>Send Direct Message to Developer</span>
+              </h4>
+              <span class="text-[10px] text-slate-400">Recipient: omrfys@gmail.com</span>
+            </div>
+
+            <form id="formContactDev" class="space-y-3">
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div>
+                  <label class="block text-[11px] font-bold text-slate-500 dark:text-slate-400 mb-1">Your Registered Email (Sender)</label>
+                  <input type="email" id="contactSenderEmail" class="w-full bg-white dark:bg-darkbg-card border border-slate-200 dark:border-darkbg-border rounded-xl p-2.5 text-xs text-slate-500 dark:text-slate-400 font-medium" readonly />
+                </div>
+                <div>
+                  <label class="block text-[11px] font-bold text-slate-500 dark:text-slate-400 mb-1">Subject</label>
+                  <input type="text" id="contactSubject" placeholder="e.g. Feedback / Feature Suggestion" class="w-full bg-white dark:bg-darkbg-card border border-slate-200 dark:border-darkbg-border rounded-xl p-2.5 text-xs text-slate-800 dark:text-white font-medium focus:ring-2 focus:ring-brand-500" required />
+                </div>
+              </div>
+              <div>
+                <label class="block text-[11px] font-bold text-slate-500 dark:text-slate-400 mb-1">Your Message</label>
+                <textarea id="contactMessage" rows="2" placeholder="Write your message here..." class="w-full bg-white dark:bg-darkbg-card border border-slate-200 dark:border-darkbg-border rounded-xl p-2.5 text-xs text-slate-800 dark:text-white font-medium focus:ring-2 focus:ring-brand-500" required></textarea>
+              </div>
+              <div class="flex justify-end">
+                <button type="submit" class="bg-gradient-to-r from-brand-500 to-cyan-400 hover:from-brand-600 hover:to-cyan-500 text-slate-950 font-black px-5 py-2.5 rounded-xl text-xs transition shadow-md shadow-brand-500/20 active:scale-95 flex items-center gap-1.5">
+                  <i class="fa-solid fa-paper-plane text-xs"></i>
+                  <span>Send Message</span>
+                </button>
+              </div>
+            </form>
+          </div>
+
+        </div>
+
+        <div class="pt-6 flex flex-col sm:flex-row items-center justify-between text-xs text-slate-400 gap-2">
+          <p>© 2026 <strong>KofsLedger</strong>. Engineered by <strong>Kofs</strong>. All rights reserved.</p>
+          <p class="flex items-center gap-2">
+            <span>Powered by MongoDB Atlas & Serverless Architecture</span>
+          </p>
+        </div>
+      </div>
+    </footer>
   </div>
 
-  <!-- Toast Container -->
+  <!-- Toast Notification -->
   <div id="toastContainer" class="fixed bottom-6 right-6 z-50 flex flex-col space-y-2 pointer-events-none"></div>
+
+  <!-- ============================================== -->
+  <!-- MODAL: QUICK DEPOSIT / ADD FUNDS TO ACCOUNT    -->
+  <!-- ============================================== -->
+  <div id="modalAddFunds" class="modal-backdrop hidden fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-md p-4">
+    <div class="bg-white dark:bg-darkbg-card border border-slate-200 dark:border-darkbg-border rounded-3xl p-6 sm:p-7 w-full max-w-md shadow-2xl space-y-4">
+      <div class="flex justify-between items-center pb-3 border-b border-slate-100 dark:border-darkbg-border">
+        <h3 class="text-lg font-black text-slate-900 dark:text-white">Add Funds / Deposit</h3>
+        <button class="modal-close w-8 h-8 rounded-full bg-slate-100 dark:bg-darkbg-elevated text-slate-400 hover:text-slate-200 flex items-center justify-center font-bold">&times;</button>
+      </div>
+      <form id="formAddFunds" class="space-y-4">
+        <input type="hidden" id="depositTargetAccountId" />
+        <div class="p-3 bg-brand-500/10 border border-brand-500/30 rounded-2xl text-xs">
+          <p class="text-slate-400">Target Account:</p>
+          <h4 id="depositTargetAccountName" class="text-base font-black text-brand-500 mt-0.5"></h4>
+        </div>
+        <div>
+          <label class="block text-xs font-bold text-slate-600 dark:text-slate-300 mb-1">Deposit Amount (৳ BDT)</label>
+          <input type="number" step="0.01" min="1" id="depositAmount" class="w-full bg-slate-50 dark:bg-darkbg-elevated border border-slate-200 dark:border-darkbg-border rounded-xl p-3 text-sm font-black text-emerald-500" placeholder="0.00" required />
+        </div>
+        <div>
+          <label class="block text-xs font-bold text-slate-600 dark:text-slate-300 mb-1">Source / Deposit Note</label>
+          <input type="text" id="depositNote" placeholder="e.g. Cash in, Salary, Bank Deposit" class="w-full bg-slate-50 dark:bg-darkbg-elevated border border-slate-200 dark:border-darkbg-border rounded-xl p-3 text-sm font-medium text-slate-800 dark:text-white" required />
+        </div>
+        <div>
+          <label class="block text-xs font-bold text-slate-600 dark:text-slate-300 mb-1">Date</label>
+          <input type="date" id="depositDate" class="w-full bg-slate-50 dark:bg-darkbg-elevated border border-slate-200 dark:border-darkbg-border rounded-xl p-3 text-sm font-medium text-slate-800 dark:text-white" required />
+        </div>
+        <button type="submit" class="w-full bg-gradient-to-r from-emerald-500 to-teal-500 text-slate-950 font-black py-3 rounded-xl text-sm transition shadow-lg shadow-emerald-500/20 active:scale-95">
+          Confirm Deposit
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- ============================================== -->
+  <!-- MODAL: LENT BORROWER HISTORY LEDGER            -->
+  <!-- ============================================== -->
+  <div id="modalLentHistory" class="modal-backdrop hidden fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-md p-4">
+    <div class="bg-white dark:bg-darkbg-card border border-slate-200 dark:border-darkbg-border rounded-3xl p-6 sm:p-8 w-full max-w-3xl shadow-2xl space-y-6 max-h-[90vh] overflow-y-auto">
+      <div class="flex justify-between items-start pb-4 border-b border-slate-100 dark:border-darkbg-border">
+        <div>
+          <span class="text-[10px] font-black uppercase tracking-wider text-amber-500 bg-amber-500/10 px-2.5 py-1 rounded-full border border-amber-500/30">Borrower Statement</span>
+          <h3 class="text-2xl font-black text-slate-900 dark:text-white mt-2" id="lentHistFriendName">Person Name</h3>
+          <p class="text-xs text-slate-400 mt-0.5">Unique Phone Identifier: <strong id="lentHistPhone" class="text-brand-500"></strong></p>
+        </div>
+        <button class="modal-close w-8 h-8 rounded-full bg-slate-100 dark:bg-darkbg-elevated text-slate-400 hover:text-slate-200 flex items-center justify-center font-bold">&times;</button>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+        <div class="bg-slate-50 dark:bg-darkbg-elevated p-4 rounded-2xl border border-slate-100 dark:border-darkbg-border">
+          <p class="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Total Given</p>
+          <p class="text-lg font-black text-slate-800 dark:text-white mt-1" id="lentHistTotal">৳0.00</p>
+        </div>
+        <div class="bg-emerald-500/10 p-4 rounded-2xl border border-emerald-500/20">
+          <p class="text-[11px] font-bold text-emerald-500 uppercase tracking-wider">Total Returned</p>
+          <p class="text-lg font-black text-emerald-500 mt-1" id="lentHistReturned">৳0.00</p>
+        </div>
+        <div class="bg-rose-500/10 p-4 rounded-2xl border border-rose-500/20">
+          <p class="text-[11px] font-bold text-rose-500 uppercase tracking-wider">Net Remaining Due</p>
+          <p class="text-lg font-black text-rose-500 mt-1" id="lentHistDue">৳0.00</p>
+        </div>
+      </div>
+
+      <div>
+        <h4 class="text-sm font-black text-slate-900 dark:text-white mb-3">All Records with this Person</h4>
+        <div class="overflow-x-auto border border-slate-100 dark:border-darkbg-border rounded-2xl">
+          <table class="w-full text-left text-xs">
+            <thead class="bg-slate-50 dark:bg-darkbg-elevated text-slate-400 uppercase border-b border-slate-100 dark:border-darkbg-border font-bold tracking-wider">
+              <tr>
+                <th class="p-3 pl-4">Account</th>
+                <th class="p-3">Total Amount</th>
+                <th class="p-3">Remaining Due</th>
+                <th class="p-3">Date</th>
+                <th class="p-3 pr-4 text-right">Status</th>
+              </tr>
+            </thead>
+            <tbody id="lentHistTableBody" class="divide-y divide-slate-100 dark:divide-darkbg-border text-slate-700 dark:text-slate-300"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
 
   <!-- MODAL: PROFILE & SETTINGS -->
   <div id="modalProfile" class="modal-backdrop hidden fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-md p-4">
@@ -621,7 +791,7 @@
       <form id="formLoanSettle" class="space-y-4">
         <input type="hidden" id="settleLoanId" />
         <div class="bg-amber-500/10 p-4 rounded-2xl border border-amber-500/30 text-xs">
-          <p class="text-amber-500">Friend: <strong id="settleFriendName" class="text-slate-900 dark:text-white text-sm"></strong></p>
+          <p class="text-amber-500">Borrower: <strong id="settleFriendName" class="text-slate-900 dark:text-white text-sm"></strong></p>
           <p class="text-amber-500 mt-1">Remaining Due: <strong id="settleRemainingDue" class="text-rose-500 text-sm font-black">৳0.00</strong></p>
         </div>
 
@@ -735,7 +905,7 @@
     </div>
   </div>
 
-  <!-- ADD / EDIT ACCOUNT MODAL -->
+  <!-- ADD / EDIT ACCOUNT MODAL (With Comprehensive Bangladesh Banks & MFS) -->
   <div id="modalAccount" class="modal-backdrop hidden fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-md p-4">
     <div class="bg-white dark:bg-darkbg-card border border-slate-200 dark:border-darkbg-border rounded-3xl p-6 sm:p-7 w-full max-w-md shadow-2xl">
       <div class="flex justify-between items-center mb-5 pb-3 border-b border-slate-100 dark:border-darkbg-border">
@@ -745,20 +915,51 @@
       <form id="formAccount" class="space-y-4">
         <input type="hidden" id="editAccountId" />
         <div>
-          <label class="block text-xs font-bold text-slate-600 dark:text-slate-300 mb-1">Account Name</label>
-          <input type="text" id="accName" class="w-full bg-slate-50 dark:bg-darkbg-elevated border border-slate-200 dark:border-darkbg-border rounded-xl p-3 text-sm font-medium text-slate-800 dark:text-white" placeholder="City Bank, bKash Personal, Cash" required />
+          <label class="block text-xs font-bold text-slate-600 dark:text-slate-300 mb-1">Account / Wallet Name</label>
+          <input type="text" id="accName" class="w-full bg-slate-50 dark:bg-darkbg-elevated border border-slate-200 dark:border-darkbg-border rounded-xl p-3 text-sm font-medium text-slate-800 dark:text-white" placeholder="e.g. City Bank Salary, Personal bKash" required />
         </div>
         <div>
-          <label class="block text-xs font-bold text-slate-600 dark:text-slate-300 mb-1">Provider Type</label>
-          <select id="accType" class="w-full bg-slate-50 dark:bg-darkbg-elevated border border-slate-200 dark:border-darkbg-border rounded-xl p-3 text-sm font-semibold text-slate-800 dark:text-white">
-            <option value="bKash">bKash</option>
-            <option value="Nagad">Nagad</option>
-            <option value="Rocket">Rocket</option>
-            <option value="Upay">Upay</option>
-            <option value="Bank">Bank Account</option>
-            <option value="Cash">Cash in Hand</option>
-            <option value="Savings">Savings / Deposit</option>
-            <option value="Other">Other Wallet</option>
+          <label class="block text-xs font-bold text-slate-600 dark:text-slate-300 mb-1">Provider Type (Banks & MFS)</label>
+          <select id="accType" class="w-full bg-slate-50 dark:bg-darkbg-elevated border border-slate-200 dark:border-darkbg-border rounded-xl p-3 text-sm font-semibold text-slate-800 dark:text-white" required>
+            
+            <optgroup label="Mobile Financial Services (MFS)">
+              <option value="bKash">bKash</option>
+              <option value="Nagad">Nagad</option>
+              <option value="Rocket">Rocket (DBBL)</option>
+              <option value="Upay">Upay (UCB)</option>
+              <option value="Cellfin">Cellfin (IBBL)</option>
+              <option value="Tap">Tap</option>
+              <option value="mCash">mCash (Islami Bank)</option>
+            </optgroup>
+
+            <optgroup label="Private Commercial Banks (Bangladesh)">
+              <option value="Islami Bank">Islami Bank Bangladesh (IBBL)</option>
+              <option value="Dutch-Bangla Bank">Dutch-Bangla Bank (DBBL)</option>
+              <option value="BRAC Bank">BRAC Bank</option>
+              <option value="City Bank">The City Bank</option>
+              <option value="Eastern Bank">Eastern Bank (EBL)</option>
+              <option value="Mutual Trust Bank">Mutual Trust Bank (MTB)</option>
+              <option value="Prime Bank">Prime Bank</option>
+              <option value="Southeast Bank">Southeast Bank</option>
+              <option value="UCB Bank">United Commercial Bank (UCB)</option>
+              <option value="Standard Chartered">Standard Chartered Bangladesh</option>
+              <option value="Bank Asia">Bank Asia</option>
+              <option value="Pubali Bank">Pubali Bank</option>
+              <option value="Other Bank">Other Private Bank</option>
+            </optgroup>
+
+            <optgroup label="State-Owned Banks (Govt)">
+              <option value="Sonali Bank">Sonali Bank PLC</option>
+              <option value="Janata Bank">Janata Bank PLC</option>
+              <option value="Agrani Bank">Agrani Bank PLC</option>
+              <option value="Rupali Bank">Rupali Bank PLC</option>
+            </optgroup>
+
+            <optgroup label="Cash & Savings">
+              <option value="Cash">Cash in Hand</option>
+              <option value="Savings">Savings / Fixed Deposit</option>
+              <option value="Other">Other Wallet</option>
+            </optgroup>
           </select>
         </div>
         <div>
@@ -796,17 +997,21 @@
     </div>
   </div>
 
-  <!-- LEND TO FRIEND MODAL -->
+  <!-- LEND MONEY MODAL (With Phone Number as Unique ID) -->
   <div id="modalLoan" class="modal-backdrop hidden fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-md p-4">
     <div class="bg-white dark:bg-darkbg-card border border-slate-200 dark:border-darkbg-border rounded-3xl p-6 sm:p-7 w-full max-w-md shadow-2xl">
       <div class="flex justify-between items-center mb-5 pb-3 border-b border-slate-100 dark:border-darkbg-border">
-        <h3 class="text-lg font-black text-slate-900 dark:text-white">Lend Money to Friend</h3>
+        <h3 class="text-lg font-black text-slate-900 dark:text-white">Lend Money</h3>
         <button class="modal-close w-8 h-8 rounded-full bg-slate-100 dark:bg-darkbg-elevated text-slate-400 hover:text-slate-200 flex items-center justify-center font-bold">&times;</button>
       </div>
       <form id="formLoan" class="space-y-4">
         <div>
-          <label class="block text-xs font-bold text-slate-600 dark:text-slate-300 mb-1">Friend's Name</label>
-          <input type="text" id="loanFriendName" class="w-full bg-slate-50 dark:bg-darkbg-elevated border border-slate-200 dark:border-darkbg-border rounded-xl p-3 text-sm font-medium text-slate-800 dark:text-white" placeholder="Tanvir Ahmed" required />
+          <label class="block text-xs font-bold text-slate-600 dark:text-slate-300 mb-1">Borrower's Name</label>
+          <input type="text" id="loanFriendName" class="w-full bg-slate-50 dark:bg-darkbg-elevated border border-slate-200 dark:border-darkbg-border rounded-xl p-3 text-sm font-medium text-slate-800 dark:text-white" placeholder="e.g. Tanvir Ahmed" required />
+        </div>
+        <div>
+          <label class="block text-xs font-bold text-slate-600 dark:text-slate-300 mb-1">Phone Number (Unique Identifier)</label>
+          <input type="text" id="loanFriendPhone" class="w-full bg-slate-50 dark:bg-darkbg-elevated border border-slate-200 dark:border-darkbg-border rounded-xl p-3 text-sm font-bold text-brand-500" placeholder="e.g. 01700000000" required />
         </div>
         <div>
           <label class="block text-xs font-bold text-slate-600 dark:text-slate-300 mb-1">Amount Given (৳ BDT)</label>
@@ -820,7 +1025,7 @@
           <label class="block text-xs font-bold text-slate-600 dark:text-slate-300 mb-1">Date</label>
           <input type="date" id="loanDate" class="w-full bg-slate-50 dark:bg-darkbg-elevated border border-slate-200 dark:border-darkbg-border rounded-xl p-3 text-sm font-medium text-slate-800 dark:text-white" required />
         </div>
-        <button type="submit" class="w-full bg-amber-500 hover:bg-amber-400 text-slate-950 font-black py-3 rounded-xl text-sm transition shadow-lg shadow-amber-500/25 active:scale-95">Record Loan</button>
+        <button type="submit" class="w-full bg-amber-500 hover:bg-amber-400 text-slate-950 font-black py-3 rounded-xl text-sm transition shadow-lg shadow-amber-500/25 active:scale-95">Record Lent Money</button>
       </form>
     </div>
   </div>
