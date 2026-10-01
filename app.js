@@ -282,6 +282,7 @@ function updateUserDisplay() {
 
   if (displayUserNameEl) displayUserNameEl.textContent = currentUser.name;
 
+  // Print Statement Details
   const printUserName = document.getElementById("printUserName");
   if (printUserName) printUserName.textContent = currentUser.name || "N/A";
 
@@ -536,7 +537,6 @@ function renderCharts() {
   const trendTitleEl = document.getElementById("trendChartTitle");
 
   if (selectedTrendTimeframe === "6M") {
-    // 6-Month Aggregate View
     if (trendTitleEl) trendTitleEl.textContent = "Cash Flow & Monthly Burn";
     const last6Months = [];
     const now = new Date();
@@ -556,7 +556,6 @@ function renderCharts() {
       return new Date(y, mon - 1).toLocaleString("default", { month: "short" });
     });
   } else {
-    // Day-by-Day Breakdown of Selected Month (e.g. "2026-10")
     const [yearStr, monthStr] = selectedTrendTimeframe.split("-");
     const year = parseInt(yearStr, 10);
     const month = parseInt(monthStr, 10);
@@ -672,6 +671,12 @@ function updateDropdowns() {
   if (transferFrom) transferFrom.innerHTML = accOpts;
   const settleDepositAccount = document.getElementById("settleDepositAccount");
   if (settleDepositAccount) settleDepositAccount.innerHTML = accOpts;
+
+  // Project Direct Funding Dropdown
+  const projFundAccount = document.getElementById("projFundAccount");
+  if (projFundAccount) {
+    projFundAccount.innerHTML = `<option value="NONE">None (Just an estimate ceiling, do not deduct bank)</option>` + accOpts;
+  }
 
   const transferTo = document.getElementById("transferTo");
   if (transferTo) transferTo.innerHTML = accOpts + `<option value="EXTERNAL">+ Send to External Recipient</option>`;
@@ -872,7 +877,7 @@ window.deleteAccount = async (id) => {
 };
 
 // ==========================================
-// PROJECTS & LEDGER
+// PROJECTS & DIRECT BANK BUDGET ALLOCATION
 // ==========================================
 function renderProjects() {
   if (!projectsGridEl) return;
@@ -928,7 +933,7 @@ function renderProjects() {
           </div>
         </div>
         
-        <div class="mt-4 pt-3 border-t border-slate-100 dark:border-darkbg-border flex justify-between items-center">
+        <div class="mt-4 pt-3 border-t border-slate-100 dark:border-darkbg-border flex items-center justify-between">
           <div>
             <span class="text-[10px] text-slate-400 uppercase font-semibold">Net Balance</span>
             <p class="font-black text-sm ${pNet >= 0 ? 'text-emerald-500' : 'text-rose-500'}">
@@ -969,11 +974,28 @@ function refreshProjectDetails(projectId) {
   netEl.textContent = `${pNet >= 0 ? '+' : ''}${formatBDT(pNet)}`;
   netEl.className = `text-lg font-black mt-1 ${pNet >= 0 ? 'text-emerald-500' : 'text-rose-500'}`;
 
+  // Direct Inflow to Project from Bank
+  const btnAddInflow = document.getElementById("pDetailBtnAddInflow");
+  if (btnAddInflow) {
+    btnAddInflow.onclick = () => {
+      resetTxForm();
+      document.getElementById("txType").value = "INCOME";
+      document.getElementById("txProject").value = p.id;
+      document.getElementById("txNote").value = `Project Funding / Revenue: ${p.name}`;
+      document.getElementById("txModalTitle").textContent = `Add Funds to ${p.name}`;
+      openModal(modalTx);
+    };
+  }
+
+  // Direct Expense from Bank for Project
   const btnAddTx = document.getElementById("pDetailBtnAddTx");
   if (btnAddTx) {
     btnAddTx.onclick = () => {
       resetTxForm();
+      document.getElementById("txType").value = "EXPENSE";
       document.getElementById("txProject").value = p.id;
+      document.getElementById("txNote").value = `Expense for: ${p.name}`;
+      document.getElementById("txModalTitle").textContent = `Add Expense to ${p.name}`;
       openModal(modalTx);
     };
   }
@@ -1014,6 +1036,7 @@ function refreshProjectDetails(projectId) {
   }).join("");
 }
 
+// Project Form with Immediate Bank Balance Deduction
 const formProject = document.getElementById("formProject");
 if (formProject) {
   formProject.onsubmit = async (e) => {
@@ -1022,6 +1045,7 @@ if (formProject) {
     const name = document.getElementById("projName").value.trim();
     const budget = parseFloat(document.getElementById("projBudget").value) || 0;
     const notes = document.getElementById("projNotes").value.trim();
+    const fundAccountId = document.getElementById("projFundAccount") ? document.getElementById("projFundAccount").value : "NONE";
 
     if (editId) {
       const proj = appData.projects.find(p => p.id === editId);
@@ -1032,8 +1056,28 @@ if (formProject) {
       }
       showToast("Project updated!");
     } else {
-      appData.projects.push({ id: "proj_" + Date.now(), name, budget, notes });
-      showToast("Project created!");
+      const newProjectId = "proj_" + Date.now();
+      appData.projects.push({ id: newProjectId, name, budget, notes });
+
+      // If user chose to fund budget directly from a Bank/Wallet
+      if (fundAccountId !== "NONE" && budget > 0) {
+        const targetAcc = appData.accounts.find(a => a.id === fundAccountId);
+        if (targetAcc) {
+          targetAcc.balance = Number(targetAcc.balance) - budget;
+          appData.transactions.unshift({
+            id: "tx_" + Date.now(),
+            type: "EXPENSE",
+            accountId: fundAccountId,
+            projectId: newProjectId,
+            amount: budget,
+            note: `Initial Budget Funded: ${name}`,
+            date: new Date().toISOString().split("T")[0]
+          });
+          showToast(`Project created & ${formatBDT(budget)} deducted from ${targetAcc.name}!`);
+        }
+      } else {
+        showToast("Project created successfully!");
+      }
     }
 
     updateDropdowns();
@@ -1050,6 +1094,8 @@ function resetProjectForm() {
   if (editId) editId.value = "";
   const title = document.getElementById("projectModalTitle");
   if (title) title.textContent = "Create Project";
+  const fundGroup = document.getElementById("projFundingAccountGroup");
+  if (fundGroup) fundGroup.classList.remove("hidden");
 }
 
 window.editProject = (id) => {
@@ -1060,6 +1106,8 @@ window.editProject = (id) => {
   document.getElementById("projBudget").value = proj.budget;
   document.getElementById("projNotes").value = proj.notes || "";
   document.getElementById("projectModalTitle").textContent = "Edit Project";
+  const fundGroup = document.getElementById("projFundingAccountGroup");
+  if (fundGroup) fundGroup.classList.add("hidden"); // Do not double deduct on edit
   openModal(modalProject);
 };
 
