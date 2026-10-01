@@ -14,6 +14,7 @@ let appData = {
 
 let activeDetailProjectId = null;
 window.currentActiveView = "overview";
+let selectedTrendTimeframe = "6M";
 
 // ==========================================
 // THEME CONTROLLER (Dark / Light Mode)
@@ -281,7 +282,6 @@ function updateUserDisplay() {
 
   if (displayUserNameEl) displayUserNameEl.textContent = currentUser.name;
 
-  // Print Statement Details
   const printUserName = document.getElementById("printUserName");
   if (printUserName) printUserName.textContent = currentUser.name || "N/A";
 
@@ -477,7 +477,7 @@ async function syncToMongoDB() {
 }
 
 // ==========================================
-// CHARTS & STATS
+// CHARTS & STATS (Daily Breakdown Support)
 // ==========================================
 let projectChartInstance = null;
 let trendChartInstance = null;
@@ -487,6 +487,7 @@ function renderCharts() {
   const textColor = isDark ? "#94a3b8" : "#64748b";
   const gridColor = isDark ? "rgba(255,255,255,0.05)" : "rgba(0,0,0,0.05)";
 
+  // 1. Doughnut Chart: Project Expenses
   const projExpenseMap = {};
   appData.transactions.filter(t => t.type === "EXPENSE").forEach(t => {
     const proj = appData.projects.find(p => p.id === t.projectId);
@@ -528,19 +529,58 @@ function renderCharts() {
     }
   }
 
-  const last6Months = [];
-  const now = new Date();
-  for (let i = 5; i >= 0; i--) {
-    const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
-    last6Months.push(d.toISOString().slice(0, 7));
-  }
+  // 2. Trend Bar Chart: 6-Months Overview OR Specific Month Day-by-Day Breakdown
+  let chartLabels = [];
+  let incomeData = [];
+  let expenseData = [];
+  const trendTitleEl = document.getElementById("trendChartTitle");
 
-  const incomeData = last6Months.map(m => appData.transactions.filter(t => t.type === "INCOME" && t.date.startsWith(m)).reduce((s, t) => s + Number(t.amount), 0));
-  const expenseData = last6Months.map(m => appData.transactions.filter(t => t.type === "EXPENSE" && t.date.startsWith(m)).reduce((s, t) => s + Number(t.amount), 0));
-  const monthLabels = last6Months.map(m => {
-    const [y, mon] = m.split("-");
-    return new Date(y, mon - 1).toLocaleString("default", { month: "short" });
-  });
+  if (selectedTrendTimeframe === "6M") {
+    // 6-Month Aggregate View
+    if (trendTitleEl) trendTitleEl.textContent = "Cash Flow & Monthly Burn";
+    const last6Months = [];
+    const now = new Date();
+    for (let i = 5; i >= 0; i--) {
+      const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
+      last6Months.push(d.toISOString().slice(0, 7));
+    }
+
+    incomeData = last6Months.map(m => 
+      appData.transactions.filter(t => t.type === "INCOME" && t.date.startsWith(m)).reduce((s, t) => s + Number(t.amount), 0)
+    );
+    expenseData = last6Months.map(m => 
+      appData.transactions.filter(t => t.type === "EXPENSE" && t.date.startsWith(m)).reduce((s, t) => s + Number(t.amount), 0)
+    );
+    chartLabels = last6Months.map(m => {
+      const [y, mon] = m.split("-");
+      return new Date(y, mon - 1).toLocaleString("default", { month: "short" });
+    });
+  } else {
+    // Day-by-Day Breakdown of Selected Month (e.g. "2026-10")
+    const [yearStr, monthStr] = selectedTrendTimeframe.split("-");
+    const year = parseInt(yearStr, 10);
+    const month = parseInt(monthStr, 10);
+    const monthName = new Date(year, month - 1).toLocaleString("default", { month: "long", year: "numeric" });
+    if (trendTitleEl) trendTitleEl.textContent = `${monthName} (Daily Cash Flow)`;
+
+    const daysInMonth = new Date(year, month, 0).getDate();
+    chartLabels = Array.from({ length: daysInMonth }, (_, i) => `Day ${i + 1}`);
+
+    for (let day = 1; day <= daysInMonth; day++) {
+      const dayFormatted = `${year}-${String(month).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
+      
+      const dayIncome = appData.transactions
+        .filter(t => t.type === "INCOME" && t.date === dayFormatted)
+        .reduce((sum, t) => sum + Number(t.amount), 0);
+      
+      const dayExpense = appData.transactions
+        .filter(t => t.type === "EXPENSE" && t.date === dayFormatted)
+        .reduce((sum, t) => sum + Number(t.amount), 0);
+
+      incomeData.push(dayIncome);
+      expenseData.push(dayExpense);
+    }
+  }
 
   if (trendChartInstance) trendChartInstance.destroy();
   const canvasTrend = document.getElementById("trendChart");
@@ -549,19 +589,26 @@ function renderCharts() {
     trendChartInstance = new Chart(trendCtx, {
       type: "bar",
       data: {
-        labels: monthLabels,
+        labels: chartLabels,
         datasets: [
-          { label: "Income", data: incomeData, backgroundColor: "#10b981", borderRadius: 6 },
-          { label: "Expense", data: expenseData, backgroundColor: "#f43f5e", borderRadius: 6 }
+          { label: "Income", data: incomeData, backgroundColor: "#10b981", borderRadius: 4 },
+          { label: "Expense", data: expenseData, backgroundColor: "#f43f5e", borderRadius: 4 }
         ]
       },
       options: {
         responsive: true,
         maintainAspectRatio: false,
-        plugins: { legend: { labels: { color: textColor, font: { size: 11, weight: 'bold' } } } },
+        plugins: { 
+          legend: { labels: { color: textColor, font: { size: 11, weight: 'bold' } } },
+          tooltip: {
+            callbacks: {
+              label: (context) => ` ${context.dataset.label}: ৳${Number(context.raw).toLocaleString('en-BD', { minimumFractionDigits: 2 })}`
+            }
+          }
+        },
         scales: {
           y: { ticks: { color: textColor, callback: v => "৳" + v }, grid: { color: gridColor } },
-          x: { ticks: { color: textColor }, grid: { display: false } }
+          x: { ticks: { color: textColor, font: { size: selectedTrendTimeframe === "6M" ? 11 : 9 } }, grid: { display: false } }
         }
       }
     });
@@ -635,6 +682,36 @@ function updateDropdowns() {
   const txProject = document.getElementById("txProject");
   if (txProject) txProject.innerHTML = projOpts;
   if (filterProjectEl) filterProjectEl.innerHTML = `<option value="ALL">All Projects</option>` + appData.projects.map(p => `<option value="${p.id}">${p.name}</option>`).join("");
+
+  // Populate Cash Flow Months Dropdown (with daily breakdown options)
+  const trendTimeframeSelect = document.getElementById("trendTimeframeSelect");
+  if (trendTimeframeSelect) {
+    const currentMonthKey = new Date().toISOString().slice(0, 7);
+    const monthsSet = new Set([currentMonthKey]);
+    
+    appData.transactions.forEach(t => {
+      if (t.date && t.date.length >= 7) {
+        monthsSet.add(t.date.slice(0, 7));
+      }
+    });
+
+    const sortedMonths = Array.from(monthsSet).sort().reverse();
+    let optionsHtml = `<option value="6M">Last 6 Months (Monthly)</option>`;
+    
+    sortedMonths.forEach(m => {
+      const [y, mon] = m.split("-");
+      const monthLabel = new Date(parseInt(y, 10), parseInt(mon, 10) - 1).toLocaleString("default", { month: "long", year: "numeric" });
+      optionsHtml += `<option value="${m}">${monthLabel} (Daily)</option>`;
+    });
+
+    trendTimeframeSelect.innerHTML = optionsHtml;
+    trendTimeframeSelect.value = selectedTrendTimeframe;
+
+    trendTimeframeSelect.onchange = (e) => {
+      selectedTrendTimeframe = e.target.value;
+      renderCharts();
+    };
+  }
 }
 
 const transferToEl = document.getElementById("transferTo");
