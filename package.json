@@ -1,0 +1,14 @@
+{
+  "name": "tracker-by-kofs",
+  "version": "2.0.0",
+  "description": "Multi-Account, Project and Debt Tracker by kofs",
+  "main": "index.html",
+  "scripts": {
+    "build": "echo 'Build successfully ready'"
+  },
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "jsonwebtoken": "^9.0.2",
+    "mongoose": "^8.3.0"
+  }
+}
