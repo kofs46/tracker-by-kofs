@@ -1,6 +1,5 @@
 const API_URL = "/api";
 
-// App State
 let currentUser = null;
 let token = localStorage.getItem("KOFS_AUTH_TOKEN") || null;
 let currentTheme = localStorage.getItem("KOFS_THEME") || "dark";
@@ -16,9 +15,6 @@ let activeDetailProjectId = null;
 window.currentActiveView = "overview";
 let selectedTrendTimeframe = "6M";
 
-// ==========================================
-// THEME CONTROLLER (Dark / Light Mode)
-// ==========================================
 function applyTheme(theme) {
   currentTheme = theme;
   localStorage.setItem("KOFS_THEME", theme);
@@ -40,7 +36,6 @@ if (btnToggleTheme) {
   };
 }
 
-// Safe API Fetch Client
 async function apiFetch(endpoint, options = {}) {
   try {
     const res = await fetch(endpoint, options);
@@ -49,7 +44,7 @@ async function apiFetch(endpoint, options = {}) {
     try {
       data = JSON.parse(text);
     } catch (e) {
-      throw new Error(`Server Error (${res.status}): ${text || "Empty response from server. Check MongoDB IP Access."}`);
+      throw new Error(`Server Error (${res.status}): ${text || "Empty response from server."}`);
     }
     if (!res.ok) throw new Error(data.error || `Request failed with status ${res.status}`);
     return data;
@@ -58,7 +53,6 @@ async function apiFetch(endpoint, options = {}) {
   }
 }
 
-// Password Eye Toggle
 window.togglePasswordVisibility = (inputId, iconId) => {
   const input = document.getElementById(inputId);
   const icon = document.getElementById(iconId);
@@ -72,7 +66,6 @@ window.togglePasswordVisibility = (inputId, iconId) => {
   }
 };
 
-// Copy Discord Handle Helper & 1-Click Launch
 window.copyDiscordHandle = () => {
   const handle = "_kofs_";
   navigator.clipboard.writeText(handle).then(() => {
@@ -85,7 +78,6 @@ window.copyDiscordHandle = () => {
   });
 };
 
-// DOM Elements
 const authGatekeeper = document.getElementById("authGatekeeper");
 const appContainer = document.getElementById("appContainer");
 const totalNetWorthEl = document.getElementById("totalNetWorth");
@@ -101,7 +93,6 @@ const filterAccountEl = document.getElementById("filterAccount");
 const txSearchEl = document.getElementById("txSearch");
 const displayUserNameEl = document.getElementById("displayUserName");
 
-// Modals
 const modalProfile = document.getElementById("modalProfile");
 const modalForgotPass = document.getElementById("modalForgotPass");
 const modalTx = document.getElementById("modalTx");
@@ -114,7 +105,6 @@ const modalLoanSettle = document.getElementById("modalLoanSettle");
 const modalAddFunds = document.getElementById("modalAddFunds");
 const modalLentHistory = document.getElementById("modalLentHistory");
 
-// Open Modal Triggers
 if (document.getElementById("btnOpenTxModal")) document.getElementById("btnOpenTxModal").onclick = () => { resetTxForm(); openModal(modalTx); };
 if (document.getElementById("btnOpenAccountModal")) document.getElementById("btnOpenAccountModal").onclick = () => { resetAccountForm(); openModal(modalAccount); };
 if (document.getElementById("btnOpenProjectModal")) document.getElementById("btnOpenProjectModal").onclick = () => { resetProjectForm(); openModal(modalProject); };
@@ -123,9 +113,7 @@ if (document.getElementById("btnOpenTransferModal")) document.getElementById("bt
 if (document.getElementById("btnOpenProfileModal")) document.getElementById("btnOpenProfileModal").onclick = () => openProfileModal();
 
 if (document.getElementById("btnForgotPassTrigger")) {
-  document.getElementById("btnForgotPassTrigger").onclick = () => {
-    openModal(modalForgotPass);
-  };
+  document.getElementById("btnForgotPassTrigger").onclick = () => openModal(modalForgotPass);
 }
 
 document.querySelectorAll(".modal-close").forEach(btn => {
@@ -168,7 +156,6 @@ function formatBDT(amount) {
   return "৳" + num.toLocaleString("en-BD", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 }
 
-// Brand visual badge helper
 function getProviderBadge(type) {
   const mfsTypes = ["bKash", "Nagad", "Rocket", "Upay", "Cellfin", "Tap", "mCash"];
   if (type === "bKash") return { bg: "bg-pink-500/10 text-pink-500 border border-pink-500/20", icon: "fa-mobile-screen" };
@@ -181,9 +168,6 @@ function getProviderBadge(type) {
   return { bg: "bg-slate-500/10 text-slate-400 border border-slate-500/20", icon: "fa-wallet" };
 }
 
-// ==========================================
-// STRICT GATEKEEPER & AUTHENTICATION
-// ==========================================
 let isRegisterMode = false;
 const tabLogin = document.getElementById("tabLogin");
 const tabRegister = document.getElementById("tabRegister");
@@ -296,11 +280,7 @@ function updateUserDisplay() {
 
   const printDate = document.getElementById("printDate");
   if (printDate) {
-    printDate.textContent = new Date().toLocaleDateString("en-BD", { 
-      year: "numeric", 
-      month: "long", 
-      day: "numeric" 
-    });
+    printDate.textContent = new Date().toLocaleDateString("en-BD", { year: "numeric", month: "long", day: "numeric" });
   }
 
   const headerAvatarContainer = document.getElementById("headerAvatarContainer");
@@ -316,9 +296,6 @@ function updateUserDisplay() {
   }
 }
 
-// ==========================================
-// PROFILE & PHOTO UPLOAD
-// ==========================================
 function openProfileModal() {
   if (!currentUser) return;
   document.getElementById("profName").value = currentUser.name || "";
@@ -335,11 +312,7 @@ if (profAvatarInput) {
   profAvatarInput.onchange = (e) => {
     const file = e.target.files[0];
     if (!file) return;
-
-    if (file.size > 1.5 * 1024 * 1024) {
-      return alert("Image size must be under 1.5MB");
-    }
-
+    if (file.size > 1.5 * 1024 * 1024) return alert("Image size must be under 1.5MB");
     const reader = new FileReader();
     reader.onload = (event) => {
       const base64 = event.target.result;
@@ -370,10 +343,7 @@ if (formProfile) {
     try {
       const data = await apiFetch(`${API_URL}/profile?action=profile`, {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": `Bearer ${token}`
-        },
+        headers: { "Content-Type": "application/json", "Authorization": `Bearer ${token}` },
         body: JSON.stringify({ name, phone, address, recoveryPin, avatar })
       });
 
@@ -429,9 +399,6 @@ if (formForgotPass) {
   };
 }
 
-// ==========================================
-// MONGODB DATA SYNC
-// ==========================================
 async function loadUserData() {
   if (!token) {
     lockApplication();
@@ -465,10 +432,7 @@ async function syncToMongoDB() {
   try {
     await apiFetch(`${API_URL}/data?action=data`, {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization": `Bearer ${token}`
-      },
+      headers: { "Content-Type": "application/json", "Authorization": `Bearer ${token}` },
       body: JSON.stringify(appData)
     });
   } catch (err) {
@@ -476,9 +440,6 @@ async function syncToMongoDB() {
   }
 }
 
-// ==========================================
-// CHARTS & STATS
-// ==========================================
 let projectChartInstance = null;
 let trendChartInstance = null;
 
@@ -520,9 +481,7 @@ function renderCharts() {
         options: {
           responsive: true,
           maintainAspectRatio: false,
-          plugins: {
-            legend: { position: "bottom", labels: { boxWidth: 10, color: textColor, font: { size: 10 } } }
-          }
+          plugins: { legend: { position: "bottom", labels: { boxWidth: 10, color: textColor, font: { size: 10 } } } }
         }
       });
     }
@@ -627,12 +586,8 @@ function render() {
   if (totalProjectInflowEl) totalProjectInflowEl.textContent = formatBDT(projIn);
   if (totalProjectExpenseEl) totalProjectExpenseEl.textContent = formatBDT(projOut);
 
-  const totalTxExpense = appData.transactions
-    .filter(t => t.type === "EXPENSE")
-    .reduce((sum, t) => sum + (Number(t.amount) || 0), 0);
-  const totalTxIncome = appData.transactions
-    .filter(t => t.type === "INCOME")
-    .reduce((sum, t) => sum + (Number(t.amount) || 0), 0);
+  const totalTxExpense = appData.transactions.filter(t => t.type === "EXPENSE").reduce((sum, t) => sum + (Number(t.amount) || 0), 0);
+  const totalTxIncome = appData.transactions.filter(t => t.type === "INCOME").reduce((sum, t) => sum + (Number(t.amount) || 0), 0);
 
   const printTotalBalance = document.getElementById("printTotalBalance");
   if (printTotalBalance) printTotalBalance.textContent = formatBDT(netWorth);
@@ -643,9 +598,7 @@ function render() {
   const printTotalInflow = document.getElementById("printTotalInflow");
   if (printTotalInflow) printTotalInflow.textContent = formatBDT(totalTxIncome);
 
-  const pendingLent = appData.loans
-    .filter(l => l.status !== "REPAID")
-    .reduce((acc, l) => acc + (Number(l.remainingAmount ?? l.amount) || 0), 0);
+  const pendingLent = appData.loans.filter(l => l.status !== "REPAID").reduce((acc, l) => acc + (Number(l.remainingAmount ?? l.amount) || 0), 0);
   if (totalLentPendingEl) totalLentPendingEl.textContent = formatBDT(pendingLent);
 
   renderAccounts();
@@ -1251,8 +1204,8 @@ function renderLoans() {
           <button onclick="window.viewLentPersonHistory('${l.phone || ''}', '${l.friendName}')" class="text-xs bg-slate-100 dark:bg-darkbg-elevated hover:text-brand-500 text-slate-700 dark:text-slate-300 font-bold px-2.5 py-1.5 rounded-xl border border-slate-200 dark:border-darkbg-border transition" title="View History">
             <i class="fa-solid fa-clock-rotate-left"></i> History
           </button>
-          <button onclick="window.openEditLoan('${l.id}')" class="text-xs bg-slate-100 dark:bg-darkbg-elevated hover:text-brand-500 text-slate-700 dark:text-slate-300 font-bold px-2 py-1.5 rounded-xl border border-slate-200 dark:border-darkbg-border transition" title="Edit Name/Phone">
-            <i class="fa-regular fa-pen-to-square"></i>
+          <button onclick="window.openEditLoan('${l.id}')" class="text-xs bg-slate-100 dark:bg-darkbg-elevated hover:text-brand-500 text-slate-700 dark:text-slate-300 font-bold px-2 py-1.5 rounded-xl border border-slate-200 dark:border-darkbg-border transition" title="Edit Name/Phone/Amount">
+            <i class="fa-regular fa-pen-to-square"></i> Edit
           </button>
           ${!isRepaid ? `
             <button onclick="window.openLoanSettle('${l.id}')" class="text-xs bg-gradient-to-r from-emerald-500 to-teal-500 text-slate-950 font-black px-3 py-1.5 rounded-xl transition shadow-md shadow-emerald-500/20">
@@ -1314,6 +1267,7 @@ window.openEditLoan = (loanId) => {
   document.getElementById("editLoanId").value = loan.id;
   document.getElementById("editLoanFriendName").value = loan.friendName;
   document.getElementById("editLoanFriendPhone").value = loan.phone || "";
+  document.getElementById("editLoanAmount").value = loan.amount;
   openModal(document.getElementById("modalEditLoan"));
 };
 
@@ -1324,15 +1278,33 @@ if (formEditLoan) {
     const loanId = document.getElementById("editLoanId").value;
     const newName = document.getElementById("editLoanFriendName").value.trim();
     const newPhone = document.getElementById("editLoanFriendPhone").value.trim();
+    const newAmount = parseFloat(document.getElementById("editLoanAmount").value) || 0;
 
     const loan = appData.loans.find(l => l.id === loanId);
     if (!loan) return;
 
+    const oldAmount = Number(loan.amount) || 0;
+    const oldRemaining = Number(loan.remainingAmount ?? loan.amount) || 0;
+    const paidAmount = oldAmount - oldRemaining;
+
+    // Adjust remaining due based on new total amount
+    let newRemaining = newAmount - paidAmount;
+    if (newRemaining < 0) newRemaining = 0;
+
     loan.friendName = newName;
     loan.phone = newPhone;
+    loan.amount = newAmount;
+    loan.remainingAmount = newRemaining;
+    if (newRemaining <= 0) {
+      loan.status = "REPAID";
+    } else if (newRemaining < newAmount) {
+      loan.status = "PARTIALLY_PAID";
+    } else {
+      loan.status = "PENDING";
+    }
 
     await syncToMongoDB();
-    showToast("Borrower details updated successfully!");
+    showToast("Lent record & amount updated successfully!");
     document.getElementById("modalEditLoan").classList.add("hidden");
   };
 }
@@ -1649,14 +1621,9 @@ window.deleteTransaction = async (txId, type, amount, accountId) => {
   showToast("Transaction deleted");
 };
 
-// ==========================================
-// SPA VIEW SWITCHER SYSTEM
-// ==========================================
 window.switchView = (viewName) => {
   window.currentActiveView = viewName;
-  
   document.querySelectorAll(".app-view").forEach(el => el.classList.add("hidden"));
-  
   document.querySelectorAll("#appSidebar nav button").forEach(btn => {
     btn.classList.remove("bg-brand-500/10", "text-brand-500");
   });
@@ -1684,7 +1651,6 @@ window.switchView = (viewName) => {
   window.scrollTo({ top: 0, behavior: "smooth" });
 };
 
-// Sidebar Handlers
 const appSidebar = document.getElementById("appSidebar");
 const sidebarBackdrop = document.getElementById("sidebarBackdrop");
 const btnOpenSidebar = document.getElementById("btnOpenSidebar");
@@ -1706,10 +1672,6 @@ if (btnOpenSidebar) btnOpenSidebar.onclick = window.openSidebar;
 if (btnCloseSidebar) btnCloseSidebar.onclick = window.closeSidebar;
 if (sidebarBackdrop) sidebarBackdrop.onclick = window.closeSidebar;
 
-// ==========================================
-// INITIAL BOOTSTRAP
-// =name
-// ==========================================
 applyTheme(currentTheme);
 
 if (token) {
