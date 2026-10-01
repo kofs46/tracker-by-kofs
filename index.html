@@ -324,7 +324,6 @@
           </div>
         </div>
 
-        <!-- Charts Grid -->
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6">
           <div class="bg-white dark:bg-darkbg-card p-4 sm:p-6 rounded-2xl sm:rounded-3xl border border-slate-200/80 dark:border-darkbg-border shadow-sm">
             <div class="flex items-center justify-between mb-3">
@@ -427,7 +426,7 @@
         </div>
       </div>
 
-      <!-- VIEW 5: TRANSACTION HISTORY WITH BALANCE IMPACT CALCULATION -->
+      <!-- VIEW 5: TRANSACTION HISTORY -->
       <div id="viewTransactions" class="app-view hidden space-y-5 print-section">
         <div class="flex flex-col md:flex-row justify-between md:items-center gap-3 pb-3 border-b border-slate-200 dark:border-darkbg-border">
           <div>
@@ -584,6 +583,28 @@
           </table>
         </div>
       </div>
+    </div>
+  </div>
+
+  <!-- MODAL: EDIT LENT RECORD -->
+  <div id="modalEditLoan" class="modal-backdrop hidden fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-md p-4">
+    <div class="bg-white dark:bg-darkbg-card border border-slate-200 dark:border-darkbg-border rounded-3xl p-6 sm:p-7 w-full max-w-md shadow-2xl">
+      <div class="flex justify-between items-center mb-5 pb-3 border-b border-slate-100 dark:border-darkbg-border">
+        <h3 class="text-lg font-black text-slate-900 dark:text-white">Edit Lent Record</h3>
+        <button class="modal-close w-8 h-8 rounded-full bg-slate-100 dark:bg-darkbg-elevated text-slate-400 hover:text-slate-200 flex items-center justify-center font-bold">&times;</button>
+      </div>
+      <form id="formEditLoan" class="space-y-4">
+        <input type="hidden" id="editLoanId" />
+        <div>
+          <label class="block text-xs font-bold text-slate-600 dark:text-slate-300 mb-1">Borrower's Name</label>
+          <input type="text" id="editLoanFriendName" class="w-full bg-slate-50 dark:bg-darkbg-elevated border border-slate-200 dark:border-darkbg-border rounded-xl p-3 text-sm font-medium text-slate-800 dark:text-white" required />
+        </div>
+        <div>
+          <label class="block text-xs font-bold text-slate-600 dark:text-slate-300 mb-1">Phone Number (Unique ID)</label>
+          <input type="text" id="editLoanFriendPhone" class="w-full bg-slate-50 dark:bg-darkbg-elevated border border-slate-200 dark:border-darkbg-border rounded-xl p-3 text-sm font-bold text-brand-500" required />
+        </div>
+        <button type="submit" class="w-full bg-brand-500 hover:bg-brand-400 text-slate-950 font-black py-3 rounded-xl text-sm transition shadow-lg shadow-brand-500/25 active:scale-95">Update Borrower Info</button>
+      </form>
     </div>
   </div>
 
@@ -933,7 +954,7 @@
     </div>
   </div>
 
-  <!-- MODAL: ADD / EDIT PROJECT (With Direct Bank Funding Option) -->
+  <!-- MODAL: ADD / EDIT PROJECT -->
   <div id="modalProject" class="modal-backdrop hidden fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-md p-4">
     <div class="bg-white dark:bg-darkbg-card border border-slate-200 dark:border-darkbg-border rounded-3xl p-6 sm:p-7 w-full max-w-md shadow-2xl">
       <div class="flex justify-between items-center mb-5 pb-3 border-b border-slate-100 dark:border-darkbg-border">

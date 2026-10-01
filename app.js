@@ -282,7 +282,6 @@ function updateUserDisplay() {
 
   if (displayUserNameEl) displayUserNameEl.textContent = currentUser.name;
 
-  // Print Statement Details
   const printUserName = document.getElementById("printUserName");
   if (printUserName) printUserName.textContent = currentUser.name || "N/A";
 
@@ -478,7 +477,7 @@ async function syncToMongoDB() {
 }
 
 // ==========================================
-// CHARTS & STATS (Daily Breakdown Support)
+// CHARTS & STATS
 // ==========================================
 let projectChartInstance = null;
 let trendChartInstance = null;
@@ -488,7 +487,6 @@ function renderCharts() {
   const textColor = isDark ? "#94a3b8" : "#64748b";
   const gridColor = isDark ? "rgba(255,255,255,0.05)" : "rgba(0,0,0,0.05)";
 
-  // 1. Doughnut Chart: Project Expenses
   const projExpenseMap = {};
   appData.transactions.filter(t => t.type === "EXPENSE").forEach(t => {
     const proj = appData.projects.find(p => p.id === t.projectId);
@@ -530,7 +528,6 @@ function renderCharts() {
     }
   }
 
-  // 2. Trend Bar Chart: 6-Months Overview OR Specific Month Day-by-Day Breakdown
   let chartLabels = [];
   let incomeData = [];
   let expenseData = [];
@@ -630,7 +627,6 @@ function render() {
   if (totalProjectInflowEl) totalProjectInflowEl.textContent = formatBDT(projIn);
   if (totalProjectExpenseEl) totalProjectExpenseEl.textContent = formatBDT(projOut);
 
-  // Print Statement Figures
   const totalTxExpense = appData.transactions
     .filter(t => t.type === "EXPENSE")
     .reduce((sum, t) => sum + (Number(t.amount) || 0), 0);
@@ -672,7 +668,6 @@ function updateDropdowns() {
   const settleDepositAccount = document.getElementById("settleDepositAccount");
   if (settleDepositAccount) settleDepositAccount.innerHTML = accOpts;
 
-  // Project Direct Funding Dropdown
   const projFundAccount = document.getElementById("projFundAccount");
   if (projFundAccount) {
     projFundAccount.innerHTML = `<option value="NONE">None (Just an estimate ceiling, do not deduct bank)</option>` + accOpts;
@@ -688,7 +683,6 @@ function updateDropdowns() {
   if (txProject) txProject.innerHTML = projOpts;
   if (filterProjectEl) filterProjectEl.innerHTML = `<option value="ALL">All Projects</option>` + appData.projects.map(p => `<option value="${p.id}">${p.name}</option>`).join("");
 
-  // Populate Cash Flow Months Dropdown (with daily breakdown options)
   const trendTimeframeSelect = document.getElementById("trendTimeframeSelect");
   if (trendTimeframeSelect) {
     const currentMonthKey = new Date().toISOString().slice(0, 7);
@@ -978,7 +972,6 @@ function refreshProjectDetails(projectId) {
   netEl.textContent = `${pNet >= 0 ? '+' : ''}${formatBDT(pNet)}`;
   netEl.className = `text-lg font-black mt-1 ${pNet >= 0 ? 'text-emerald-500' : 'text-rose-500'}`;
 
-  // Direct Inflow to Project from Bank
   const btnAddInflow = document.getElementById("pDetailBtnAddInflow");
   if (btnAddInflow) {
     btnAddInflow.onclick = () => {
@@ -991,7 +984,6 @@ function refreshProjectDetails(projectId) {
     };
   }
 
-  // Direct Expense from Bank for Project
   const btnAddTx = document.getElementById("pDetailBtnAddTx");
   if (btnAddTx) {
     btnAddTx.onclick = () => {
@@ -1040,7 +1032,6 @@ function refreshProjectDetails(projectId) {
   }).join("");
 }
 
-// Project Form with Immediate Bank Balance Deduction
 const formProject = document.getElementById("formProject");
 if (formProject) {
   formProject.onsubmit = async (e) => {
@@ -1257,8 +1248,11 @@ function renderLoans() {
           </span>
         </td>
         <td class="p-3.5 pr-4 text-right space-x-1.5">
-          <button onclick="window.viewLentPersonHistory('${l.phone || ''}', '${l.friendName}')" class="text-xs bg-slate-100 dark:bg-darkbg-elevated hover:text-brand-500 text-slate-700 dark:text-slate-300 font-bold px-2.5 py-1.5 rounded-xl border border-slate-200 dark:border-darkbg-border transition" title="View History with this person">
+          <button onclick="window.viewLentPersonHistory('${l.phone || ''}', '${l.friendName}')" class="text-xs bg-slate-100 dark:bg-darkbg-elevated hover:text-brand-500 text-slate-700 dark:text-slate-300 font-bold px-2.5 py-1.5 rounded-xl border border-slate-200 dark:border-darkbg-border transition" title="View History">
             <i class="fa-solid fa-clock-rotate-left"></i> History
+          </button>
+          <button onclick="window.openEditLoan('${l.id}')" class="text-xs bg-slate-100 dark:bg-darkbg-elevated hover:text-brand-500 text-slate-700 dark:text-slate-300 font-bold px-2 py-1.5 rounded-xl border border-slate-200 dark:border-darkbg-border transition" title="Edit Name/Phone">
+            <i class="fa-regular fa-pen-to-square"></i>
           </button>
           ${!isRepaid ? `
             <button onclick="window.openLoanSettle('${l.id}')" class="text-xs bg-gradient-to-r from-emerald-500 to-teal-500 text-slate-950 font-black px-3 py-1.5 rounded-xl transition shadow-md shadow-emerald-500/20">
@@ -1313,6 +1307,35 @@ window.viewLentPersonHistory = (phone, name) => {
 
   openModal(modalLentHistory);
 };
+
+window.openEditLoan = (loanId) => {
+  const loan = appData.loans.find(l => l.id === loanId);
+  if (!loan) return;
+  document.getElementById("editLoanId").value = loan.id;
+  document.getElementById("editLoanFriendName").value = loan.friendName;
+  document.getElementById("editLoanFriendPhone").value = loan.phone || "";
+  openModal(document.getElementById("modalEditLoan"));
+};
+
+const formEditLoan = document.getElementById("formEditLoan");
+if (formEditLoan) {
+  formEditLoan.onsubmit = async (e) => {
+    e.preventDefault();
+    const loanId = document.getElementById("editLoanId").value;
+    const newName = document.getElementById("editLoanFriendName").value.trim();
+    const newPhone = document.getElementById("editLoanFriendPhone").value.trim();
+
+    const loan = appData.loans.find(l => l.id === loanId);
+    if (!loan) return;
+
+    loan.friendName = newName;
+    loan.phone = newPhone;
+
+    await syncToMongoDB();
+    showToast("Borrower details updated successfully!");
+    document.getElementById("modalEditLoan").classList.add("hidden");
+  };
+}
 
 window.openLoanSettle = (loanId) => {
   const loan = appData.loans.find(l => l.id === loanId);
@@ -1501,7 +1524,6 @@ function renderTransactions() {
           ${isIncome ? '+' : '-'}${formatBDT(t.amount)}
         </td>
         
-        <!-- Balance Flow Calculation (Prev ± Amount = Result) -->
         <td class="p-3.5 font-mono text-right text-xs">
           ${hasFlow ? `
             <div class="inline-flex flex-col items-end leading-tight space-y-0.5">
@@ -1686,6 +1708,7 @@ if (sidebarBackdrop) sidebarBackdrop.onclick = window.closeSidebar;
 
 // ==========================================
 // INITIAL BOOTSTRAP
+// =name
 // ==========================================
 applyTheme(currentTheme);
 
