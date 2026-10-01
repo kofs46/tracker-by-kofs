@@ -801,7 +801,9 @@ if (formAddFunds) {
     if (!target) return alert("Target account not found");
     if (amount <= 0) return alert("Enter a valid deposit amount");
 
-    target.balance = Number(target.balance) + amount;
+    const prevBalance = Number(target.balance);
+    const newBalance = prevBalance + amount;
+    target.balance = newBalance;
 
     appData.transactions.unshift({
       id: "tx_" + Date.now(),
@@ -809,6 +811,8 @@ if (formAddFunds) {
       accountId: accId,
       projectId: "NONE",
       amount,
+      prevBalance,
+      newBalance,
       note: `Deposit: ${note}`,
       date
     });
@@ -1059,17 +1063,21 @@ if (formProject) {
       const newProjectId = "proj_" + Date.now();
       appData.projects.push({ id: newProjectId, name, budget, notes });
 
-      // If user chose to fund budget directly from a Bank/Wallet
       if (fundAccountId !== "NONE" && budget > 0) {
         const targetAcc = appData.accounts.find(a => a.id === fundAccountId);
         if (targetAcc) {
-          targetAcc.balance = Number(targetAcc.balance) - budget;
+          const prevBal = Number(targetAcc.balance);
+          const newBal = prevBal - budget;
+          targetAcc.balance = newBal;
+
           appData.transactions.unshift({
             id: "tx_" + Date.now(),
             type: "EXPENSE",
             accountId: fundAccountId,
             projectId: newProjectId,
             amount: budget,
+            prevBalance: prevBal,
+            newBalance: newBal,
             note: `Initial Budget Funded: ${name}`,
             date: new Date().toISOString().split("T")[0]
           });
@@ -1107,7 +1115,7 @@ window.editProject = (id) => {
   document.getElementById("projNotes").value = proj.notes || "";
   document.getElementById("projectModalTitle").textContent = "Edit Project";
   const fundGroup = document.getElementById("projFundingAccountGroup");
-  if (fundGroup) fundGroup.classList.add("hidden"); // Do not double deduct on edit
+  if (fundGroup) fundGroup.classList.add("hidden");
   openModal(modalProject);
 };
 
@@ -1136,13 +1144,18 @@ if (formTransfer) {
 
     if (toVal === "EXTERNAL") {
       const extName = document.getElementById("transferExternalName").value.trim();
-      fromAcc.balance = Number(fromAcc.balance) - amount;
+      const fromPrev = Number(fromAcc.balance);
+      const fromNew = fromPrev - amount;
+      fromAcc.balance = fromNew;
+
       appData.transactions.unshift({
         id: "tx_" + Date.now(),
         type: "EXPENSE",
         accountId: fromId,
         projectId: "NONE",
         amount,
+        prevBalance: fromPrev,
+        newBalance: fromNew,
         note: `Transfer to: ${extName}`,
         date
       });
@@ -1152,8 +1165,13 @@ if (formTransfer) {
       const toAcc = appData.accounts.find(a => a.id === toVal);
       if (!toAcc) return;
 
-      fromAcc.balance = Number(fromAcc.balance) - amount;
-      toAcc.balance = Number(toAcc.balance) + amount;
+      const fromPrev = Number(fromAcc.balance);
+      const fromNew = fromPrev - amount;
+      fromAcc.balance = fromNew;
+
+      const toPrev = Number(toAcc.balance);
+      const toNew = toPrev + amount;
+      toAcc.balance = toNew;
 
       appData.transactions.unshift({
         id: "tx_" + Date.now(),
@@ -1161,6 +1179,8 @@ if (formTransfer) {
         accountId: fromId,
         projectId: "NONE",
         amount,
+        prevBalance: fromPrev,
+        newBalance: fromNew,
         note: `Transfer to ${toAcc.name}`,
         date
       });
@@ -1170,6 +1190,8 @@ if (formTransfer) {
         accountId: toVal,
         projectId: "NONE",
         amount,
+        prevBalance: toPrev,
+        newBalance: toNew,
         note: `Transfer from ${fromAcc.name}`,
         date
       });
@@ -1353,7 +1375,9 @@ if (formLoanSettle) {
       }
     }
 
-    targetAcc.balance = Number(targetAcc.balance) + receivedAmount;
+    const prevBal = Number(targetAcc.balance);
+    const newBal = prevBal + receivedAmount;
+    targetAcc.balance = newBal;
 
     const newDue = remainingDue - receivedAmount;
     loan.remainingAmount = newDue;
@@ -1370,6 +1394,8 @@ if (formLoanSettle) {
       accountId: depositAccId,
       projectId: "NONE",
       amount: receivedAmount,
+      prevBalance: prevBal,
+      newBalance: newBal,
       note: `Debt received from ${loan.friendName} (${settleType === 'PARTIAL' ? 'Partial' : 'Full'})`,
       date
     });
@@ -1393,7 +1419,10 @@ if (formLoan) {
     const targetAccount = appData.accounts.find(a => a.id === accountId);
     if (!targetAccount) return alert("Select source account");
 
-    targetAccount.balance = Number(targetAccount.balance) - amount;
+    const prevBal = Number(targetAccount.balance);
+    const newBal = prevBal - amount;
+    targetAccount.balance = newBal;
+
     appData.loans.unshift({ 
       id: "loan_" + Date.now(), 
       friendName, 
@@ -1403,6 +1432,18 @@ if (formLoan) {
       accountId, 
       date, 
       status: "PENDING" 
+    });
+
+    appData.transactions.unshift({
+      id: "tx_" + Date.now(),
+      type: "EXPENSE",
+      accountId,
+      projectId: "NONE",
+      amount,
+      prevBalance: prevBal,
+      newBalance: newBal,
+      note: `Lent to: ${friendName} (${phone})`,
+      date
     });
 
     await syncToMongoDB();
@@ -1420,7 +1461,7 @@ window.deleteLoan = async (id) => {
 };
 
 // ==========================================
-// TRANSACTIONS
+// TRANSACTIONS & BALANCE IMPACT DISPLAY
 // ==========================================
 function renderTransactions() {
   if (!txTableBodyEl) return;
@@ -1436,7 +1477,7 @@ function renderTransactions() {
   });
 
   if (filtered.length === 0) {
-    txTableBodyEl.innerHTML = `<tr><td colspan="7" class="p-6 text-center text-slate-400 text-xs">No transactions found.</td></tr>`;
+    txTableBodyEl.innerHTML = `<tr><td colspan="8" class="p-6 text-center text-slate-400 text-xs">No transactions found.</td></tr>`;
     return;
   }
 
@@ -1444,6 +1485,7 @@ function renderTransactions() {
     const isIncome = t.type === "INCOME";
     const acc = appData.accounts.find(a => a.id === t.accountId);
     const proj = appData.projects.find(p => p.id === t.projectId);
+    const hasFlow = t.prevBalance !== undefined && t.newBalance !== undefined;
 
     return `
       <tr class="hover:bg-slate-50 dark:hover:bg-darkbg-elevated/50 transition border-b border-slate-100 dark:border-darkbg-border">
@@ -1458,6 +1500,24 @@ function renderTransactions() {
         <td class="p-3.5 font-black text-right ${isIncome ? 'text-emerald-500' : 'text-rose-500'}">
           ${isIncome ? '+' : '-'}${formatBDT(t.amount)}
         </td>
+        
+        <!-- Balance Flow Calculation (Prev ± Amount = Result) -->
+        <td class="p-3.5 font-mono text-right text-xs">
+          ${hasFlow ? `
+            <div class="inline-flex flex-col items-end leading-tight space-y-0.5">
+              <span class="text-slate-400 text-[10px]">Prev: ${formatBDT(t.prevBalance)}</span>
+              <span class="${isIncome ? 'text-emerald-500 font-bold' : 'text-rose-500 font-bold'} text-[11px]">
+                ${isIncome ? '+' : '-'}${formatBDT(t.amount)}
+              </span>
+              <span class="font-black text-slate-900 dark:text-white text-xs border-t border-slate-200 dark:border-darkbg-border pt-0.5">
+                = ${formatBDT(t.newBalance)}
+              </span>
+            </div>
+          ` : `
+            <span class="text-slate-400 text-xs">—</span>
+          `}
+        </td>
+
         <td class="p-3.5 text-xs text-slate-400">${t.date}</td>
         <td class="p-3.5 pr-4 text-right space-x-1 no-print">
           <button onclick="window.editTransaction('${t.id}')" class="text-slate-400 hover:text-brand-400 text-xs p-1" title="Edit">
@@ -1491,6 +1551,9 @@ if (formTx) {
     const targetAccount = appData.accounts.find(a => a.id === accountId);
     if (!targetAccount) return alert("Select an account");
 
+    const prevBal = Number(targetAccount.balance);
+    const newBal = type === "INCOME" ? prevBal + amount : prevBal - amount;
+
     if (editId) {
       const oldTx = appData.transactions.find(t => t.id === editId);
       if (oldTx) {
@@ -1502,14 +1565,26 @@ if (formTx) {
         oldTx.accountId = accountId;
         oldTx.projectId = projectId;
         oldTx.amount = amount;
+        oldTx.prevBalance = prevBal;
+        oldTx.newBalance = newBal;
         oldTx.note = note;
         oldTx.date = date;
       }
     } else {
-      appData.transactions.unshift({ id: "tx_" + Date.now(), type, accountId, projectId, amount, note, date });
+      appData.transactions.unshift({
+        id: "tx_" + Date.now(),
+        type,
+        accountId,
+        projectId,
+        amount,
+        prevBalance: prevBal,
+        newBalance: newBal,
+        note,
+        date
+      });
     }
 
-    targetAccount.balance = type === "INCOME" ? Number(targetAccount.balance) + amount : Number(targetAccount.balance) - amount;
+    targetAccount.balance = newBal;
 
     await syncToMongoDB();
     showToast(editId ? "Transaction updated!" : "Transaction saved!");
