@@ -1307,3 +1307,68 @@ window.closeSidebar = () => {
 if (btnOpenSidebar) btnOpenSidebar.onclick = window.openSidebar;
 if (btnCloseSidebar) btnCloseSidebar.onclick = window.closeSidebar;
 if (sidebarBackdrop) sidebarBackdrop.onclick = window.closeSidebar;
+
+// ==========================================
+// SPA VIEW SWITCHER SYSTEM
+// ==========================================
+window.currentActiveView = "overview";
+
+window.switchView = (viewName) => {
+  window.currentActiveView = viewName;
+  
+  // Hide all views
+  document.querySelectorAll(".app-view").forEach(el => el.classList.add("hidden"));
+  
+  // Reset active classes on sidebar links
+  document.querySelectorAll("#appSidebar nav button").forEach(btn => {
+    btn.classList.remove("bg-brand-500/10", "text-brand-500");
+  });
+
+  // Show target view
+  const targetMap = {
+    overview: "viewOverview",
+    accounts: "viewAccounts",
+    projects: "viewProjects",
+    loans: "viewLoans",
+    transactions: "viewTransactions"
+  };
+
+  const targetId = targetMap[viewName] || "viewOverview";
+  const targetEl = document.getElementById(targetId);
+  if (targetEl) targetEl.classList.remove("hidden");
+
+  // Highlight active link in sidebar
+  const activeBtn = document.getElementById(`nav-${viewName}`);
+  if (activeBtn) activeBtn.classList.add("bg-brand-500/10", "text-brand-500");
+
+  // Re-render chart if overview is activated
+  if (viewName === "overview") {
+    setTimeout(renderCharts, 50);
+  }
+
+  // Auto close sidebar if open
+  window.closeSidebar();
+  window.scrollTo({ top: 0, behavior: "smooth" });
+};
+
+// Sidebar Handlers
+const appSidebar = document.getElementById("appSidebar");
+const sidebarBackdrop = document.getElementById("sidebarBackdrop");
+const btnOpenSidebar = document.getElementById("btnOpenSidebar");
+const btnCloseSidebar = document.getElementById("btnCloseSidebar");
+
+window.openSidebar = () => {
+  if (!appSidebar || !sidebarBackdrop) return;
+  sidebarBackdrop.classList.remove("hidden");
+  setTimeout(() => appSidebar.classList.remove("-translate-x-full"), 10);
+};
+
+window.closeSidebar = () => {
+  if (!appSidebar || !sidebarBackdrop) return;
+  appSidebar.classList.add("-translate-x-full");
+  setTimeout(() => sidebarBackdrop.classList.add("hidden"), 300);
+};
+
+if (btnOpenSidebar) btnOpenSidebar.onclick = window.openSidebar;
+if (btnCloseSidebar) btnCloseSidebar.onclick = window.closeSidebar;
+if (sidebarBackdrop) sidebarBackdrop.onclick = window.closeSidebar;
