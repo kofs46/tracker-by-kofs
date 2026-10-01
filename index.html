@@ -1,453 +1,529 @@
 <!DOCTYPE html>
-<html lang="bn">
+<html lang="en" class="dark">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>tracker by kofs • Financial Operating System</title>
+  <title>KofsLedger • Smart Financial & Project OS</title>
   <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              50: '#ecfeff',
+              100: '#cffafe',
+              300: '#67e8f9',
+              400: '#22d3ee',
+              500: '#06b6d4',
+              600: '#00d2ff',
+              700: '#0e7490',
+              900: '#164e63',
+            },
+            darkbg: {
+              DEFAULT: '#0b0f19',
+              card: '#111827',
+              border: '#1f293d',
+              elevated: '#1a2333'
+            }
+          }
+        }
+      }
+    }
+  </script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <link rel="stylesheet" href="style.css" />
 </head>
-<body class="bg-[#f8fafc] text-slate-800 min-h-screen selection:bg-indigo-500 selection:text-white pb-24 sm:pb-12">
+<body class="bg-slate-50 dark:bg-darkbg text-slate-800 dark:text-slate-100 min-h-screen selection:bg-brand-500 selection:text-slate-900 transition-colors duration-200">
 
-  <!-- Printable Header -->
-  <div class="print-only hidden p-8 border-b border-slate-300">
-    <div class="flex justify-between items-center">
-      <div>
-        <h1 class="text-3xl font-black tracking-tight text-slate-900">tracker by kofs</h1>
-        <p class="text-xs font-semibold text-slate-500 uppercase tracking-widest mt-1">Official Financial Statement</p>
+  <!-- ============================================== -->
+  <!-- STRICT FULL-SCREEN AUTHENTICATION WALL GATE   -->
+  <!-- ============================================== -->
+  <div id="authGatekeeper" class="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/95 dark:bg-[#060911]/98 backdrop-blur-2xl p-4 overflow-y-auto">
+    <div class="bg-white dark:bg-darkbg-card border border-slate-200 dark:border-darkbg-border rounded-3xl p-6 sm:p-9 w-full max-w-md shadow-2xl shadow-cyan-500/10 transition-all">
+      
+      <!-- Brand Logo -->
+      <div class="text-center mb-6">
+        <div class="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-tr from-slate-900 via-slate-800 to-slate-950 border border-brand-500/40 shadow-xl shadow-brand-500/20 mb-3 group">
+          <svg class="w-10 h-10 text-brand-400 group-hover:scale-105 transition-transform" viewBox="0 0 200 200" fill="currentColor">
+            <path d="M40 30 L85 30 L85 170 L40 170 Z" fill="#1e293b"/>
+            <path d="M75 105 L145 35 L175 35 L105 105 Z" fill="#00d2ff"/>
+            <path d="M95 100 L170 175 L135 175 L65 105 Z" fill="#0284c7"/>
+          </svg>
+        </div>
+        <h2 class="text-2xl font-black tracking-tight text-slate-900 dark:text-white flex items-center justify-center gap-1.5">
+          <span>KOFS</span><span class="text-brand-500 dark:text-brand-400">Ledger</span>
+        </h2>
+        <p class="text-xs text-slate-400 mt-1" id="authSubTitle">Secure Financial & Project Operating System</p>
       </div>
-      <div class="text-right text-xs space-y-1">
-        <p><strong>Account Holder:</strong> <span id="printUserName">User</span></p>
-        <p><strong>Generated Date:</strong> <span id="printDate"></span></p>
+
+      <!-- Mode Selector -->
+      <div class="flex bg-slate-100 dark:bg-darkbg-elevated p-1 rounded-xl mb-5">
+        <button id="tabRegister" class="flex-1 py-2 text-xs font-bold rounded-lg transition text-slate-500 dark:text-slate-400">Create Account</button>
+        <button id="tabLogin" class="flex-1 py-2 text-xs font-bold rounded-lg transition bg-white dark:bg-brand-500 dark:text-slate-950 text-brand-600 shadow-sm">Login</button>
       </div>
+
+      <!-- Form -->
+      <form id="formAuth" class="space-y-4">
+        <div id="authNameGroup" class="hidden">
+          <label class="block text-xs font-bold text-slate-600 dark:text-slate-300 mb-1" data-i18n="your_name">Full Name</label>
+          <input type="text" id="authName" class="w-full bg-slate-50 dark:bg-darkbg-elevated border border-slate-200 dark:border-darkbg-border rounded-xl p-3 text-sm font-medium focus:ring-2 focus:ring-brand-500 text-slate-800 dark:text-white" placeholder="e.g. Omr Fy" />
+        </div>
+        <div>
+          <label class="block text-xs font-bold text-slate-600 dark:text-slate-300 mb-1" data-i18n="email_addr">Email Address</label>
+          <input type="email" id="authEmail" class="w-full bg-slate-50 dark:bg-darkbg-elevated border border-slate-200 dark:border-darkbg-border rounded-xl p-3 text-sm font-medium focus:ring-2 focus:ring-brand-500 text-slate-800 dark:text-white" placeholder="name@example.com" required />
+        </div>
+        <div>
+          <div class="flex justify-between items-center mb-1">
+            <label class="block text-xs font-bold text-slate-600 dark:text-slate-300" data-i18n="password">Password</label>
+            <button type="button" id="btnForgotPassTrigger" class="text-[11px] font-bold text-brand-500 hover:text-brand-400 transition" data-i18n="forgot_pass">Forgot Password?</button>
+          </div>
+          <div class="relative">
+            <input type="password" id="authPassword" class="w-full bg-slate-50 dark:bg-darkbg-elevated border border-slate-200 dark:border-darkbg-border rounded-xl p-3 pr-10 text-sm font-medium focus:ring-2 focus:ring-brand-500 text-slate-800 dark:text-white" placeholder="••••••••" required />
+            <button type="button" onclick="window.togglePasswordVisibility('authPassword', 'eyeAuthPass')" class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-200 text-sm p-1">
+              <i id="eyeAuthPass" class="fa-regular fa-eye"></i>
+            </button>
+          </div>
+        </div>
+
+        <button type="submit" id="btnAuthSubmit" class="w-full bg-gradient-to-r from-brand-500 to-cyan-400 hover:from-brand-600 hover:to-cyan-500 text-slate-950 font-black py-3 rounded-xl text-sm transition shadow-lg shadow-brand-500/25 active:scale-95 flex items-center justify-center gap-2">
+          <span>Login</span>
+        </button>
+      </form>
     </div>
   </div>
 
-  <!-- App Header -->
-  <header class="no-print bg-white/80 backdrop-blur-xl border-b border-slate-200/80 sticky top-0 z-40 px-4 md:px-8 py-3 transition-all">
-    <div class="max-w-7xl mx-auto flex justify-between items-center">
-      <div class="flex items-center space-x-3">
-        <div class="w-10 h-10 rounded-2xl bg-gradient-to-tr from-indigo-600 via-indigo-500 to-violet-500 flex items-center justify-center font-bold text-white shadow-lg shadow-indigo-500/25 ring-4 ring-indigo-50">
-          <i class="fa-solid fa-shapes text-base"></i>
-        </div>
+  <!-- ============================================== -->
+  <!-- MAIN APP CONTAINER (LOCKED UNTIL AUTHENTICATED)-->
+  <!-- ============================================== -->
+  <div id="appContainer" class="hidden">
+    
+    <!-- Printable Header (Only for Transaction history prints) -->
+    <div class="print-only hidden p-8 border-b border-slate-300">
+      <div class="flex justify-between items-center">
         <div>
-          <div class="flex items-center gap-2">
-            <h1 class="font-extrabold text-lg sm:text-xl tracking-tight text-slate-900 leading-tight">tracker by kofs</h1>
-            <span class="hidden sm:inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold bg-indigo-50 text-indigo-700 border border-indigo-200/60">Cloud v2.0</span>
-          </div>
-          <p class="text-[11px] text-slate-400 font-medium hidden sm:block">Multi-Account Ledger • Project Costing • Debt Management</p>
+          <h1 class="text-3xl font-black tracking-tight text-slate-900">KOFS<span class="text-cyan-600">Ledger</span></h1>
+          <p class="text-xs font-bold text-slate-500 uppercase tracking-widest mt-0.5">Transaction Statement Ledger</p>
         </div>
-      </div>
-
-      <div class="flex items-center space-x-2 sm:space-x-3">
-        <!-- Profile Pill (Click to open profile settings) -->
-        <button id="btnOpenProfileModal" class="flex items-center gap-2 bg-slate-100/80 hover:bg-indigo-50 border border-slate-200 hover:border-indigo-200 px-3 py-1.5 rounded-full text-xs font-bold transition group" title="Click to view & edit profile">
-          <div class="w-5 h-5 rounded-full bg-indigo-600 group-hover:bg-indigo-700 text-white flex items-center justify-center text-[10px] transition">
-            <i class="fa-solid fa-user"></i>
-          </div>
-          <span id="displayUserName" class="text-slate-700 max-w-[90px] truncate">User</span>
-          <i class="fa-solid fa-gear text-slate-400 group-hover:text-indigo-600 text-[10px]"></i>
-        </button>
-
-        <button id="btnLogout" class="text-slate-400 hover:text-rose-600 p-2 rounded-xl hover:bg-rose-50 transition text-xs" title="Logout">
-          <i class="fa-solid fa-power-off text-sm"></i>
-        </button>
-
-        <button onclick="window.print()" class="hidden md:flex items-center gap-2 bg-white hover:bg-slate-50 text-slate-700 px-3.5 py-2 rounded-xl text-xs font-bold border border-slate-200 shadow-sm transition">
-          <i class="fa-solid fa-print text-slate-400"></i> Print
-        </button>
-
-        <button id="btnOpenTransferModal" class="hidden sm:flex items-center gap-2 bg-white hover:bg-slate-50 text-slate-700 px-3.5 py-2 rounded-xl text-xs font-bold border border-slate-200 shadow-sm transition">
-          <i class="fa-solid fa-arrow-right-arrow-left text-indigo-600"></i> Transfer
-        </button>
-
-        <button id="btnOpenTxModal" class="bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-700 hover:to-violet-700 text-white px-4 py-2 rounded-xl text-xs sm:text-sm font-bold transition shadow-lg shadow-indigo-600/25 flex items-center gap-2 active:scale-95">
-          <i class="fa-solid fa-plus text-xs"></i> Add Transaction
-        </button>
-      </div>
-    </div>
-  </header>
-
-  <!-- Main Content -->
-  <main class="max-w-7xl mx-auto p-4 md:p-6 lg:p-8 space-y-8">
-
-    <!-- KPI Summary Grid -->
-    <div class="no-print grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5">
-      <div class="group relative overflow-hidden bg-white p-6 rounded-3xl border border-slate-200/80 shadow-sm hover:shadow-xl hover:shadow-indigo-500/5 transition-all duration-300">
-        <div class="flex justify-between items-start">
-          <span class="text-xs font-bold uppercase tracking-wider text-slate-400">Total Net Worth</span>
-          <div class="w-10 h-10 rounded-2xl bg-indigo-50 flex items-center justify-center text-indigo-600 group-hover:scale-110 transition-transform">
-            <i class="fa-solid fa-vault"></i>
-          </div>
-        </div>
-        <h2 id="totalNetWorth" class="text-2xl sm:text-3xl font-black mt-3 text-slate-900 tracking-tight">৳0.00</h2>
-        <div class="flex items-center gap-1.5 mt-2 text-xs font-medium text-slate-400">
-          <i class="fa-solid fa-shield-halved text-indigo-500"></i>
-          <span id="accountCountLabel">Across all accounts</span>
-        </div>
-      </div>
-
-      <div class="group relative overflow-hidden bg-white p-6 rounded-3xl border border-slate-200/80 shadow-sm hover:shadow-xl hover:shadow-emerald-500/5 transition-all duration-300">
-        <div class="flex justify-between items-start">
-          <span class="text-xs font-bold uppercase tracking-wider text-slate-400">Project Inflow</span>
-          <div class="w-10 h-10 rounded-2xl bg-emerald-50 flex items-center justify-center text-emerald-600 group-hover:scale-110 transition-transform">
-            <i class="fa-solid fa-circle-arrow-up"></i>
-          </div>
-        </div>
-        <h2 id="totalProjectInflow" class="text-2xl sm:text-3xl font-black mt-3 text-emerald-600 tracking-tight">৳0.00</h2>
-        <div class="flex items-center gap-1.5 mt-2 text-xs font-medium text-emerald-600/80">
-          <i class="fa-solid fa-arrow-up-right-dots"></i>
-          <span>Total revenue & funding</span>
-        </div>
-      </div>
-
-      <div class="group relative overflow-hidden bg-white p-6 rounded-3xl border border-slate-200/80 shadow-sm hover:shadow-xl hover:shadow-rose-500/5 transition-all duration-300">
-        <div class="flex justify-between items-start">
-          <span class="text-xs font-bold uppercase tracking-wider text-slate-400">Project Cost</span>
-          <div class="w-10 h-10 rounded-2xl bg-rose-50 flex items-center justify-center text-rose-600 group-hover:scale-110 transition-transform">
-            <i class="fa-solid fa-circle-arrow-down"></i>
-          </div>
-        </div>
-        <h2 id="totalProjectExpense" class="text-2xl sm:text-3xl font-black mt-3 text-rose-600 tracking-tight">৳0.00</h2>
-        <div class="flex items-center gap-1.5 mt-2 text-xs font-medium text-rose-600/80">
-          <i class="fa-solid fa-chart-line-down"></i>
-          <span>Total expenses & budget spent</span>
-        </div>
-      </div>
-
-      <div class="group relative overflow-hidden bg-white p-6 rounded-3xl border border-slate-200/80 shadow-sm hover:shadow-xl hover:shadow-amber-500/5 transition-all duration-300">
-        <div class="flex justify-between items-start">
-          <span class="text-xs font-bold uppercase tracking-wider text-slate-400">Lent to Friends</span>
-          <div class="w-10 h-10 rounded-2xl bg-amber-50 flex items-center justify-center text-amber-600 group-hover:scale-110 transition-transform">
-            <i class="fa-solid fa-hand-holding-dollar"></i>
-          </div>
-        </div>
-        <h2 id="totalLentPending" class="text-2xl sm:text-3xl font-black mt-3 text-amber-600 tracking-tight">৳0.00</h2>
-        <div class="flex items-center gap-1.5 mt-2 text-xs font-medium text-amber-600/80">
-          <i class="fa-regular fa-clock"></i>
-          <span>Pending receivables</span>
+        <div class="text-right text-xs space-y-1">
+          <p><strong>Account Holder:</strong> <span id="printUserName">User</span></p>
+          <p><strong>Date Generated:</strong> <span id="printDate"></span></p>
         </div>
       </div>
     </div>
 
-    <!-- Analytics & Charts Grid -->
-    <div class="no-print grid grid-cols-1 lg:grid-cols-3 gap-6">
-      <div class="bg-white p-6 rounded-3xl border border-slate-200/80 shadow-sm">
-        <div class="flex items-center justify-between mb-4">
-          <h3 class="font-extrabold text-slate-900 text-sm tracking-tight flex items-center gap-2">
-            <i class="fa-solid fa-pie-chart text-indigo-600"></i> Project Cost Breakdown
-          </h3>
-          <span class="text-[11px] text-slate-400 font-semibold">Distribution</span>
-        </div>
-        <div class="relative h-64 flex items-center justify-center">
-          <canvas id="projectChart"></canvas>
-          <div id="noProjectChartMsg" class="hidden text-xs font-medium text-slate-400 text-center">No project expenses recorded yet.</div>
-        </div>
-      </div>
-
-      <div class="bg-white p-6 rounded-3xl border border-slate-200/80 shadow-sm lg:col-span-2">
-        <div class="flex items-center justify-between mb-4">
-          <h3 class="font-extrabold text-slate-900 text-sm tracking-tight flex items-center gap-2">
-            <i class="fa-solid fa-chart-column text-emerald-600"></i> Cash Flow & Burn Rate
-          </h3>
-          <span class="text-[11px] text-slate-400 font-semibold">Last 6 Months</span>
-        </div>
-        <div class="relative h-64">
-          <canvas id="trendChart"></canvas>
-        </div>
-      </div>
-    </div>
-
-    <!-- Accounts Section -->
-    <section class="no-print bg-white p-6 rounded-3xl border border-slate-200/80 shadow-sm space-y-5">
-      <div class="flex flex-col sm:flex-row justify-between sm:items-center gap-2">
-        <div>
-          <h2 class="text-base sm:text-lg font-extrabold text-slate-900 tracking-tight">Accounts & Wallets</h2>
-          <p class="text-xs text-slate-400">bKash, Nagad, Rocket, Bank accounts & Cash balances.</p>
-        </div>
-        <button id="btnOpenAccountModal" class="inline-flex items-center justify-center gap-2 bg-slate-50 hover:bg-slate-100 text-slate-700 px-4 py-2 rounded-xl text-xs font-bold border border-slate-200 transition">
-          <i class="fa-solid fa-plus text-indigo-600"></i> Add Account
-        </button>
-      </div>
-      <div id="accountsGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4"></div>
-    </section>
-
-    <!-- Projects Section -->
-    <section class="no-print bg-white p-6 rounded-3xl border border-slate-200/80 shadow-sm space-y-5">
-      <div class="flex flex-col sm:flex-row justify-between sm:items-center gap-2">
-        <div>
-          <h2 class="text-base sm:text-lg font-extrabold text-slate-900 tracking-tight">Active Projects</h2>
-          <p class="text-xs text-slate-400">Track budgets, debit expenses, credit revenues, and line-item purpose.</p>
-        </div>
-        <button id="btnOpenProjectModal" class="inline-flex items-center justify-center gap-2 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 px-4 py-2 rounded-xl text-xs font-bold border border-indigo-200/60 transition">
-          <i class="fa-solid fa-folder-plus"></i> New Project
-        </button>
-      </div>
-      <div id="projectsGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4"></div>
-    </section>
-
-    <!-- Loans Section -->
-    <section class="no-print bg-white p-6 rounded-3xl border border-slate-200/80 shadow-sm space-y-5">
-      <div class="flex flex-col sm:flex-row justify-between sm:items-center gap-2">
-        <div>
-          <h2 class="text-base sm:text-lg font-extrabold text-slate-900 tracking-tight">Lent to Friends (ধার/লোন)</h2>
-          <p class="text-xs text-slate-400">Track personal debts with real-time partial or full repayment options.</p>
-        </div>
-        <button id="btnOpenLoanModal" class="inline-flex items-center justify-center gap-2 bg-amber-50 hover:bg-amber-100 text-amber-900 px-4 py-2 rounded-xl text-xs font-bold border border-amber-200/80 transition">
-          <i class="fa-solid fa-handshake"></i> Lend Money
-        </button>
-      </div>
-      <div class="overflow-x-auto rounded-2xl border border-slate-100">
-        <table class="w-full text-left text-sm">
-          <thead class="text-[11px] uppercase tracking-wider text-slate-400 bg-slate-50/70 border-b border-slate-100">
-            <tr>
-              <th class="p-3.5 pl-4 font-bold">Friend</th>
-              <th class="p-3.5 font-bold">Remaining Due</th>
-              <th class="p-3.5 font-bold">Total Lent</th>
-              <th class="p-3.5 font-bold">Source Account</th>
-              <th class="p-3.5 font-bold">Date</th>
-              <th class="p-3.5 font-bold">Status</th>
-              <th class="p-3.5 pr-4 text-right font-bold">Actions</th>
-            </tr>
-          </thead>
-          <tbody id="loansTableBody" class="divide-y divide-slate-100 text-slate-700"></tbody>
-        </table>
-      </div>
-    </section>
-
-    <!-- Transactions History Section -->
-    <section class="bg-white p-6 rounded-3xl border border-slate-200/80 shadow-sm space-y-5 print-section">
-      <div class="flex flex-col md:flex-row justify-between md:items-center gap-4">
-        <div>
-          <h2 class="text-base sm:text-lg font-extrabold text-slate-900 tracking-tight">Transaction History</h2>
-          <p class="text-xs text-slate-400">All income credits, debit expenses, and internal transfers.</p>
-        </div>
-        <div class="no-print flex flex-wrap items-center gap-2.5">
-          <div class="relative">
-            <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-xs"></i>
-            <input type="text" id="txSearch" placeholder="Search notes..." class="pl-8 bg-slate-50 border border-slate-200 text-xs rounded-xl px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500 w-36 sm:w-48 font-medium transition" />
+    <!-- App Header -->
+    <header class="no-print bg-white/80 dark:bg-darkbg-card/80 backdrop-blur-xl border-b border-slate-200/80 dark:border-darkbg-border sticky top-0 z-40 px-4 md:px-8 py-3 transition-colors">
+      <div class="max-w-7xl mx-auto flex justify-between items-center">
+        
+        <!-- Brand Logo & Name -->
+        <div class="flex items-center space-x-3">
+          <div class="w-10 h-10 rounded-2xl bg-gradient-to-tr from-slate-900 via-slate-800 to-slate-950 flex items-center justify-center border border-brand-500/30 shadow-md shadow-brand-500/20">
+            <svg class="w-6 h-6 text-brand-400" viewBox="0 0 200 200" fill="currentColor">
+              <path d="M40 30 L85 30 L85 170 L40 170 Z" fill="#94a3b8"/>
+              <path d="M75 105 L145 35 L175 35 L105 105 Z" fill="#00d2ff"/>
+              <path d="M95 100 L170 175 L135 175 L65 105 Z" fill="#0284c7"/>
+            </svg>
           </div>
-          <select id="filterProject" class="bg-slate-50 border border-slate-200 text-xs rounded-xl px-3 py-2 font-medium focus:ring-2 focus:ring-indigo-500"></select>
-          <select id="filterAccount" class="bg-slate-50 border border-slate-200 text-xs rounded-xl px-3 py-2 font-medium focus:ring-2 focus:ring-indigo-500"></select>
-          <button onclick="window.print()" class="bg-slate-900 hover:bg-slate-800 text-white text-xs px-3.5 py-2 rounded-xl font-bold flex items-center gap-2 transition shadow-sm">
-            <i class="fa-solid fa-print"></i> Print
+          <div>
+            <div class="flex items-center gap-1.5">
+              <h1 class="font-black text-lg sm:text-xl tracking-tight text-slate-900 dark:text-white leading-tight">
+                KOFS<span class="text-brand-500 dark:text-brand-400">Ledger</span>
+              </h1>
+              <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[9px] font-black uppercase tracking-wider bg-brand-500/10 text-brand-600 dark:text-brand-400 border border-brand-500/30">PRO</span>
+            </div>
+            <p class="text-[11px] text-slate-400 font-medium hidden sm:block" data-i18n="tagline">Smart Multi-Wallet & Project OS</p>
+          </div>
+        </div>
+
+        <!-- Controls: Language, Theme, Profile, Actions -->
+        <div class="flex items-center space-x-2 sm:space-x-3">
+          
+          <!-- Language Toggle Button -->
+          <button id="btnToggleLang" class="flex items-center gap-1 bg-slate-100 dark:bg-darkbg-elevated hover:bg-slate-200 dark:hover:bg-slate-700/60 text-slate-700 dark:text-slate-300 px-3 py-1.5 rounded-xl text-xs font-bold border border-slate-200 dark:border-darkbg-border transition" title="Change Language">
+            <i class="fa-solid fa-language text-brand-500"></i>
+            <span id="langLabel">বাংলা</span>
+          </button>
+
+          <!-- Theme Toggle (Dark / Light) -->
+          <button id="btnToggleTheme" class="w-9 h-9 rounded-xl bg-slate-100 dark:bg-darkbg-elevated hover:bg-slate-200 dark:hover:bg-slate-700/60 text-slate-700 dark:text-brand-400 flex items-center justify-center text-sm border border-slate-200 dark:border-darkbg-border transition" title="Toggle Theme">
+            <i id="themeIcon" class="fa-solid fa-moon"></i>
+          </button>
+
+          <!-- Profile Badge -->
+          <button id="btnOpenProfileModal" class="flex items-center gap-2 bg-slate-100 dark:bg-darkbg-elevated hover:border-brand-500/50 border border-slate-200 dark:border-darkbg-border px-2.5 py-1 rounded-full text-xs font-bold transition group" title="Account Settings">
+            <div id="headerAvatarContainer" class="w-6 h-6 rounded-full overflow-hidden bg-brand-500 text-slate-950 flex items-center justify-center font-black text-[10px]">
+              <span id="headerAvatarInitial">U</span>
+            </div>
+            <span id="displayUserName" class="text-slate-700 dark:text-slate-200 max-w-[80px] sm:max-w-[110px] truncate">User</span>
+            <i class="fa-solid fa-chevron-down text-slate-400 group-hover:text-brand-400 text-[10px]"></i>
+          </button>
+
+          <!-- Logout Button -->
+          <button id="btnLogout" class="text-slate-400 hover:text-rose-500 p-2 rounded-xl hover:bg-rose-500/10 transition text-xs" title="Logout">
+            <i class="fa-solid fa-power-off text-sm"></i>
+          </button>
+
+          <!-- Add Transaction CTA -->
+          <button id="btnOpenTxModal" class="bg-gradient-to-r from-brand-500 to-cyan-400 hover:from-brand-600 hover:to-cyan-500 text-slate-950 px-3.5 sm:px-4 py-2 rounded-xl text-xs sm:text-sm font-black transition shadow-lg shadow-brand-500/20 flex items-center gap-1.5 active:scale-95">
+            <i class="fa-solid fa-plus text-xs"></i>
+            <span data-i18n="add_tx_btn">Add Tx</span>
           </button>
         </div>
       </div>
-      <div class="overflow-x-auto rounded-2xl border border-slate-100">
-        <table class="w-full text-left text-sm" id="mainPrintTable">
-          <thead class="text-[11px] uppercase tracking-wider text-slate-400 bg-slate-50/70 border-b border-slate-100">
-            <tr>
-              <th class="p-3.5 pl-4 font-bold">Type</th>
-              <th class="p-3.5 font-bold">Description / Purpose</th>
-              <th class="p-3.5 font-bold">Account</th>
-              <th class="p-3.5 font-bold">Project</th>
-              <th class="p-3.5 text-right font-bold">Amount (BDT)</th>
-              <th class="p-3.5 font-bold">Date</th>
-              <th class="p-3.5 pr-4 text-right no-print font-bold">Actions</th>
-            </tr>
-          </thead>
-          <tbody id="txTableBody" class="divide-y divide-slate-100 text-slate-700"></tbody>
-        </table>
-      </div>
-    </section>
-  </main>
+    </header>
 
-  <!-- Mobile Floating Bottom Dock -->
-  <div class="sm:hidden no-print fixed bottom-4 inset-x-4 z-40 bg-slate-900/90 backdrop-blur-xl border border-white/10 rounded-2xl p-2 px-3 shadow-2xl flex items-center justify-around text-white">
-    <button onclick="document.getElementById('btnOpenTxModal').click()" class="flex flex-col items-center text-[10px] font-bold text-indigo-400 hover:text-indigo-300">
-      <div class="w-9 h-9 rounded-xl bg-indigo-600 text-white flex items-center justify-center text-sm shadow-lg shadow-indigo-600/40 mb-1">
-        <i class="fa-solid fa-plus"></i>
+    <!-- Main Content Grid -->
+    <main class="max-w-7xl mx-auto p-4 md:p-6 lg:p-8 space-y-8 pb-20">
+
+      <!-- KPI Summary Cards -->
+      <div class="no-print grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5">
+        
+        <!-- Total Net Worth -->
+        <div class="group bg-white dark:bg-darkbg-card p-6 rounded-3xl border border-slate-200/80 dark:border-darkbg-border shadow-sm hover:border-brand-500/40 transition-all duration-300">
+          <div class="flex justify-between items-start">
+            <span class="text-xs font-bold uppercase tracking-wider text-slate-400" data-i18n="net_worth">Total Net Worth</span>
+            <div class="w-10 h-10 rounded-2xl bg-brand-500/10 text-brand-500 flex items-center justify-center text-base group-hover:scale-110 transition-transform">
+              <i class="fa-solid fa-vault"></i>
+            </div>
+          </div>
+          <h2 id="totalNetWorth" class="text-2xl sm:text-3xl font-black mt-3 text-slate-900 dark:text-white tracking-tight">৳0.00</h2>
+          <div class="flex items-center gap-1.5 mt-2 text-xs font-medium text-slate-400">
+            <i class="fa-solid fa-shield-halved text-brand-500"></i>
+            <span id="accountCountLabel">Across all accounts</span>
+          </div>
+        </div>
+
+        <!-- Project Inflow -->
+        <div class="group bg-white dark:bg-darkbg-card p-6 rounded-3xl border border-slate-200/80 dark:border-darkbg-border shadow-sm hover:border-emerald-500/40 transition-all duration-300">
+          <div class="flex justify-between items-start">
+            <span class="text-xs font-bold uppercase tracking-wider text-slate-400" data-i18n="proj_inflow">Project Inflow</span>
+            <div class="w-10 h-10 rounded-2xl bg-emerald-500/10 text-emerald-500 flex items-center justify-center text-base group-hover:scale-110 transition-transform">
+              <i class="fa-solid fa-circle-arrow-up"></i>
+            </div>
+          </div>
+          <h2 id="totalProjectInflow" class="text-2xl sm:text-3xl font-black mt-3 text-emerald-500 tracking-tight">৳0.00</h2>
+          <p class="text-xs text-slate-400 mt-2 flex items-center gap-1.5">
+            <i class="fa-solid fa-arrow-trend-up text-emerald-500"></i>
+            <span data-i18n="inflow_desc">Revenue & funds added</span>
+          </p>
+        </div>
+
+        <!-- Project Cost -->
+        <div class="group bg-white dark:bg-darkbg-card p-6 rounded-3xl border border-slate-200/80 dark:border-darkbg-border shadow-sm hover:border-rose-500/40 transition-all duration-300">
+          <div class="flex justify-between items-start">
+            <span class="text-xs font-bold uppercase tracking-wider text-slate-400" data-i18n="proj_cost">Project Cost</span>
+            <div class="w-10 h-10 rounded-2xl bg-rose-500/10 text-rose-500 flex items-center justify-center text-base group-hover:scale-110 transition-transform">
+              <i class="fa-solid fa-circle-arrow-down"></i>
+            </div>
+          </div>
+          <h2 id="totalProjectExpense" class="text-2xl sm:text-3xl font-black mt-3 text-rose-500 tracking-tight">৳0.00</h2>
+          <p class="text-xs text-slate-400 mt-2 flex items-center gap-1.5">
+            <i class="fa-solid fa-chart-line-down text-rose-500"></i>
+            <span data-i18n="cost_desc">Total expenses on projects</span>
+          </p>
+        </div>
+
+        <!-- Lent to Friends -->
+        <div class="group bg-white dark:bg-darkbg-card p-6 rounded-3xl border border-slate-200/80 dark:border-darkbg-border shadow-sm hover:border-amber-500/40 transition-all duration-300">
+          <div class="flex justify-between items-start">
+            <span class="text-xs font-bold uppercase tracking-wider text-slate-400" data-i18n="lent_friends">Lent to Friends</span>
+            <div class="w-10 h-10 rounded-2xl bg-amber-500/10 text-amber-500 flex items-center justify-center text-base group-hover:scale-110 transition-transform">
+              <i class="fa-solid fa-hand-holding-dollar"></i>
+            </div>
+          </div>
+          <h2 id="totalLentPending" class="text-2xl sm:text-3xl font-black mt-3 text-amber-500 tracking-tight">৳0.00</h2>
+          <p class="text-xs text-slate-400 mt-2 flex items-center gap-1.5">
+            <i class="fa-regular fa-clock text-amber-500"></i>
+            <span data-i18n="pending_due">Pending receivables</span>
+          </p>
+        </div>
       </div>
-      Add Tx
-    </button>
-    <button onclick="document.getElementById('btnOpenTransferModal').click()" class="flex flex-col items-center text-[10px] font-semibold text-slate-300 hover:text-white">
-      <div class="w-8 h-8 rounded-lg flex items-center justify-center text-sm mb-1 text-slate-300">
-        <i class="fa-solid fa-arrow-right-arrow-left"></i>
+
+      <!-- Charts & Visuals -->
+      <div class="no-print grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div class="bg-white dark:bg-darkbg-card p-6 rounded-3xl border border-slate-200/80 dark:border-darkbg-border shadow-sm">
+          <div class="flex items-center justify-between mb-4">
+            <h3 class="font-extrabold text-slate-900 dark:text-white text-sm flex items-center gap-2">
+              <i class="fa-solid fa-pie-chart text-brand-500"></i>
+              <span data-i18n="chart_pie_title">Project Cost Breakdown</span>
+            </h3>
+            <span class="text-[11px] text-slate-400 font-semibold" data-i18n="distribution">Distribution</span>
+          </div>
+          <div class="relative h-64 flex items-center justify-center">
+            <canvas id="projectChart"></canvas>
+            <div id="noProjectChartMsg" class="hidden text-xs text-slate-400">No project expenses recorded yet.</div>
+          </div>
+        </div>
+
+        <div class="bg-white dark:bg-darkbg-card p-6 rounded-3xl border border-slate-200/80 dark:border-darkbg-border shadow-sm lg:col-span-2">
+          <div class="flex items-center justify-between mb-4">
+            <h3 class="font-extrabold text-slate-900 dark:text-white text-sm flex items-center gap-2">
+              <i class="fa-solid fa-chart-column text-emerald-500"></i>
+              <span data-i18n="chart_bar_title">Cash Flow & Monthly Burn</span>
+            </h3>
+            <span class="text-[11px] text-slate-400 font-semibold" data-i18n="last_6_months">Last 6 Months</span>
+          </div>
+          <div class="relative h-64">
+            <canvas id="trendChart"></canvas>
+          </div>
+        </div>
       </div>
-      Transfer
-    </button>
-    <button onclick="document.getElementById('btnOpenProfileModal').click()" class="flex flex-col items-center text-[10px] font-semibold text-slate-300 hover:text-white">
-      <div class="w-8 h-8 rounded-lg flex items-center justify-center text-sm mb-1 text-slate-300">
-        <i class="fa-solid fa-user-gear"></i>
-      </div>
-      Profile
-    </button>
+
+      <!-- Accounts & Wallets -->
+      <section class="no-print bg-white dark:bg-darkbg-card p-6 rounded-3xl border border-slate-200/80 dark:border-darkbg-border shadow-sm space-y-5">
+        <div class="flex flex-col sm:flex-row justify-between sm:items-center gap-2">
+          <div>
+            <h2 class="text-base sm:text-lg font-extrabold text-slate-900 dark:text-white tracking-tight" data-i18n="sec_accounts">Accounts & Wallets</h2>
+            <p class="text-xs text-slate-400" data-i18n="sec_accounts_sub">bKash, Nagad, Rocket, Bank accounts & Cash balances.</p>
+          </div>
+          <div class="flex items-center gap-2">
+            <button id="btnOpenTransferModal" class="inline-flex items-center gap-1.5 bg-slate-100 dark:bg-darkbg-elevated hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 px-3.5 py-2 rounded-xl text-xs font-bold border border-slate-200 dark:border-darkbg-border transition">
+              <i class="fa-solid fa-arrow-right-arrow-left text-brand-500"></i>
+              <span data-i18n="btn_transfer">Transfer</span>
+            </button>
+            <button id="btnOpenAccountModal" class="inline-flex items-center gap-1.5 bg-brand-500/10 hover:bg-brand-500/20 text-brand-600 dark:text-brand-400 px-3.5 py-2 rounded-xl text-xs font-bold border border-brand-500/30 transition">
+              <i class="fa-solid fa-plus"></i>
+              <span data-i18n="btn_add_account">Add Account</span>
+            </button>
+          </div>
+        </div>
+        <div id="accountsGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4"></div>
+      </section>
+
+      <!-- Active Projects Manager -->
+      <section class="no-print bg-white dark:bg-darkbg-card p-6 rounded-3xl border border-slate-200/80 dark:border-darkbg-border shadow-sm space-y-5">
+        <div class="flex flex-col sm:flex-row justify-between sm:items-center gap-2">
+          <div>
+            <h2 class="text-base sm:text-lg font-extrabold text-slate-900 dark:text-white tracking-tight" data-i18n="sec_projects">Active Projects & Purpose Ledger</h2>
+            <p class="text-xs text-slate-400" data-i18n="sec_projects_sub">Track budget ceilings, debits, credits, and purpose-wise line-item costs.</p>
+          </div>
+          <button id="btnOpenProjectModal" class="inline-flex items-center gap-1.5 bg-brand-500/10 hover:bg-brand-500/20 text-brand-600 dark:text-brand-400 px-3.5 py-2 rounded-xl text-xs font-bold border border-brand-500/30 transition">
+            <i class="fa-solid fa-folder-plus"></i>
+            <span data-i18n="btn_new_project">New Project</span>
+          </button>
+        </div>
+        <div id="projectsGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4"></div>
+      </section>
+
+      <!-- Lent to Friends (Personal Debts) -->
+      <section class="no-print bg-white dark:bg-darkbg-card p-6 rounded-3xl border border-slate-200/80 dark:border-darkbg-border shadow-sm space-y-5">
+        <div class="flex flex-col sm:flex-row justify-between sm:items-center gap-2">
+          <div>
+            <h2 class="text-base sm:text-lg font-extrabold text-slate-900 dark:text-white tracking-tight" data-i18n="sec_loans">Lent to Friends (ধার/লোন)</h2>
+            <p class="text-xs text-slate-400" data-i18n="sec_loans_sub">Track personal debt balances with real-time partial or full repayment receipt.</p>
+          </div>
+          <button id="btnOpenLoanModal" class="inline-flex items-center gap-1.5 bg-amber-500/10 hover:bg-amber-500/20 text-amber-600 dark:text-amber-400 px-3.5 py-2 rounded-xl text-xs font-bold border border-amber-500/30 transition">
+            <i class="fa-solid fa-handshake"></i>
+            <span data-i18n="btn_lend_money">Lend Money</span>
+          </button>
+        </div>
+        <div class="overflow-x-auto rounded-2xl border border-slate-100 dark:border-darkbg-border">
+          <table class="w-full text-left text-sm">
+            <thead class="text-[11px] uppercase tracking-wider text-slate-400 bg-slate-50/70 dark:bg-darkbg-elevated border-b border-slate-100 dark:border-darkbg-border">
+              <tr>
+                <th class="p-3.5 pl-4 font-bold" data-i18n="tbl_friend">Friend</th>
+                <th class="p-3.5 font-bold" data-i18n="tbl_remaining">Remaining Due</th>
+                <th class="p-3.5 font-bold" data-i18n="tbl_total_lent">Total Lent</th>
+                <th class="p-3.5 font-bold" data-i18n="tbl_source">Source Account</th>
+                <th class="p-3.5 font-bold" data-i18n="tbl_date">Date</th>
+                <th class="p-3.5 font-bold" data-i18n="tbl_status">Status</th>
+                <th class="p-3.5 pr-4 text-right font-bold" data-i18n="tbl_actions">Actions</th>
+              </tr>
+            </thead>
+            <tbody id="loansTableBody" class="divide-y divide-slate-100 dark:divide-darkbg-border text-slate-700 dark:text-slate-300"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- Transaction History with Dedicated Print Button -->
+      <section class="bg-white dark:bg-darkbg-card p-6 rounded-3xl border border-slate-200/80 dark:border-darkbg-border shadow-sm space-y-5 print-section">
+        <div class="flex flex-col md:flex-row justify-between md:items-center gap-4">
+          <div>
+            <h2 class="text-base sm:text-lg font-extrabold text-slate-900 dark:text-white tracking-tight" data-i18n="sec_tx_history">Transaction History</h2>
+            <p class="text-xs text-slate-400" data-i18n="sec_tx_sub">All credits, debit expenses, and account transfers.</p>
+          </div>
+          <div class="no-print flex flex-wrap items-center gap-2.5">
+            <div class="relative">
+              <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-xs"></i>
+              <input type="text" id="txSearch" placeholder="Search..." class="pl-8 bg-slate-50 dark:bg-darkbg-elevated border border-slate-200 dark:border-darkbg-border text-xs rounded-xl px-3 py-2 text-slate-800 dark:text-white focus:ring-2 focus:ring-brand-500 w-32 sm:w-44 font-medium transition" />
+            </div>
+            <select id="filterProject" class="bg-slate-50 dark:bg-darkbg-elevated border border-slate-200 dark:border-darkbg-border text-xs rounded-xl px-3 py-2 font-medium text-slate-800 dark:text-white"></select>
+            <select id="filterAccount" class="bg-slate-50 dark:bg-darkbg-elevated border border-slate-200 dark:border-darkbg-border text-xs rounded-xl px-3 py-2 font-medium text-slate-800 dark:text-white"></select>
+            
+            <!-- Sole Print Statement Button -->
+            <button onclick="window.print()" class="bg-slate-900 dark:bg-slate-100 hover:bg-slate-800 dark:hover:bg-white text-white dark:text-slate-950 text-xs px-3.5 py-2 rounded-xl font-black flex items-center gap-2 transition shadow-sm active:scale-95" title="Print Transaction History">
+              <i class="fa-solid fa-print"></i>
+              <span data-i18n="btn_print_history">Print Statement</span>
+            </button>
+          </div>
+        </div>
+        <div class="overflow-x-auto rounded-2xl border border-slate-100 dark:border-darkbg-border">
+          <table class="w-full text-left text-sm" id="mainPrintTable">
+            <thead class="text-[11px] uppercase tracking-wider text-slate-400 bg-slate-50/70 dark:bg-darkbg-elevated border-b border-slate-100 dark:border-darkbg-border">
+              <tr>
+                <th class="p-3.5 pl-4 font-bold" data-i18n="tbl_type">Type</th>
+                <th class="p-3.5 font-bold" data-i18n="tbl_purpose">Purpose / Note</th>
+                <th class="p-3.5 font-bold" data-i18n="tbl_account">Account</th>
+                <th class="p-3.5 font-bold" data-i18n="tbl_project">Project</th>
+                <th class="p-3.5 text-right font-bold" data-i18n="tbl_amount">Amount (BDT)</th>
+                <th class="p-3.5 font-bold" data-i18n="tbl_date">Date</th>
+                <th class="p-3.5 pr-4 text-right no-print font-bold" data-i18n="tbl_actions">Actions</th>
+              </tr>
+            </thead>
+            <tbody id="txTableBody" class="divide-y divide-slate-100 dark:divide-darkbg-border text-slate-700 dark:text-slate-300"></tbody>
+          </table>
+        </div>
+      </section>
+    </main>
   </div>
 
   <!-- Toast Notification -->
   <div id="toastContainer" class="fixed bottom-6 right-6 z-50 flex flex-col space-y-2 pointer-events-none"></div>
 
-  <!-- MODAL: USER PROFILE & SETTINGS -->
+  <!-- ============================================== -->
+  <!-- MODAL: PROFILE & AVATAR PHOTO SETTINGS         -->
+  <!-- ============================================== -->
   <div id="modalProfile" class="modal-backdrop hidden fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-md p-4">
-    <div class="bg-white border border-slate-200 rounded-3xl p-6 sm:p-8 w-full max-w-lg shadow-2xl space-y-5">
-      <div class="flex justify-between items-center pb-3 border-b border-slate-100">
+    <div class="bg-white dark:bg-darkbg-card border border-slate-200 dark:border-darkbg-border rounded-3xl p-6 sm:p-8 w-full max-w-lg shadow-2xl space-y-5">
+      <div class="flex justify-between items-center pb-3 border-b border-slate-100 dark:border-darkbg-border">
         <div class="flex items-center gap-3">
-          <div class="w-10 h-10 rounded-2xl bg-indigo-50 text-indigo-600 flex items-center justify-center font-bold text-base">
-            <i class="fa-solid fa-id-badge"></i>
+          <div class="w-10 h-10 rounded-2xl bg-brand-500/10 text-brand-500 flex items-center justify-center font-bold text-base">
+            <i class="fa-solid fa-user-gear"></i>
           </div>
           <div>
-            <h3 class="text-lg font-black text-slate-900">User Profile Settings</h3>
-            <p class="text-xs text-slate-400">Update personal info & recovery security</p>
+            <h3 class="text-lg font-black text-slate-900 dark:text-white" data-i18n="prof_settings">Profile & Settings</h3>
+            <p class="text-xs text-slate-400" data-i18n="prof_sub">Manage identity, photo & security PIN</p>
           </div>
         </div>
-        <button class="modal-close w-8 h-8 rounded-full bg-slate-100 text-slate-400 hover:text-slate-700 flex items-center justify-center font-bold">&times;</button>
+        <button class="modal-close w-8 h-8 rounded-full bg-slate-100 dark:bg-darkbg-elevated text-slate-400 hover:text-slate-200 flex items-center justify-center font-bold">&times;</button>
       </div>
 
       <form id="formProfile" class="space-y-4">
+        <!-- Photo Upload Preview -->
+        <div class="flex items-center gap-4 p-3 bg-slate-50 dark:bg-darkbg-elevated rounded-2xl border border-slate-200 dark:border-darkbg-border">
+          <div id="modalAvatarPreview" class="w-16 h-16 rounded-2xl overflow-hidden bg-brand-500 text-slate-950 font-black text-xl flex items-center justify-center border-2 border-brand-500/50 shadow-md">
+            <span id="modalAvatarInitial">U</span>
+          </div>
+          <div class="space-y-1">
+            <label class="block text-xs font-bold text-slate-700 dark:text-slate-200 cursor-pointer" data-i18n="upload_photo">Profile Photo</label>
+            <input type="file" id="profAvatarInput" accept="image/*" class="text-xs text-slate-400 file:mr-2 file:py-1 file:px-2.5 file:rounded-lg file:border-0 file:text-xs file:font-bold file:bg-brand-500 file:text-slate-950 hover:file:bg-brand-400 cursor-pointer" />
+            <input type="hidden" id="profAvatarBase64" />
+          </div>
+        </div>
+
         <div>
-          <label class="block text-xs font-bold text-slate-600 mb-1">Full Name</label>
-          <input type="text" id="profName" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-sm font-medium focus:ring-2 focus:ring-indigo-500" required />
+          <label class="block text-xs font-bold text-slate-600 dark:text-slate-300 mb-1" data-i18n="your_name">Full Name</label>
+          <input type="text" id="profName" class="w-full bg-slate-50 dark:bg-darkbg-elevated border border-slate-200 dark:border-darkbg-border rounded-xl p-3 text-sm font-medium text-slate-800 dark:text-white" required />
         </div>
         <div>
-          <label class="block text-xs font-bold text-slate-600 mb-1">Email Address (Registered)</label>
-          <input type="email" id="profEmail" class="w-full bg-slate-100 text-slate-400 border border-slate-200 rounded-xl p-3 text-sm font-medium cursor-not-allowed" readonly />
+          <label class="block text-xs font-bold text-slate-600 dark:text-slate-300 mb-1" data-i18n="email_addr">Registered Email</label>
+          <input type="email" id="profEmail" class="w-full bg-slate-100 dark:bg-slate-800/40 text-slate-400 border border-slate-200 dark:border-darkbg-border rounded-xl p-3 text-sm font-medium cursor-not-allowed" readonly />
         </div>
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
           <div>
-            <label class="block text-xs font-bold text-slate-600 mb-1">Phone Number</label>
-            <input type="text" id="profPhone" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-sm font-medium focus:ring-2 focus:ring-indigo-500" placeholder="e.g. 01700000000" />
+            <label class="block text-xs font-bold text-slate-600 dark:text-slate-300 mb-1" data-i18n="phone_number">Phone Number</label>
+            <input type="text" id="profPhone" class="w-full bg-slate-50 dark:bg-darkbg-elevated border border-slate-200 dark:border-darkbg-border rounded-xl p-3 text-sm font-medium text-slate-800 dark:text-white" placeholder="01700000000" />
           </div>
           <div>
-            <label class="block text-xs font-bold text-slate-600 mb-1">Secret Recovery PIN (6 Digits)</label>
-            <input type="text" id="profRecoveryPin" maxlength="6" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-sm font-bold text-indigo-600 focus:ring-2 focus:ring-indigo-500" placeholder="e.g. 123456" title="Used to recover your password if forgotten" required />
+            <label class="block text-xs font-bold text-slate-600 dark:text-slate-300 mb-1" data-i18n="recovery_pin">Secret Recovery PIN (6 Digits)</label>
+            <input type="text" id="profRecoveryPin" maxlength="6" class="w-full bg-slate-50 dark:bg-darkbg-elevated border border-slate-200 dark:border-darkbg-border rounded-xl p-3 text-sm font-bold text-brand-500" required />
           </div>
         </div>
         <div>
-          <label class="block text-xs font-bold text-slate-600 mb-1">Full Address / Location</label>
-          <textarea id="profAddress" rows="2" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-sm font-medium focus:ring-2 focus:ring-indigo-500" placeholder="e.g. Dhaka, Bangladesh"></textarea>
+          <label class="block text-xs font-bold text-slate-600 dark:text-slate-300 mb-1" data-i18n="address">Address</label>
+          <textarea id="profAddress" rows="2" class="w-full bg-slate-50 dark:bg-darkbg-elevated border border-slate-200 dark:border-darkbg-border rounded-xl p-3 text-sm font-medium text-slate-800 dark:text-white" placeholder="Location details..."></textarea>
         </div>
 
-        <button type="submit" id="btnSaveProfile" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 rounded-xl text-sm transition shadow-lg shadow-indigo-600/20 active:scale-95">
+        <button type="submit" id="btnSaveProfile" class="w-full bg-gradient-to-r from-brand-500 to-cyan-400 hover:from-brand-600 hover:to-cyan-500 text-slate-950 font-black py-3 rounded-xl text-sm transition shadow-lg shadow-brand-500/20 active:scale-95" data-i18n="save_profile">
           Save Profile Changes
         </button>
       </form>
     </div>
   </div>
 
-  <!-- MODAL: FORGOT / RESET PASSWORD -->
+  <!-- ============================================== -->
+  <!-- MODAL: FORGOT / RESET PASSWORD                 -->
+  <!-- ============================================== -->
   <div id="modalForgotPass" class="modal-backdrop hidden fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-md p-4">
-    <div class="bg-white border border-slate-200 rounded-3xl p-6 sm:p-8 w-full max-w-md shadow-2xl space-y-4">
-      <div class="flex justify-between items-center pb-3 border-b border-slate-100">
+    <div class="bg-white dark:bg-darkbg-card border border-slate-200 dark:border-darkbg-border rounded-3xl p-6 sm:p-8 w-full max-w-md shadow-2xl space-y-4">
+      <div class="flex justify-between items-center pb-3 border-b border-slate-100 dark:border-darkbg-border">
         <div>
-          <h3 class="text-lg font-black text-slate-900">Reset Account Password</h3>
-          <p class="text-xs text-slate-400">Recover your account using your Secret PIN</p>
+          <h3 class="text-lg font-black text-slate-900 dark:text-white" data-i18n="reset_pass_title">Reset Account Password</h3>
+          <p class="text-xs text-slate-400" data-i18n="reset_pass_sub">Verify using your 6-digit Secret PIN</p>
         </div>
-        <button class="modal-close w-8 h-8 rounded-full bg-slate-100 text-slate-400 hover:text-slate-700 flex items-center justify-center font-bold">&times;</button>
+        <button class="modal-close w-8 h-8 rounded-full bg-slate-100 dark:bg-darkbg-elevated text-slate-400 hover:text-slate-200 flex items-center justify-center font-bold">&times;</button>
       </div>
 
       <form id="formForgotPass" class="space-y-4">
         <div>
-          <label class="block text-xs font-bold text-slate-600 mb-1">Registered Email</label>
-          <input type="email" id="resetEmail" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-sm font-medium focus:ring-2 focus:ring-indigo-500" placeholder="name@example.com" required />
+          <label class="block text-xs font-bold text-slate-600 dark:text-slate-300 mb-1" data-i18n="email_addr">Registered Email</label>
+          <input type="email" id="resetEmail" class="w-full bg-slate-50 dark:bg-darkbg-elevated border border-slate-200 dark:border-darkbg-border rounded-xl p-3 text-sm font-medium text-slate-800 dark:text-white" placeholder="name@example.com" required />
         </div>
         <div>
-          <label class="block text-xs font-bold text-slate-600 mb-1">Secret Recovery PIN (Set in profile)</label>
-          <input type="text" id="resetPin" maxlength="6" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-sm font-bold text-indigo-600 focus:ring-2 focus:ring-indigo-500" placeholder="e.g. 123456" required />
+          <label class="block text-xs font-bold text-slate-600 dark:text-slate-300 mb-1" data-i18n="recovery_pin">Secret Recovery PIN (6 Digits)</label>
+          <input type="text" id="resetPin" maxlength="6" class="w-full bg-slate-50 dark:bg-darkbg-elevated border border-slate-200 dark:border-darkbg-border rounded-xl p-3 text-sm font-bold text-brand-500" placeholder="123456" required />
         </div>
         <div>
-          <label class="block text-xs font-bold text-slate-600 mb-1">New Password</label>
+          <label class="block text-xs font-bold text-slate-600 dark:text-slate-300 mb-1" data-i18n="new_pass">New Password</label>
           <div class="relative">
-            <input type="password" id="resetNewPass" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 pr-10 text-sm font-medium focus:ring-2 focus:ring-indigo-500" placeholder="••••••••" required />
-            <button type="button" onclick="window.togglePasswordVisibility('resetNewPass', 'eyeResetPass')" class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 text-sm p-1">
+            <input type="password" id="resetNewPass" class="w-full bg-slate-50 dark:bg-darkbg-elevated border border-slate-200 dark:border-darkbg-border rounded-xl p-3 pr-10 text-sm font-medium text-slate-800 dark:text-white" placeholder="••••••••" required />
+            <button type="button" onclick="window.togglePasswordVisibility('resetNewPass', 'eyeResetPass')" class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-200 text-sm p-1">
               <i id="eyeResetPass" class="fa-regular fa-eye"></i>
             </button>
           </div>
         </div>
 
-        <button type="submit" id="btnSubmitReset" class="w-full bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 text-white font-bold py-3 rounded-xl text-sm transition shadow-lg shadow-emerald-600/20 active:scale-95">
+        <button type="submit" id="btnSubmitReset" class="w-full bg-gradient-to-r from-emerald-500 to-teal-500 text-slate-950 font-black py-3 rounded-xl text-sm transition shadow-lg shadow-emerald-500/20 active:scale-95" data-i18n="confirm_reset">
           Reset Password
         </button>
       </form>
     </div>
   </div>
 
-  <!-- AUTH MODAL (LOGIN / REGISTER WITH EYE TOGGLE) -->
-  <div id="modalAuth" class="modal-backdrop hidden fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-md p-4">
-    <div class="bg-white border border-slate-200 rounded-3xl p-6 sm:p-8 w-full max-w-md shadow-2xl">
-      <div class="text-center mb-6">
-        <div class="w-14 h-14 rounded-2xl bg-gradient-to-tr from-indigo-600 to-violet-600 text-white flex items-center justify-center mx-auto mb-3 font-black text-2xl shadow-xl shadow-indigo-600/30 ring-4 ring-indigo-50">
-          <i class="fa-solid fa-shapes"></i>
-        </div>
-        <h3 class="text-2xl font-black text-slate-900 tracking-tight" id="authModalTitle">Welcome Back</h3>
-        <p class="text-xs text-slate-400 mt-1">Multi-Account & Project Financial Tracker</p>
-      </div>
-
-      <div class="flex bg-slate-100 p-1 rounded-xl mb-5">
-        <button id="tabRegister" class="flex-1 py-1.5 text-xs font-bold rounded-lg transition text-slate-500">Create Account</button>
-        <button id="tabLogin" class="flex-1 py-1.5 text-xs font-bold rounded-lg transition bg-white text-indigo-600 shadow-sm">Login</button>
-      </div>
-
-      <form id="formAuth" class="space-y-4">
-        <div id="authNameGroup" class="hidden">
-          <label class="block text-xs font-bold text-slate-600 mb-1">Your Name</label>
-          <input type="text" id="authName" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-sm font-medium focus:ring-2 focus:ring-indigo-500" placeholder="e.g. Omr Fy" />
-        </div>
-        <div>
-          <label class="block text-xs font-bold text-slate-600 mb-1">Email Address</label>
-          <input type="email" id="authEmail" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-sm font-medium focus:ring-2 focus:ring-indigo-500" placeholder="name@example.com" required />
-        </div>
-        <div>
-          <div class="flex justify-between items-center mb-1">
-            <label class="block text-xs font-bold text-slate-600">Password</label>
-            <button type="button" id="btnForgotPassTrigger" class="text-[11px] font-bold text-indigo-600 hover:text-indigo-800 transition">Forgot Password?</button>
-          </div>
-          <div class="relative">
-            <input type="password" id="authPassword" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 pr-10 text-sm font-medium focus:ring-2 focus:ring-indigo-500" placeholder="••••••••" required />
-            <button type="button" onclick="window.togglePasswordVisibility('authPassword', 'eyeAuthPass')" class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 text-sm p-1">
-              <i id="eyeAuthPass" class="fa-regular fa-eye"></i>
-            </button>
-          </div>
-        </div>
-
-        <button type="submit" id="btnAuthSubmit" class="w-full bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-700 hover:to-violet-700 text-white font-bold py-3 rounded-xl text-sm transition shadow-lg shadow-indigo-600/30 active:scale-95">Login</button>
-      </form>
-    </div>
-  </div>
-
   <!-- MODAL: PROJECT DETAILS & PURPOSE LEDGER -->
   <div id="modalProjectDetails" class="modal-backdrop hidden fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-md p-4">
-    <div class="bg-white border border-slate-200 rounded-3xl p-6 sm:p-8 w-full max-w-4xl shadow-2xl space-y-6 max-h-[90vh] overflow-y-auto">
-      <div class="flex justify-between items-start pb-4 border-b border-slate-100">
+    <div class="bg-white dark:bg-darkbg-card border border-slate-200 dark:border-darkbg-border rounded-3xl p-6 sm:p-8 w-full max-w-4xl shadow-2xl space-y-6 max-h-[90vh] overflow-y-auto">
+      <div class="flex justify-between items-start pb-4 border-b border-slate-100 dark:border-darkbg-border">
         <div>
-          <span class="text-[10px] font-extrabold uppercase tracking-wider text-indigo-600 bg-indigo-50 px-2.5 py-1 rounded-full border border-indigo-200/50">Project Statement</span>
-          <h3 class="text-2xl font-black text-slate-900 mt-2" id="pDetailName">Project Name</h3>
+          <span class="text-[10px] font-black uppercase tracking-wider text-brand-500 bg-brand-500/10 px-2.5 py-1 rounded-full border border-brand-500/30">Project Ledger</span>
+          <h3 class="text-2xl font-black text-slate-900 dark:text-white mt-2" id="pDetailName">Project Name</h3>
           <p class="text-xs text-slate-400 mt-0.5" id="pDetailNotes">Project notes</p>
         </div>
-        <button class="modal-close w-8 h-8 rounded-full bg-slate-100 text-slate-400 hover:text-slate-700 flex items-center justify-center text-lg font-bold transition">&times;</button>
+        <button class="modal-close w-8 h-8 rounded-full bg-slate-100 dark:bg-darkbg-elevated text-slate-400 hover:text-slate-200 flex items-center justify-center font-bold">&times;</button>
       </div>
 
       <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
-        <div class="bg-slate-50 p-4 rounded-2xl border border-slate-100">
+        <div class="bg-slate-50 dark:bg-darkbg-elevated p-4 rounded-2xl border border-slate-100 dark:border-darkbg-border">
           <p class="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Allocated Budget</p>
-          <p class="text-lg font-extrabold text-slate-800 mt-1" id="pDetailBudget">৳0.00</p>
+          <p class="text-lg font-black text-slate-800 dark:text-white mt-1" id="pDetailBudget">৳0.00</p>
         </div>
-        <div class="bg-emerald-50/70 p-4 rounded-2xl border border-emerald-100">
-          <p class="text-[11px] font-bold text-emerald-600 uppercase tracking-wider">Credit (Inflow)</p>
-          <p class="text-lg font-extrabold text-emerald-600 mt-1" id="pDetailInflow">+৳0.00</p>
+        <div class="bg-emerald-500/10 p-4 rounded-2xl border border-emerald-500/20">
+          <p class="text-[11px] font-bold text-emerald-500 uppercase tracking-wider">Total Inflow</p>
+          <p class="text-lg font-black text-emerald-500 mt-1" id="pDetailInflow">+৳0.00</p>
         </div>
-        <div class="bg-rose-50/70 p-4 rounded-2xl border border-rose-100">
-          <p class="text-[11px] font-bold text-rose-600 uppercase tracking-wider">Debit (Spent)</p>
-          <p class="text-lg font-extrabold text-rose-600 mt-1" id="pDetailExpense">-৳0.00</p>
+        <div class="bg-rose-500/10 p-4 rounded-2xl border border-rose-500/20">
+          <p class="text-[11px] font-bold text-rose-500 uppercase tracking-wider">Total Spent</p>
+          <p class="text-lg font-black text-rose-500 mt-1" id="pDetailExpense">-৳0.00</p>
         </div>
-        <div class="bg-indigo-50/70 p-4 rounded-2xl border border-indigo-100">
-          <p class="text-[11px] font-bold text-indigo-600 uppercase tracking-wider">Net Balance</p>
-          <p class="text-lg font-black text-indigo-600 mt-1" id="pDetailNet">৳0.00</p>
+        <div class="bg-brand-500/10 p-4 rounded-2xl border border-brand-500/20">
+          <p class="text-[11px] font-bold text-brand-400 uppercase tracking-wider">Net Balance</p>
+          <p class="text-lg font-black text-brand-400 mt-1" id="pDetailNet">৳0.00</p>
         </div>
       </div>
 
       <div>
         <div class="flex justify-between items-center mb-3">
-          <h4 class="text-sm font-extrabold text-slate-900">Line-Item Cost & Inflow Ledger</h4>
-          <button id="pDetailBtnAddTx" class="text-xs bg-indigo-600 hover:bg-indigo-700 text-white font-bold px-3.5 py-1.5 rounded-xl transition shadow-md shadow-indigo-600/20">
+          <h4 class="text-sm font-black text-slate-900 dark:text-white">Line-Item Purpose & Cost Record</h4>
+          <button id="pDetailBtnAddTx" class="text-xs bg-brand-500 hover:bg-brand-400 text-slate-950 font-black px-3.5 py-1.5 rounded-xl transition shadow-md shadow-brand-500/20">
             <i class="fa-solid fa-plus mr-1"></i> Add Record to Project
           </button>
         </div>
-        <div class="overflow-x-auto border border-slate-100 rounded-2xl">
+        <div class="overflow-x-auto border border-slate-100 dark:border-darkbg-border rounded-2xl">
           <table class="w-full text-left text-xs">
-            <thead class="bg-slate-50 text-slate-400 uppercase border-b border-slate-100 font-bold tracking-wider">
+            <thead class="bg-slate-50 dark:bg-darkbg-elevated text-slate-400 uppercase border-b border-slate-100 dark:border-darkbg-border font-bold tracking-wider">
               <tr>
                 <th class="p-3 pl-4">Type</th>
                 <th class="p-3">Purpose / Note</th>
@@ -457,7 +533,7 @@
                 <th class="p-3 pr-4 text-right">Action</th>
               </tr>
             </thead>
-            <tbody id="pDetailTxTableBody" class="divide-y divide-slate-100 text-slate-700"></tbody>
+            <tbody id="pDetailTxTableBody" class="divide-y divide-slate-100 dark:divide-darkbg-border text-slate-700 dark:text-slate-300"></tbody>
           </table>
         </div>
       </div>
@@ -466,48 +542,48 @@
 
   <!-- MODAL: RECEIVE LOAN (FULL / PARTIAL REPAYMENT) -->
   <div id="modalLoanSettle" class="modal-backdrop hidden fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-md p-4">
-    <div class="bg-white border border-slate-200 rounded-3xl p-6 sm:p-7 w-full max-w-md shadow-2xl space-y-4">
-      <div class="flex justify-between items-center pb-3 border-b border-slate-100">
-        <h3 class="text-lg font-black text-slate-900">Receive Loan Repayment</h3>
-        <button class="modal-close w-8 h-8 rounded-full bg-slate-100 text-slate-400 hover:text-slate-700 flex items-center justify-center font-bold">&times;</button>
+    <div class="bg-white dark:bg-darkbg-card border border-slate-200 dark:border-darkbg-border rounded-3xl p-6 sm:p-7 w-full max-w-md shadow-2xl space-y-4">
+      <div class="flex justify-between items-center pb-3 border-b border-slate-100 dark:border-darkbg-border">
+        <h3 class="text-lg font-black text-slate-900 dark:text-white">Receive Loan Repayment</h3>
+        <button class="modal-close w-8 h-8 rounded-full bg-slate-100 dark:bg-darkbg-elevated text-slate-400 hover:text-slate-200 flex items-center justify-center font-bold">&times;</button>
       </div>
       <form id="formLoanSettle" class="space-y-4">
         <input type="hidden" id="settleLoanId" />
-        <div class="bg-amber-50 p-4 rounded-2xl border border-amber-200/80 text-xs">
-          <p class="text-amber-800">Friend: <strong id="settleFriendName" class="text-slate-900 text-sm"></strong></p>
-          <p class="text-amber-800 mt-1">Remaining Due: <strong id="settleRemainingDue" class="text-rose-600 text-sm font-black">৳0.00</strong></p>
+        <div class="bg-amber-500/10 p-4 rounded-2xl border border-amber-500/30 text-xs">
+          <p class="text-amber-500">Friend: <strong id="settleFriendName" class="text-slate-900 dark:text-white text-sm"></strong></p>
+          <p class="text-amber-500 mt-1">Remaining Due: <strong id="settleRemainingDue" class="text-rose-500 text-sm font-black">৳0.00</strong></p>
         </div>
 
         <div>
-          <label class="block text-xs font-bold text-slate-600 mb-1.5">Repayment Option</label>
+          <label class="block text-xs font-bold text-slate-600 dark:text-slate-300 mb-1.5">Repayment Option</label>
           <div class="grid grid-cols-2 gap-2">
-            <label class="flex items-center gap-2 p-3 border border-slate-200 rounded-2xl cursor-pointer hover:bg-slate-50 has-[:checked]:border-indigo-600 has-[:checked]:bg-indigo-50/50 transition">
-              <input type="radio" name="settleType" value="FULL" checked id="radioFullSettle" class="accent-indigo-600" />
-              <span class="text-xs font-bold text-slate-800">Full Amount</span>
+            <label class="flex items-center gap-2 p-3 border border-slate-200 dark:border-darkbg-border rounded-2xl cursor-pointer hover:bg-slate-50 dark:hover:bg-darkbg-elevated has-[:checked]:border-brand-500 has-[:checked]:bg-brand-500/10 transition">
+              <input type="radio" name="settleType" value="FULL" checked id="radioFullSettle" class="accent-brand-500" />
+              <span class="text-xs font-bold text-slate-800 dark:text-white">Full Amount</span>
             </label>
-            <label class="flex items-center gap-2 p-3 border border-slate-200 rounded-2xl cursor-pointer hover:bg-slate-50 has-[:checked]:border-indigo-600 has-[:checked]:bg-indigo-50/50 transition">
-              <input type="radio" name="settleType" value="PARTIAL" id="radioPartialSettle" class="accent-indigo-600" />
-              <span class="text-xs font-bold text-slate-800">Partial Amount</span>
+            <label class="flex items-center gap-2 p-3 border border-slate-200 dark:border-darkbg-border rounded-2xl cursor-pointer hover:bg-slate-50 dark:hover:bg-darkbg-elevated has-[:checked]:border-brand-500 has-[:checked]:bg-brand-500/10 transition">
+              <input type="radio" name="settleType" value="PARTIAL" id="radioPartialSettle" class="accent-brand-500" />
+              <span class="text-xs font-bold text-slate-800 dark:text-white">Partial Amount</span>
             </label>
           </div>
         </div>
 
         <div id="partialAmountGroup" class="hidden">
-          <label class="block text-xs font-bold text-slate-600 mb-1">Received Partial Amount (৳ BDT)</label>
-          <input type="number" step="0.01" min="1" id="settleReceivedAmount" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-sm font-semibold focus:ring-2 focus:ring-indigo-500" placeholder="e.g. 1000" />
+          <label class="block text-xs font-bold text-slate-600 dark:text-slate-300 mb-1">Received Partial Amount (৳ BDT)</label>
+          <input type="number" step="0.01" min="1" id="settleReceivedAmount" class="w-full bg-slate-50 dark:bg-darkbg-elevated border border-slate-200 dark:border-darkbg-border rounded-xl p-3 text-sm font-bold text-brand-500" placeholder="e.g. 1000" />
         </div>
 
         <div>
-          <label class="block text-xs font-bold text-slate-600 mb-1">Deposit Repayment Into Account</label>
-          <select id="settleDepositAccount" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-sm font-semibold focus:ring-2 focus:ring-indigo-500" required></select>
+          <label class="block text-xs font-bold text-slate-600 dark:text-slate-300 mb-1">Deposit Repayment Into</label>
+          <select id="settleDepositAccount" class="w-full bg-slate-50 dark:bg-darkbg-elevated border border-slate-200 dark:border-darkbg-border rounded-xl p-3 text-sm font-semibold text-slate-800 dark:text-white" required></select>
         </div>
 
         <div>
-          <label class="block text-xs font-bold text-slate-600 mb-1">Date</label>
-          <input type="date" id="settleDate" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-sm font-medium focus:ring-2 focus:ring-indigo-500" required />
+          <label class="block text-xs font-bold text-slate-600 dark:text-slate-300 mb-1">Date</label>
+          <input type="date" id="settleDate" class="w-full bg-slate-50 dark:bg-darkbg-elevated border border-slate-200 dark:border-darkbg-border rounded-xl p-3 text-sm font-medium text-slate-800 dark:text-white" required />
         </div>
 
-        <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 rounded-xl text-sm transition shadow-lg shadow-emerald-600/20 active:scale-95">
+        <button type="submit" class="w-full bg-gradient-to-r from-emerald-500 to-teal-500 text-slate-950 font-black py-3 rounded-xl text-sm transition shadow-lg shadow-emerald-500/20 active:scale-95">
           Confirm Repayment
         </button>
       </form>
@@ -516,94 +592,94 @@
 
   <!-- ADD / EDIT TRANSACTION MODAL -->
   <div id="modalTx" class="modal-backdrop hidden fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-md p-4">
-    <div class="bg-white border border-slate-200 rounded-3xl p-6 sm:p-7 w-full max-w-md shadow-2xl">
-      <div class="flex justify-between items-center mb-5 pb-3 border-b border-slate-100">
-        <h3 class="text-lg font-black text-slate-900" id="txModalTitle">Add Transaction</h3>
-        <button class="modal-close w-8 h-8 rounded-full bg-slate-100 text-slate-400 hover:text-slate-700 flex items-center justify-center font-bold">&times;</button>
+    <div class="bg-white dark:bg-darkbg-card border border-slate-200 dark:border-darkbg-border rounded-3xl p-6 sm:p-7 w-full max-w-md shadow-2xl">
+      <div class="flex justify-between items-center mb-5 pb-3 border-b border-slate-100 dark:border-darkbg-border">
+        <h3 class="text-lg font-black text-slate-900 dark:text-white" id="txModalTitle">Add Transaction</h3>
+        <button class="modal-close w-8 h-8 rounded-full bg-slate-100 dark:bg-darkbg-elevated text-slate-400 hover:text-slate-200 flex items-center justify-center font-bold">&times;</button>
       </div>
       <form id="formTx" class="space-y-4">
         <input type="hidden" id="editTxId" />
         <div>
-          <label class="block text-xs font-bold text-slate-600 mb-1">Transaction Type</label>
-          <select id="txType" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-sm font-semibold focus:ring-2 focus:ring-indigo-500">
+          <label class="block text-xs font-bold text-slate-600 dark:text-slate-300 mb-1">Transaction Type</label>
+          <select id="txType" class="w-full bg-slate-50 dark:bg-darkbg-elevated border border-slate-200 dark:border-darkbg-border rounded-xl p-3 text-sm font-semibold text-slate-800 dark:text-white">
             <option value="EXPENSE">Expense / Debit (টাকা খরচ)</option>
             <option value="INCOME">Income / Credit (টাকা জমা)</option>
           </select>
         </div>
         <div>
-          <label class="block text-xs font-bold text-slate-600 mb-1">Payment Method / Account</label>
-          <select id="txAccount" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-sm font-semibold focus:ring-2 focus:ring-indigo-500" required></select>
+          <label class="block text-xs font-bold text-slate-600 dark:text-slate-300 mb-1">Account</label>
+          <select id="txAccount" class="w-full bg-slate-50 dark:bg-darkbg-elevated border border-slate-200 dark:border-darkbg-border rounded-xl p-3 text-sm font-semibold text-slate-800 dark:text-white" required></select>
         </div>
         <div>
-          <label class="block text-xs font-bold text-slate-600 mb-1">Associated Project</label>
-          <select id="txProject" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-sm font-semibold focus:ring-2 focus:ring-indigo-500"></select>
+          <label class="block text-xs font-bold text-slate-600 dark:text-slate-300 mb-1">Project</label>
+          <select id="txProject" class="w-full bg-slate-50 dark:bg-darkbg-elevated border border-slate-200 dark:border-darkbg-border rounded-xl p-3 text-sm font-semibold text-slate-800 dark:text-white"></select>
         </div>
         <div>
-          <label class="block text-xs font-bold text-slate-600 mb-1">Amount (৳ BDT)</label>
-          <input type="number" step="0.01" min="0.01" id="txAmount" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-sm font-bold text-indigo-600 focus:ring-2 focus:ring-indigo-500" placeholder="0.00" required />
+          <label class="block text-xs font-bold text-slate-600 dark:text-slate-300 mb-1">Amount (৳ BDT)</label>
+          <input type="number" step="0.01" min="0.01" id="txAmount" class="w-full bg-slate-50 dark:bg-darkbg-elevated border border-slate-200 dark:border-darkbg-border rounded-xl p-3 text-sm font-black text-brand-500" placeholder="0.00" required />
         </div>
         <div>
-          <label class="block text-xs font-bold text-slate-600 mb-1">Purpose / Note (খরচের বিবরণ)</label>
-          <input type="text" id="txNote" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-sm font-medium focus:ring-2 focus:ring-indigo-500" placeholder="e.g. Server hosting, Freelance payout" required />
+          <label class="block text-xs font-bold text-slate-600 dark:text-slate-300 mb-1">Purpose / Note</label>
+          <input type="text" id="txNote" class="w-full bg-slate-50 dark:bg-darkbg-elevated border border-slate-200 dark:border-darkbg-border rounded-xl p-3 text-sm font-medium text-slate-800 dark:text-white" placeholder="e.g. Hosting bill, design asset" required />
         </div>
         <div>
-          <label class="block text-xs font-bold text-slate-600 mb-1">Date</label>
-          <input type="date" id="txDate" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-sm font-medium focus:ring-2 focus:ring-indigo-500" required />
+          <label class="block text-xs font-bold text-slate-600 dark:text-slate-300 mb-1">Date</label>
+          <input type="date" id="txDate" class="w-full bg-slate-50 dark:bg-darkbg-elevated border border-slate-200 dark:border-darkbg-border rounded-xl p-3 text-sm font-medium text-slate-800 dark:text-white" required />
         </div>
-        <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 rounded-xl text-sm transition shadow-lg shadow-indigo-600/25 active:scale-95">Save Transaction</button>
+        <button type="submit" class="w-full bg-brand-500 hover:bg-brand-400 text-slate-950 font-black py-3 rounded-xl text-sm transition shadow-lg shadow-brand-500/25 active:scale-95">Save Transaction</button>
       </form>
     </div>
   </div>
 
   <!-- TRANSFER MODAL -->
   <div id="modalTransfer" class="modal-backdrop hidden fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-md p-4">
-    <div class="bg-white border border-slate-200 rounded-3xl p-6 sm:p-7 w-full max-w-md shadow-2xl">
-      <div class="flex justify-between items-center mb-5 pb-3 border-b border-slate-100">
-        <h3 class="text-lg font-black text-slate-900">Transfer Money</h3>
-        <button class="modal-close w-8 h-8 rounded-full bg-slate-100 text-slate-400 hover:text-slate-700 flex items-center justify-center font-bold">&times;</button>
+    <div class="bg-white dark:bg-darkbg-card border border-slate-200 dark:border-darkbg-border rounded-3xl p-6 sm:p-7 w-full max-w-md shadow-2xl">
+      <div class="flex justify-between items-center mb-5 pb-3 border-b border-slate-100 dark:border-darkbg-border">
+        <h3 class="text-lg font-black text-slate-900 dark:text-white">Transfer Money</h3>
+        <button class="modal-close w-8 h-8 rounded-full bg-slate-100 dark:bg-darkbg-elevated text-slate-400 hover:text-slate-200 flex items-center justify-center font-bold">&times;</button>
       </div>
       <form id="formTransfer" class="space-y-4">
         <div>
-          <label class="block text-xs font-bold text-slate-600 mb-1">From Account (Deduct)</label>
-          <select id="transferFrom" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-sm font-semibold focus:ring-2 focus:ring-indigo-500" required></select>
+          <label class="block text-xs font-bold text-slate-600 dark:text-slate-300 mb-1">From Account (Deduct)</label>
+          <select id="transferFrom" class="w-full bg-slate-50 dark:bg-darkbg-elevated border border-slate-200 dark:border-darkbg-border rounded-xl p-3 text-sm font-semibold text-slate-800 dark:text-white" required></select>
         </div>
         <div>
-          <label class="block text-xs font-bold text-slate-600 mb-1">To Account (Credit)</label>
-          <select id="transferTo" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-sm font-semibold focus:ring-2 focus:ring-indigo-500" required></select>
+          <label class="block text-xs font-bold text-slate-600 dark:text-slate-300 mb-1">To Account (Credit)</label>
+          <select id="transferTo" class="w-full bg-slate-50 dark:bg-darkbg-elevated border border-slate-200 dark:border-darkbg-border rounded-xl p-3 text-sm font-semibold text-slate-800 dark:text-white" required></select>
         </div>
         <div id="externalRecipientGroup" class="hidden">
-          <label class="block text-xs font-bold text-slate-600 mb-1">External Person / Account Name</label>
-          <input type="text" id="transferExternalName" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-sm font-medium focus:ring-2 focus:ring-indigo-500" placeholder="e.g. Friend bKash" />
+          <label class="block text-xs font-bold text-slate-600 dark:text-slate-300 mb-1">External Recipient Name</label>
+          <input type="text" id="transferExternalName" class="w-full bg-slate-50 dark:bg-darkbg-elevated border border-slate-200 dark:border-darkbg-border rounded-xl p-3 text-sm font-medium text-slate-800 dark:text-white" placeholder="e.g. Tanvir bKash" />
         </div>
         <div>
-          <label class="block text-xs font-bold text-slate-600 mb-1">Amount (৳ BDT)</label>
-          <input type="number" step="0.01" min="0.01" id="transferAmount" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-sm font-bold text-indigo-600 focus:ring-2 focus:ring-indigo-500" placeholder="0.00" required />
+          <label class="block text-xs font-bold text-slate-600 dark:text-slate-300 mb-1">Amount (৳ BDT)</label>
+          <input type="number" step="0.01" min="0.01" id="transferAmount" class="w-full bg-slate-50 dark:bg-darkbg-elevated border border-slate-200 dark:border-darkbg-border rounded-xl p-3 text-sm font-black text-brand-500" placeholder="0.00" required />
         </div>
         <div>
-          <label class="block text-xs font-bold text-slate-600 mb-1">Date</label>
-          <input type="date" id="transferDate" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-sm font-medium focus:ring-2 focus:ring-indigo-500" required />
+          <label class="block text-xs font-bold text-slate-600 dark:text-slate-300 mb-1">Date</label>
+          <input type="date" id="transferDate" class="w-full bg-slate-50 dark:bg-darkbg-elevated border border-slate-200 dark:border-darkbg-border rounded-xl p-3 text-sm font-medium text-slate-800 dark:text-white" required />
         </div>
-        <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 rounded-xl text-sm transition shadow-lg shadow-indigo-600/25 active:scale-95">Confirm Transfer</button>
+        <button type="submit" class="w-full bg-brand-500 hover:bg-brand-400 text-slate-950 font-black py-3 rounded-xl text-sm transition shadow-lg shadow-brand-500/25 active:scale-95">Confirm Transfer</button>
       </form>
     </div>
   </div>
 
   <!-- ADD / EDIT ACCOUNT MODAL -->
   <div id="modalAccount" class="modal-backdrop hidden fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-md p-4">
-    <div class="bg-white border border-slate-200 rounded-3xl p-6 sm:p-7 w-full max-w-md shadow-2xl">
-      <div class="flex justify-between items-center mb-5 pb-3 border-b border-slate-100">
-        <h3 class="text-lg font-black text-slate-900" id="accountModalTitle">Add Account / Wallet</h3>
-        <button class="modal-close w-8 h-8 rounded-full bg-slate-100 text-slate-400 hover:text-slate-700 flex items-center justify-center font-bold">&times;</button>
+    <div class="bg-white dark:bg-darkbg-card border border-slate-200 dark:border-darkbg-border rounded-3xl p-6 sm:p-7 w-full max-w-md shadow-2xl">
+      <div class="flex justify-between items-center mb-5 pb-3 border-b border-slate-100 dark:border-darkbg-border">
+        <h3 class="text-lg font-black text-slate-900 dark:text-white" id="accountModalTitle">Add Account / Wallet</h3>
+        <button class="modal-close w-8 h-8 rounded-full bg-slate-100 dark:bg-darkbg-elevated text-slate-400 hover:text-slate-200 flex items-center justify-center font-bold">&times;</button>
       </div>
       <form id="formAccount" class="space-y-4">
         <input type="hidden" id="editAccountId" />
         <div>
-          <label class="block text-xs font-bold text-slate-600 mb-1">Account Name</label>
-          <input type="text" id="accName" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-sm font-medium focus:ring-2 focus:ring-indigo-500" placeholder="e.g. City Bank, bKash Personal, Cash" required />
+          <label class="block text-xs font-bold text-slate-600 dark:text-slate-300 mb-1">Account Name</label>
+          <input type="text" id="accName" class="w-full bg-slate-50 dark:bg-darkbg-elevated border border-slate-200 dark:border-darkbg-border rounded-xl p-3 text-sm font-medium text-slate-800 dark:text-white" placeholder="City Bank, bKash Personal, Cash" required />
         </div>
         <div>
-          <label class="block text-xs font-bold text-slate-600 mb-1">Provider Type</label>
-          <select id="accType" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-sm font-semibold focus:ring-2 focus:ring-indigo-500">
+          <label class="block text-xs font-bold text-slate-600 dark:text-slate-300 mb-1">Provider Type</label>
+          <select id="accType" class="w-full bg-slate-50 dark:bg-darkbg-elevated border border-slate-200 dark:border-darkbg-border rounded-xl p-3 text-sm font-semibold text-slate-800 dark:text-white">
             <option value="bKash">bKash</option>
             <option value="Nagad">Nagad</option>
             <option value="Rocket">Rocket</option>
@@ -615,65 +691,65 @@
           </select>
         </div>
         <div>
-          <label class="block text-xs font-bold text-slate-600 mb-1">Starting Balance (৳ BDT)</label>
-          <input type="number" step="0.01" id="accBalance" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-sm font-bold text-indigo-600 focus:ring-2 focus:ring-indigo-500" placeholder="0.00" required />
+          <label class="block text-xs font-bold text-slate-600 dark:text-slate-300 mb-1">Balance (৳ BDT)</label>
+          <input type="number" step="0.01" id="accBalance" class="w-full bg-slate-50 dark:bg-darkbg-elevated border border-slate-200 dark:border-darkbg-border rounded-xl p-3 text-sm font-black text-brand-500" placeholder="0.00" required />
         </div>
-        <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 rounded-xl text-sm transition shadow-lg shadow-indigo-600/25 active:scale-95">Save Account</button>
+        <button type="submit" class="w-full bg-brand-500 hover:bg-brand-400 text-slate-950 font-black py-3 rounded-xl text-sm transition shadow-lg shadow-brand-500/25 active:scale-95">Save Account</button>
       </form>
     </div>
   </div>
 
   <!-- ADD / EDIT PROJECT MODAL -->
   <div id="modalProject" class="modal-backdrop hidden fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-md p-4">
-    <div class="bg-white border border-slate-200 rounded-3xl p-6 sm:p-7 w-full max-w-md shadow-2xl">
-      <div class="flex justify-between items-center mb-5 pb-3 border-b border-slate-100">
-        <h3 class="text-lg font-black text-slate-900" id="projectModalTitle">Create Project</h3>
-        <button class="modal-close w-8 h-8 rounded-full bg-slate-100 text-slate-400 hover:text-slate-700 flex items-center justify-center font-bold">&times;</button>
+    <div class="bg-white dark:bg-darkbg-card border border-slate-200 dark:border-darkbg-border rounded-3xl p-6 sm:p-7 w-full max-w-md shadow-2xl">
+      <div class="flex justify-between items-center mb-5 pb-3 border-b border-slate-100 dark:border-darkbg-border">
+        <h3 class="text-lg font-black text-slate-900 dark:text-white" id="projectModalTitle">Create Project</h3>
+        <button class="modal-close w-8 h-8 rounded-full bg-slate-100 dark:bg-darkbg-elevated text-slate-400 hover:text-slate-200 flex items-center justify-center font-bold">&times;</button>
       </div>
       <form id="formProject" class="space-y-4">
         <input type="hidden" id="editProjectId" />
         <div>
-          <label class="block text-xs font-bold text-slate-600 mb-1">Project Name</label>
-          <input type="text" id="projName" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-sm font-medium focus:ring-2 focus:ring-indigo-500" placeholder="e.g. Client Web App, Renovation" required />
+          <label class="block text-xs font-bold text-slate-600 dark:text-slate-300 mb-1">Project Name</label>
+          <input type="text" id="projName" class="w-full bg-slate-50 dark:bg-darkbg-elevated border border-slate-200 dark:border-darkbg-border rounded-xl p-3 text-sm font-medium text-slate-800 dark:text-white" placeholder="Client Web App, Renovation" required />
         </div>
         <div>
-          <label class="block text-xs font-bold text-slate-600 mb-1">Allocated Budget (৳ BDT)</label>
-          <input type="number" step="0.01" id="projBudget" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-sm font-bold text-indigo-600 focus:ring-2 focus:ring-indigo-500" placeholder="0.00" />
+          <label class="block text-xs font-bold text-slate-600 dark:text-slate-300 mb-1">Allocated Budget (৳ BDT)</label>
+          <input type="number" step="0.01" id="projBudget" class="w-full bg-slate-50 dark:bg-darkbg-elevated border border-slate-200 dark:border-darkbg-border rounded-xl p-3 text-sm font-black text-brand-500" placeholder="0.00" />
         </div>
         <div>
-          <label class="block text-xs font-bold text-slate-600 mb-1">Notes / Description</label>
-          <input type="text" id="projNotes" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-sm font-medium focus:ring-2 focus:ring-indigo-500" placeholder="Key objectives & remarks" />
+          <label class="block text-xs font-bold text-slate-600 dark:text-slate-300 mb-1">Notes / Description</label>
+          <input type="text" id="projNotes" class="w-full bg-slate-50 dark:bg-darkbg-elevated border border-slate-200 dark:border-darkbg-border rounded-xl p-3 text-sm font-medium text-slate-800 dark:text-white" placeholder="Key objectives..." />
         </div>
-        <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 rounded-xl text-sm transition shadow-lg shadow-indigo-600/25 active:scale-95">Save Project</button>
+        <button type="submit" class="w-full bg-brand-500 hover:bg-brand-400 text-slate-950 font-black py-3 rounded-xl text-sm transition shadow-lg shadow-brand-500/25 active:scale-95">Save Project</button>
       </form>
     </div>
   </div>
 
   <!-- LEND TO FRIEND MODAL -->
   <div id="modalLoan" class="modal-backdrop hidden fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-md p-4">
-    <div class="bg-white border border-slate-200 rounded-3xl p-6 sm:p-7 w-full max-w-md shadow-2xl">
-      <div class="flex justify-between items-center mb-5 pb-3 border-b border-slate-100">
-        <h3 class="text-lg font-black text-slate-900">Lend Money to Friend</h3>
-        <button class="modal-close w-8 h-8 rounded-full bg-slate-100 text-slate-400 hover:text-slate-700 flex items-center justify-center font-bold">&times;</button>
+    <div class="bg-white dark:bg-darkbg-card border border-slate-200 dark:border-darkbg-border rounded-3xl p-6 sm:p-7 w-full max-w-md shadow-2xl">
+      <div class="flex justify-between items-center mb-5 pb-3 border-b border-slate-100 dark:border-darkbg-border">
+        <h3 class="text-lg font-black text-slate-900 dark:text-white">Lend Money to Friend</h3>
+        <button class="modal-close w-8 h-8 rounded-full bg-slate-100 dark:bg-darkbg-elevated text-slate-400 hover:text-slate-200 flex items-center justify-center font-bold">&times;</button>
       </div>
       <form id="formLoan" class="space-y-4">
         <div>
-          <label class="block text-xs font-bold text-slate-600 mb-1">Friend's Name</label>
-          <input type="text" id="loanFriendName" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-sm font-medium focus:ring-2 focus:ring-indigo-500" placeholder="e.g. Tanvir Ahmed" required />
+          <label class="block text-xs font-bold text-slate-600 dark:text-slate-300 mb-1">Friend's Name</label>
+          <input type="text" id="loanFriendName" class="w-full bg-slate-50 dark:bg-darkbg-elevated border border-slate-200 dark:border-darkbg-border rounded-xl p-3 text-sm font-medium text-slate-800 dark:text-white" placeholder="Tanvir Ahmed" required />
         </div>
         <div>
-          <label class="block text-xs font-bold text-slate-600 mb-1">Amount Given (৳ BDT)</label>
-          <input type="number" step="0.01" min="0.01" id="loanAmount" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-sm font-bold text-amber-600 focus:ring-2 focus:ring-indigo-500" placeholder="0.00" required />
+          <label class="block text-xs font-bold text-slate-600 dark:text-slate-300 mb-1">Amount Given (৳ BDT)</label>
+          <input type="number" step="0.01" min="0.01" id="loanAmount" class="w-full bg-slate-50 dark:bg-darkbg-elevated border border-slate-200 dark:border-darkbg-border rounded-xl p-3 text-sm font-black text-amber-500" placeholder="0.00" required />
         </div>
         <div>
-          <label class="block text-xs font-bold text-slate-600 mb-1">Deduct From Account</label>
-          <select id="loanAccount" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-sm font-semibold focus:ring-2 focus:ring-indigo-500" required></select>
+          <label class="block text-xs font-bold text-slate-600 dark:text-slate-300 mb-1">Deduct From Account</label>
+          <select id="loanAccount" class="w-full bg-slate-50 dark:bg-darkbg-elevated border border-slate-200 dark:border-darkbg-border rounded-xl p-3 text-sm font-semibold text-slate-800 dark:text-white" required></select>
         </div>
         <div>
-          <label class="block text-xs font-bold text-slate-600 mb-1">Date</label>
-          <input type="date" id="loanDate" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-sm font-medium focus:ring-2 focus:ring-indigo-500" required />
+          <label class="block text-xs font-bold text-slate-600 dark:text-slate-300 mb-1">Date</label>
+          <input type="date" id="loanDate" class="w-full bg-slate-50 dark:bg-darkbg-elevated border border-slate-200 dark:border-darkbg-border rounded-xl p-3 text-sm font-medium text-slate-800 dark:text-white" required />
         </div>
-        <button type="submit" class="w-full bg-amber-600 hover:bg-amber-700 text-white font-bold py-3 rounded-xl text-sm transition shadow-lg shadow-amber-600/25 active:scale-95">Record Loan</button>
+        <button type="submit" class="w-full bg-amber-500 hover:bg-amber-400 text-slate-950 font-black py-3 rounded-xl text-sm transition shadow-lg shadow-amber-500/25 active:scale-95">Record Loan</button>
       </form>
     </div>
   </div>

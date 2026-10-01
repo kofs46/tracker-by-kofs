@@ -11,13 +11,14 @@ const headers = {
   "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS"
 };
 
-// User Schema with Phone, Address and Recovery PIN
+// User Schema with Avatar Photo
 const UserSchema = new mongoose.Schema({
   name: { type: String, required: true },
   email: { type: String, required: true, unique: true },
   password: { type: String, required: true },
   phone: { type: String, default: "" },
   address: { type: String, default: "" },
+  avatar: { type: String, default: "" },
   recoveryPin: { type: String, default: "123456" }
 }, { timestamps: true });
 
@@ -76,9 +77,9 @@ exports.handler = async (event, context) => {
     else if (pathLower.includes("profile") || queryAction === "profile") action = "profile";
     else if (pathLower.includes("reset-password") || queryAction === "reset-password") action = "reset-password";
 
-    // 1. User Register
+    // 1. Register
     if (event.httpMethod === "POST" && action === "register") {
-      const { name, email, password, phone, address, recoveryPin } = JSON.parse(event.body || "{}");
+      const { name, email, password } = JSON.parse(event.body || "{}");
       if (!email || !password) {
         return { statusCode: 400, headers, body: JSON.stringify({ error: "Email and password are required!" }) };
       }
@@ -92,9 +93,10 @@ exports.handler = async (event, context) => {
         name: name || "User",
         email: email.toLowerCase(),
         password: hashedPassword,
-        phone: phone || "",
-        address: address || "",
-        recoveryPin: recoveryPin || "123456"
+        phone: "",
+        address: "",
+        avatar: "",
+        recoveryPin: "123456"
       });
 
       await UserData.create({
@@ -123,13 +125,14 @@ exports.handler = async (event, context) => {
             email: user.email,
             phone: user.phone,
             address: user.address,
+            avatar: user.avatar,
             recoveryPin: user.recoveryPin
           }
         })
       };
     }
 
-    // 2. User Login
+    // 2. Login
     if (event.httpMethod === "POST" && action === "login") {
       const { email, password } = JSON.parse(event.body || "{}");
       const user = await User.findOne({ email: email.toLowerCase() });
@@ -153,13 +156,14 @@ exports.handler = async (event, context) => {
             email: user.email,
             phone: user.phone || "",
             address: user.address || "",
+            avatar: user.avatar || "",
             recoveryPin: user.recoveryPin || "123456"
           }
         })
       };
     }
 
-    // 3. Password Reset (Recovery using Secret PIN)
+    // 3. Password Recovery
     if (event.httpMethod === "POST" && action === "reset-password") {
       const { email, recoveryPin, newPassword } = JSON.parse(event.body || "{}");
       if (!email || !recoveryPin || !newPassword) {
@@ -172,7 +176,7 @@ exports.handler = async (event, context) => {
       }
 
       if ((user.recoveryPin || "123456") !== recoveryPin.trim()) {
-        return { statusCode: 400, headers, body: JSON.stringify({ error: "Invalid Recovery PIN! Check your profile PIN." }) };
+        return { statusCode: 400, headers, body: JSON.stringify({ error: "Invalid Recovery PIN!" }) };
       }
 
       const hashedPassword = await bcrypt.hash(newPassword, 10);
@@ -186,24 +190,23 @@ exports.handler = async (event, context) => {
       };
     }
 
-    // 4. Authenticated Endpoints
+    // 4. Authenticated APIs
     const authUser = authenticate(event);
     if (!authUser) {
       return { statusCode: 401, headers, body: JSON.stringify({ error: "Unauthorized! Please login." }) };
     }
 
-    // Profile Update (Name, Phone, Address, Recovery PIN)
+    // Profile & Avatar update
     if (event.httpMethod === "POST" && action === "profile") {
-      const { name, phone, address, recoveryPin } = JSON.parse(event.body || "{}");
+      const { name, phone, address, recoveryPin, avatar } = JSON.parse(event.body || "{}");
       const user = await User.findById(authUser.userId);
-      if (!user) {
-        return { statusCode: 404, headers, body: JSON.stringify({ error: "User not found!" }) };
-      }
+      if (!user) return { statusCode: 404, headers, body: JSON.stringify({ error: "User not found!" }) };
 
       if (name) user.name = name;
       if (phone !== undefined) user.phone = phone;
       if (address !== undefined) user.address = address;
       if (recoveryPin) user.recoveryPin = recoveryPin;
+      if (avatar !== undefined) user.avatar = avatar;
       await user.save();
 
       return {
@@ -216,13 +219,14 @@ exports.handler = async (event, context) => {
             email: user.email,
             phone: user.phone,
             address: user.address,
+            avatar: user.avatar,
             recoveryPin: user.recoveryPin
           }
         })
       };
     }
 
-    // Financial Data Sync
+    // Financial Data API
     if (event.httpMethod === "GET") {
       let data = await UserData.findOne({ userId: authUser.userId });
       if (!data) {
