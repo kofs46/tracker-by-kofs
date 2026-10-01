@@ -623,7 +623,7 @@ function updateDropdowns() {
 
   const projFundAccount = document.getElementById("projFundAccount");
   if (projFundAccount) {
-    projFundAccount.innerHTML = `<option value="NONE">None (Just an estimate ceiling, do not deduct bank)</option>` + accOpts;
+    projFundAccount.innerHTML = `<option value="NONE">None (Just an estimate ceiling)</option>` + accOpts;
   }
 
   const transferTo = document.getElementById("transferTo");
@@ -632,8 +632,15 @@ function updateDropdowns() {
 
   const projOpts = `<option value="NONE">General / Personal (No Project)</option>` + 
     appData.projects.map(p => `<option value="${p.id}">${p.name}</option>`).join("");
+  
   const txProject = document.getElementById("txProject");
   if (txProject) txProject.innerHTML = projOpts;
+  
+  const transferFromProject = document.getElementById("transferFromProject");
+  const transferToProject = document.getElementById("transferToProject");
+  if (transferFromProject) transferFromProject.innerHTML = `<option value="NONE">None</option>` + appData.projects.map(p => `<option value="${p.id}">${p.name}</option>`).join("");
+  if (transferToProject) transferToProject.innerHTML = `<option value="NONE">None</option>` + appData.projects.map(p => `<option value="${p.id}">${p.name}</option>`).join("");
+
   if (filterProjectEl) filterProjectEl.innerHTML = `<option value="ALL">All Projects</option>` + appData.projects.map(p => `<option value="${p.id}">${p.name}</option>`).join("");
 
   const trendTimeframeSelect = document.getElementById("trendTimeframeSelect");
@@ -682,13 +689,10 @@ if (transferToEl) {
   };
 }
 
-// ==========================================
-// ACCOUNTS & DIRECT DEPOSIT
-// ==========================================
 function renderAccounts() {
   if (!accountsGridEl) return;
   if (appData.accounts.length === 0) {
-    accountsGridEl.innerHTML = `<div class="col-span-full py-6 text-center text-slate-400 bg-slate-50 dark:bg-darkbg-elevated border border-dashed border-slate-200 dark:border-darkbg-border rounded-2xl text-xs">No accounts added yet. Click "+ Add Account".</div>`;
+    accountsGridEl.innerHTML = `<div class="col-span-full py-6 text-center text-slate-400 bg-slate-50 dark:bg-darkbg-elevated border border-dashed rounded-2xl text-xs">No accounts added yet.</div>`;
     return;
   }
   accountsGridEl.innerHTML = appData.accounts.map(a => {
@@ -702,21 +706,16 @@ function renderAccounts() {
               <span>${a.type}</span>
             </span>
             <div class="flex items-center gap-1">
-              <button onclick="window.editAccount('${a.id}')" class="p-1.5 text-slate-400 hover:text-brand-400 transition text-xs" title="Edit Account">
-                <i class="fa-regular fa-pen-to-square"></i>
-              </button>
-              <button onclick="window.deleteAccount('${a.id}')" class="p-1.5 text-slate-400 hover:text-rose-500 transition text-xs" title="Delete Account">
-                <i class="fa-regular fa-trash-can"></i>
-              </button>
+              <button onclick="window.editAccount('${a.id}')" class="p-1.5 text-slate-400 hover:text-brand-400 transition text-xs" title="Edit"><i class="fa-regular fa-pen-to-square"></i></button>
+              <button onclick="window.deleteAccount('${a.id}')" class="p-1.5 text-slate-400 hover:text-rose-500 transition text-xs" title="Delete"><i class="fa-regular fa-trash-can"></i></button>
             </div>
           </div>
           <h4 class="font-extrabold text-slate-800 dark:text-white text-base mt-2">${a.name}</h4>
           <p class="text-2xl font-black text-brand-500 mt-1">${formatBDT(a.balance)}</p>
         </div>
-
         <div class="mt-4 pt-3 border-t border-slate-100 dark:border-darkbg-border flex items-center justify-between">
           <span class="text-[10px] font-bold text-slate-400">Available Balance</span>
-          <button onclick="window.openDepositModal('${a.id}')" class="bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 text-xs font-black px-3 py-1.5 rounded-xl border border-emerald-500/30 transition flex items-center gap-1.5 active:scale-95">
+          <button onclick="window.openDepositModal('${a.id}')" class="bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 text-xs font-black px-3 py-1.5 rounded-xl border border-emerald-500/30 transition active:scale-95">
             <i class="fa-solid fa-circle-plus"></i> Add Money
           </button>
         </div>
@@ -746,7 +745,7 @@ if (formAddFunds) {
 
     const target = appData.accounts.find(a => a.id === accId);
     if (!target) return alert("Target account not found");
-    if (amount <= 0) return alert("Enter a valid deposit amount");
+    if (amount <= 0) return alert("Enter valid amount");
 
     const prevBalance = Number(target.balance);
     const newBalance = prevBalance + amount;
@@ -786,10 +785,10 @@ if (formAccount) {
         acc.type = type;
         acc.balance = balance;
       }
-      showToast("Account details updated!");
+      showToast("Account updated!");
     } else {
       appData.accounts.push({ id: "acc_" + Date.now(), name, type, balance });
-      showToast("Account created successfully!");
+      showToast("Account created!");
     }
 
     updateDropdowns();
@@ -827,13 +826,10 @@ window.deleteAccount = async (id) => {
   showToast("Account removed");
 };
 
-// ==========================================
-// PROJECTS & DIRECT BANK BUDGET ALLOCATION
-// ==========================================
 function renderProjects() {
   if (!projectsGridEl) return;
   if (appData.projects.length === 0) {
-    projectsGridEl.innerHTML = `<div class="col-span-full py-6 text-center text-slate-400 bg-slate-50 dark:bg-darkbg-elevated border border-dashed border-slate-200 dark:border-darkbg-border rounded-2xl text-xs">No projects created yet.</div>`;
+    projectsGridEl.innerHTML = `<div class="col-span-full py-6 text-center text-slate-400 bg-slate-50 dark:bg-darkbg-elevated border border-dashed rounded-2xl text-xs">No projects created yet.</div>`;
     return;
   }
   projectsGridEl.innerHTML = appData.projects.map(p => {
@@ -850,19 +846,14 @@ function renderProjects() {
           <div class="flex justify-between items-start">
             <h4 class="font-bold text-slate-900 dark:text-white text-base">${p.name}</h4>
             <div class="flex items-center gap-1">
-              <button onclick="window.editProject('${p.id}')" class="p-1 text-slate-400 hover:text-brand-400 text-xs" title="Edit">
-                <i class="fa-regular fa-pen-to-square"></i>
-              </button>
-              <button onclick="window.deleteProject('${p.id}')" class="p-1 text-slate-400 hover:text-rose-500 text-xs" title="Delete">
-                <i class="fa-regular fa-trash-can"></i>
-              </button>
+              <button onclick="window.editProject('${p.id}')" class="p-1 text-slate-400 hover:text-brand-400 text-xs" title="Edit"><i class="fa-regular fa-pen-to-square"></i></button>
+              <button onclick="window.deleteProject('${p.id}')" class="p-1 text-slate-400 hover:text-rose-500 text-xs" title="Delete"><i class="fa-regular fa-trash-can"></i></button>
             </div>
           </div>
           ${p.notes ? `<p class="text-xs text-slate-400 mt-1">${p.notes}</p>` : ""}
-
           ${budget > 0 ? `
             <div class="mt-3">
-              <div class="flex justify-between text-[11px] text-slate-500 dark:text-slate-400 font-semibold mb-1">
+              <div class="flex justify-between text-[11px] text-slate-400 font-semibold mb-1">
                 <span>Spent: ${progressPercent}%</span>
                 <span>Budget: ${formatBDT(budget)}</span>
               </div>
@@ -871,27 +862,17 @@ function renderProjects() {
               </div>
             </div>
           ` : ""}
-
           <div class="grid grid-cols-2 gap-2 mt-4 pt-3 border-t border-slate-100 dark:border-darkbg-border text-xs">
-            <div>
-              <span class="text-slate-400">Total Inflow:</span>
-              <p class="font-bold text-emerald-500">+${formatBDT(pIn)}</p>
-            </div>
-            <div>
-              <span class="text-slate-400">Total Spent:</span>
-              <p class="font-bold text-rose-500">-${formatBDT(pOut)}</p>
-            </div>
+            <div><span class="text-slate-400">Inflow:</span><p class="font-bold text-emerald-500">+${formatBDT(pIn)}</p></div>
+            <div><span class="text-slate-400">Spent:</span><p class="font-bold text-rose-500">-${formatBDT(pOut)}</p></div>
           </div>
         </div>
-        
         <div class="mt-4 pt-3 border-t border-slate-100 dark:border-darkbg-border flex items-center justify-between">
           <div>
             <span class="text-[10px] text-slate-400 uppercase font-semibold">Net Balance</span>
-            <p class="font-black text-sm ${pNet >= 0 ? 'text-emerald-500' : 'text-rose-500'}">
-              ${pNet >= 0 ? '+' : ''}${formatBDT(pNet)}
-            </p>
+            <p class="font-black text-sm ${pNet >= 0 ? 'text-emerald-500' : 'text-rose-500'}">${pNet >= 0 ? '+' : ''}${formatBDT(pNet)}</p>
           </div>
-          <button onclick="window.openProjectDetails('${p.id}')" class="bg-brand-500/10 hover:bg-brand-500/20 text-brand-600 dark:text-brand-400 text-xs font-bold px-3 py-1.5 rounded-xl border border-brand-500/30 transition flex items-center gap-1.5">
+          <button onclick="window.openProjectDetails('${p.id}')" class="bg-brand-500/10 hover:bg-brand-500/20 text-brand-600 dark:text-brand-400 text-xs font-bold px-3 py-1.5 rounded-xl border border-brand-500/30 transition">
             <i class="fa-solid fa-list-check"></i> View Ledger
           </button>
         </div>
@@ -963,22 +944,16 @@ function refreshProjectDetails(projectId) {
       <tr class="hover:bg-slate-50 dark:hover:bg-darkbg-elevated/50 transition border-b border-slate-100 dark:border-darkbg-border">
         <td class="p-3 pl-4">
           <span class="px-2 py-0.5 rounded text-[10px] font-bold ${isIncome ? 'bg-emerald-500/10 text-emerald-500' : 'bg-rose-500/10 text-rose-500'}">
-            ${isIncome ? 'Credit / Inflow' : 'Debit / Outflow'}
+            ${isIncome ? 'Credit' : 'Debit'}
           </span>
         </td>
         <td class="p-3 font-semibold text-slate-800 dark:text-slate-200">${t.note}</td>
-        <td class="p-3 text-slate-500 dark:text-slate-400">${acc ? `${acc.name} (${acc.type})` : 'N/A'}</td>
-        <td class="p-3 font-bold text-right ${isIncome ? 'text-emerald-500' : 'text-rose-500'}">
-          ${isIncome ? '+' : '-'}${formatBDT(t.amount)}
-        </td>
+        <td class="p-3 text-slate-500 dark:text-slate-400">${acc ? `${acc.name}` : 'N/A'}</td>
+        <td class="p-3 font-bold text-right ${isIncome ? 'text-emerald-500' : 'text-rose-500'}">${isIncome ? '+' : '-'}${formatBDT(t.amount)}</td>
         <td class="p-3 text-slate-500 dark:text-slate-400">${t.date}</td>
         <td class="p-3 pr-4 text-right space-x-1">
-          <button onclick="window.editTransaction('${t.id}')" class="text-slate-400 hover:text-brand-400 p-1" title="Edit">
-            <i class="fa-regular fa-pen-to-square"></i>
-          </button>
-          <button onclick="window.deleteTransaction('${t.id}', '${t.type}', ${t.amount}, '${t.accountId}')" class="text-slate-400 hover:text-rose-500 p-1" title="Delete">
-            <i class="fa-regular fa-trash-can"></i>
-          </button>
+          <button onclick="window.editTransaction('${t.id}')" class="text-slate-400 hover:text-brand-400 p-1" title="Edit"><i class="fa-regular fa-pen-to-square"></i></button>
+          <button onclick="window.deleteTransaction('${t.id}', '${t.type}', ${t.amount}, '${t.accountId}')" class="text-slate-400 hover:text-rose-500 p-1" title="Delete"><i class="fa-regular fa-trash-can"></i></button>
         </td>
       </tr>
     `;
@@ -997,11 +972,7 @@ if (formProject) {
 
     if (editId) {
       const proj = appData.projects.find(p => p.id === editId);
-      if (proj) {
-        proj.name = name;
-        proj.budget = budget;
-        proj.notes = notes;
-      }
+      if (proj) { proj.name = name; proj.budget = budget; proj.notes = notes; }
       showToast("Project updated!");
     } else {
       const newProjectId = "proj_" + Date.now();
@@ -1013,7 +984,6 @@ if (formProject) {
           const prevBal = Number(targetAcc.balance);
           const newBal = prevBal - budget;
           targetAcc.balance = newBal;
-
           appData.transactions.unshift({
             id: "tx_" + Date.now(),
             type: "EXPENSE",
@@ -1025,7 +995,7 @@ if (formProject) {
             note: `Initial Budget Funded: ${name}`,
             date: new Date().toISOString().split("T")[0]
           });
-          showToast(`Project created & ${formatBDT(budget)} deducted from ${targetAcc.name}!`);
+          showToast(`Project created & ${formatBDT(budget)} deducted!`);
         }
       } else {
         showToast("Project created successfully!");
@@ -1072,7 +1042,7 @@ window.deleteProject = async (id) => {
 };
 
 // ==========================================
-// TRANSFERS
+// TRANSFERS & PROJECT FUND SHIFTING
 // ==========================================
 const formTransfer = document.getElementById("formTransfer");
 if (formTransfer) {
@@ -1080,6 +1050,8 @@ if (formTransfer) {
     e.preventDefault();
     const fromId = document.getElementById("transferFrom").value;
     const toVal = document.getElementById("transferTo").value;
+    const fromProjId = document.getElementById("transferFromProject") ? document.getElementById("transferFromProject").value : "NONE";
+    const toProjId = document.getElementById("transferToProject") ? document.getElementById("transferToProject").value : "NONE";
     const amount = parseFloat(document.getElementById("transferAmount").value) || 0;
     const date = document.getElementById("transferDate").value;
 
@@ -1096,7 +1068,7 @@ if (formTransfer) {
         id: "tx_" + Date.now(),
         type: "EXPENSE",
         accountId: fromId,
-        projectId: "NONE",
+        projectId: fromProjId,
         amount,
         prevBalance: fromPrev,
         newBalance: fromNew,
@@ -1105,7 +1077,7 @@ if (formTransfer) {
       });
       showToast(`Transferred ${formatBDT(amount)} to ${extName}!`);
     } else {
-      if (fromId === toVal) return alert("Source and destination accounts cannot be identical!");
+      if (fromId === toVal && fromProjId === toProjId) return alert("Source and destination cannot be identical!");
       const toAcc = appData.accounts.find(a => a.id === toVal);
       if (!toAcc) return;
 
@@ -1121,25 +1093,26 @@ if (formTransfer) {
         id: "tx_" + Date.now(),
         type: "EXPENSE",
         accountId: fromId,
-        projectId: "NONE",
+        projectId: fromProjId,
         amount,
         prevBalance: fromPrev,
         newBalance: fromNew,
-        note: `Transfer to ${toAcc.name}`,
+        note: `Shift funds to ${toAcc.name}`,
         date
       });
+
       appData.transactions.unshift({
         id: "tx_" + (Date.now() + 1),
         type: "INCOME",
         accountId: toVal,
-        projectId: "NONE",
+        projectId: toProjId,
         amount,
         prevBalance: toPrev,
         newBalance: toNew,
-        note: `Transfer from ${fromAcc.name}`,
+        note: `Shift funds from ${fromAcc.name}`,
         date
       });
-      showToast(`Transferred ${formatBDT(amount)} from ${fromAcc.name} to ${toAcc.name}!`);
+      showToast(`Successfully transferred ${formatBDT(amount)}!`);
     }
 
     await syncToMongoDB();
@@ -1151,7 +1124,7 @@ if (formTransfer) {
 }
 
 // ==========================================
-// LENT (DEBT TRACKER & PHONE LEDGER)
+// LENT (DEBT TRACKER)
 // ==========================================
 function renderLoans() {
   if (!loansTableBodyEl) return;
@@ -1180,41 +1153,23 @@ function renderLoans() {
       <tr class="hover:bg-slate-50 dark:hover:bg-darkbg-elevated/50 transition border-b border-slate-100 dark:border-darkbg-border">
         <td class="p-3.5 pl-4">
           <div class="flex items-center gap-2">
-            <div class="w-8 h-8 rounded-full bg-brand-500/10 text-brand-400 flex items-center justify-center font-bold text-xs">
-              <i class="fa-solid fa-user"></i>
-            </div>
+            <div class="w-8 h-8 rounded-full bg-brand-500/10 text-brand-400 flex items-center justify-center font-bold text-xs"><i class="fa-solid fa-user"></i></div>
             <div>
               <h5 class="font-extrabold text-slate-900 dark:text-white">${l.friendName}</h5>
-              <p class="text-[11px] font-bold text-brand-500 flex items-center gap-1">
-                <i class="fa-solid fa-phone text-[9px]"></i> ${l.phone || 'N/A'}
-              </p>
+              <p class="text-[11px] font-bold text-brand-500 flex items-center gap-1"><i class="fa-solid fa-phone text-[9px]"></i> ${l.phone || 'N/A'}</p>
             </div>
           </div>
         </td>
         <td class="p-3.5 font-black text-rose-500">${formatBDT(remainingDue)}</td>
         <td class="p-3.5 text-xs text-slate-400">${formatBDT(totalAmount)}</td>
-        <td class="p-3.5 text-xs text-slate-400">${acc ? `${acc.name} [${acc.type}]` : "N/A"}</td>
+        <td class="p-3.5 text-xs text-slate-400">${acc ? acc.name : "N/A"}</td>
         <td class="p-3.5 text-xs text-slate-400">${l.date}</td>
-        <td class="p-3.5">
-          <span class="px-2.5 py-0.5 rounded-full text-[10px] font-black ${badgeClass}">
-            ${statusText}
-          </span>
-        </td>
+        <td class="p-3.5"><span class="px-2.5 py-0.5 rounded-full text-[10px] font-black ${badgeClass}">${statusText}</span></td>
         <td class="p-3.5 pr-4 text-right space-x-1.5">
-          <button onclick="window.viewLentPersonHistory('${l.phone || ''}', '${l.friendName}')" class="text-xs bg-slate-100 dark:bg-darkbg-elevated hover:text-brand-500 text-slate-700 dark:text-slate-300 font-bold px-2.5 py-1.5 rounded-xl border border-slate-200 dark:border-darkbg-border transition" title="View History">
-            <i class="fa-solid fa-clock-rotate-left"></i> History
-          </button>
-          <button onclick="window.openEditLoan('${l.id}')" class="text-xs bg-slate-100 dark:bg-darkbg-elevated hover:text-brand-500 text-slate-700 dark:text-slate-300 font-bold px-2 py-1.5 rounded-xl border border-slate-200 dark:border-darkbg-border transition" title="Edit Name/Phone/Amount">
-            <i class="fa-regular fa-pen-to-square"></i> Edit
-          </button>
-          ${!isRepaid ? `
-            <button onclick="window.openLoanSettle('${l.id}')" class="text-xs bg-gradient-to-r from-emerald-500 to-teal-500 text-slate-950 font-black px-3 py-1.5 rounded-xl transition shadow-md shadow-emerald-500/20">
-              <i class="fa-solid fa-hand-holding-dollar mr-1"></i> Receive
-            </button>
-          ` : ""}
-          <button onclick="window.deleteLoan('${l.id}')" class="text-slate-400 hover:text-rose-500 text-xs p-1" title="Delete">
-            <i class="fa-regular fa-trash-can"></i>
-          </button>
+          <button onclick="window.viewLentPersonHistory('${l.phone || ''}', '${l.friendName}')" class="text-xs bg-slate-100 dark:bg-darkbg-elevated hover:text-brand-500 px-2.5 py-1.5 rounded-xl border transition"><i class="fa-solid fa-clock-rotate-left"></i> History</button>
+          <button onclick="window.openEditLoan('${l.id}')" class="text-xs bg-slate-100 dark:bg-darkbg-elevated hover:text-brand-500 px-2.5 py-1.5 rounded-xl border transition"><i class="fa-regular fa-pen-to-square"></i> Edit</button>
+          ${!isRepaid ? `<button onclick="window.openLoanSettle('${l.id}')" class="text-xs bg-gradient-to-r from-emerald-500 to-teal-500 text-slate-950 font-black px-3 py-1.5 rounded-xl transition shadow-md">Receive</button>` : ""}
+          <button onclick="window.deleteLoan('${l.id}')" class="text-slate-400 hover:text-rose-500 text-xs p-1" title="Delete"><i class="fa-regular fa-trash-can"></i></button>
         </td>
       </tr>
     `;
@@ -1223,7 +1178,6 @@ function renderLoans() {
 
 window.viewLentPersonHistory = (phone, name) => {
   const matchingLoans = appData.loans.filter(l => (phone && l.phone === phone) || l.friendName.toLowerCase() === name.toLowerCase());
-  
   const totalLent = matchingLoans.reduce((sum, l) => sum + (Number(l.amount) || 0), 0);
   const totalDue = matchingLoans.reduce((sum, l) => sum + (Number(l.remainingAmount ?? l.amount) || 0), 0);
   const totalReturned = totalLent - totalDue;
@@ -1236,27 +1190,19 @@ window.viewLentPersonHistory = (phone, name) => {
 
   const tbody = document.getElementById("lentHistTableBody");
   if (!tbody) return;
-  if (matchingLoans.length === 0) {
-    tbody.innerHTML = `<tr><td colspan="5" class="p-4 text-center text-slate-400">No records found.</td></tr>`;
-  } else {
-    tbody.innerHTML = matchingLoans.map(l => {
-      const acc = appData.accounts.find(a => a.id === l.accountId);
-      const isRepaid = l.status === "REPAID" || (Number(l.remainingAmount ?? l.amount) <= 0);
-      return `
-        <tr class="hover:bg-slate-50 dark:hover:bg-darkbg-elevated/50 transition border-b border-slate-100 dark:border-darkbg-border">
-          <td class="p-3 pl-4 font-semibold text-slate-800 dark:text-slate-200">${acc ? `${acc.name} [${acc.type}]` : 'N/A'}</td>
-          <td class="p-3 font-bold text-slate-700 dark:text-slate-300">${formatBDT(l.amount)}</td>
-          <td class="p-3 font-black text-rose-500">${formatBDT(l.remainingAmount ?? l.amount)}</td>
-          <td class="p-3 text-slate-400">${l.date}</td>
-          <td class="p-3 pr-4 text-right">
-            <span class="px-2 py-0.5 rounded-full text-[10px] font-bold ${isRepaid ? 'bg-emerald-500/10 text-emerald-500' : 'bg-amber-500/10 text-amber-500'}">
-              ${isRepaid ? 'Fully Repaid' : 'Pending'}
-            </span>
-          </td>
-        </tr>
-      `;
-    }).join("");
-  }
+  tbody.innerHTML = matchingLoans.map(l => {
+    const acc = appData.accounts.find(a => a.id === l.accountId);
+    const isRepaid = l.status === "REPAID" || (Number(l.remainingAmount ?? l.amount) <= 0);
+    return `
+      <tr class="hover:bg-slate-50 dark:hover:bg-darkbg-elevated/50 transition border-b border-slate-100 dark:border-darkbg-border">
+        <td class="p-3 pl-4 font-semibold text-slate-800 dark:text-slate-200">${acc ? acc.name : 'N/A'}</td>
+        <td class="p-3 font-bold text-slate-700 dark:text-slate-300">${formatBDT(l.amount)}</td>
+        <td class="p-3 font-black text-rose-500">${formatBDT(l.remainingAmount ?? l.amount)}</td>
+        <td class="p-3 text-slate-400">${l.date}</td>
+        <td class="p-3 pr-4 text-right"><span class="px-2 py-0.5 rounded-full text-[10px] font-bold ${isRepaid ? 'bg-emerald-500/10 text-emerald-500' : 'bg-amber-500/10 text-amber-500'}">${isRepaid ? 'Repaid' : 'Pending'}</span></td>
+      </tr>
+    `;
+  }).join("");
 
   openModal(modalLentHistory);
 };
@@ -1287,7 +1233,6 @@ if (formEditLoan) {
     const oldRemaining = Number(loan.remainingAmount ?? loan.amount) || 0;
     const paidAmount = oldAmount - oldRemaining;
 
-    // Adjust remaining due based on new total amount
     let newRemaining = newAmount - paidAmount;
     if (newRemaining < 0) newRemaining = 0;
 
@@ -1295,16 +1240,10 @@ if (formEditLoan) {
     loan.phone = newPhone;
     loan.amount = newAmount;
     loan.remainingAmount = newRemaining;
-    if (newRemaining <= 0) {
-      loan.status = "REPAID";
-    } else if (newRemaining < newAmount) {
-      loan.status = "PARTIALLY_PAID";
-    } else {
-      loan.status = "PENDING";
-    }
+    loan.status = newRemaining <= 0 ? "REPAID" : newRemaining < newAmount ? "PARTIALLY_PAID" : "PENDING";
 
     await syncToMongoDB();
-    showToast("Lent record & amount updated successfully!");
+    showToast("Lent record & amount updated!");
     document.getElementById("modalEditLoan").classList.add("hidden");
   };
 }
@@ -1312,40 +1251,20 @@ if (formEditLoan) {
 window.openLoanSettle = (loanId) => {
   const loan = appData.loans.find(l => l.id === loanId);
   if (!loan) return;
-
   const remainingDue = Number(loan.remainingAmount ?? loan.amount) || 0;
   document.getElementById("settleLoanId").value = loan.id;
-  document.getElementById("settleFriendName").textContent = `${loan.friendName} (${loan.phone || 'No phone'})`;
+  document.getElementById("settleFriendName").textContent = `${loan.friendName} (${loan.phone || ''})`;
   document.getElementById("settleRemainingDue").textContent = formatBDT(remainingDue);
-
   document.getElementById("radioFullSettle").checked = true;
   document.getElementById("partialAmountGroup").classList.add("hidden");
   document.getElementById("settleReceivedAmount").value = remainingDue;
-  document.getElementById("settleReceivedAmount").max = remainingDue;
-
   openModal(modalLoanSettle);
 };
 
 const radioFullSettle = document.getElementById("radioFullSettle");
-if (radioFullSettle) {
-  radioFullSettle.onchange = () => {
-    const group = document.getElementById("partialAmountGroup");
-    if (group) group.classList.add("hidden");
-  };
-}
-
+if (radioFullSettle) radioFullSettle.onchange = () => document.getElementById("partialAmountGroup").classList.add("hidden");
 const radioPartialSettle = document.getElementById("radioPartialSettle");
-if (radioPartialSettle) {
-  radioPartialSettle.onchange = () => {
-    const group = document.getElementById("partialAmountGroup");
-    if (group) group.classList.remove("hidden");
-    const loanId = document.getElementById("settleLoanId").value;
-    const loan = appData.loans.find(l => l.id === loanId);
-    const remainingDue = Number(loan?.remainingAmount ?? loan?.amount) || 0;
-    const receivedInput = document.getElementById("settleReceivedAmount");
-    if (receivedInput) receivedInput.value = Math.floor(remainingDue / 2) || 1;
-  };
-}
+if (radioPartialSettle) radioPartialSettle.onchange = () => document.getElementById("partialAmountGroup").classList.remove("hidden");
 
 const formLoanSettle = document.getElementById("formLoanSettle");
 if (formLoanSettle) {
@@ -1358,16 +1277,13 @@ if (formLoanSettle) {
 
     const loan = appData.loans.find(l => l.id === loanId);
     const targetAcc = appData.accounts.find(a => a.id === depositAccId);
-    if (!loan || !targetAcc) return alert("Invalid account or loan selection");
+    if (!loan || !targetAcc) return alert("Invalid account selection");
 
     const remainingDue = Number(loan.remainingAmount ?? loan.amount) || 0;
     let receivedAmount = remainingDue;
-
     if (settleType === "PARTIAL") {
       receivedAmount = parseFloat(document.getElementById("settleReceivedAmount").value) || 0;
-      if (receivedAmount <= 0 || receivedAmount > remainingDue) {
-        return alert(`Enter valid amount between ৳1 and ${formatBDT(remainingDue)}`);
-      }
+      if (receivedAmount <= 0 || receivedAmount > remainingDue) return alert("Enter valid partial amount");
     }
 
     const prevBal = Number(targetAcc.balance);
@@ -1376,12 +1292,7 @@ if (formLoanSettle) {
 
     const newDue = remainingDue - receivedAmount;
     loan.remainingAmount = newDue;
-    if (newDue <= 0) {
-      loan.status = "REPAID";
-      loan.remainingAmount = 0;
-    } else {
-      loan.status = "PARTIALLY_PAID";
-    }
+    loan.status = newDue <= 0 ? "REPAID" : "PARTIALLY_PAID";
 
     appData.transactions.unshift({
       id: "tx_" + Date.now(),
@@ -1391,12 +1302,12 @@ if (formLoanSettle) {
       amount: receivedAmount,
       prevBalance: prevBal,
       newBalance: newBal,
-      note: `Debt received from ${loan.friendName} (${settleType === 'PARTIAL' ? 'Partial' : 'Full'})`,
+      note: `Debt received from ${loan.friendName}`,
       date
     });
 
     await syncToMongoDB();
-    showToast(`Received ${formatBDT(receivedAmount)} from ${loan.friendName}!`);
+    showToast(`Received ${formatBDT(receivedAmount)}!`);
     if (modalLoanSettle) modalLoanSettle.classList.add("hidden");
   };
 }
@@ -1406,29 +1317,19 @@ if (formLoan) {
   formLoan.onsubmit = async (e) => {
     e.preventDefault();
     const friendName = document.getElementById("loanFriendName").value.trim();
-    const phone = document.getElementById("loanFriendPhone") ? document.getElementById("loanFriendPhone").value.trim() : "";
+    const phone = document.getElementById("loanFriendPhone").value.trim();
     const amount = parseFloat(document.getElementById("loanAmount").value) || 0;
     const accountId = document.getElementById("loanAccount").value;
     const date = document.getElementById("loanDate").value;
 
     const targetAccount = appData.accounts.find(a => a.id === accountId);
-    if (!targetAccount) return alert("Select source account");
+    if (!targetAccount) return alert("Select account");
 
     const prevBal = Number(targetAccount.balance);
     const newBal = prevBal - amount;
     targetAccount.balance = newBal;
 
-    appData.loans.unshift({ 
-      id: "loan_" + Date.now(), 
-      friendName, 
-      phone,
-      amount, 
-      remainingAmount: amount, 
-      accountId, 
-      date, 
-      status: "PENDING" 
-    });
-
+    appData.loans.unshift({ id: "loan_" + Date.now(), friendName, phone, amount, remainingAmount: amount, accountId, date, status: "PENDING" });
     appData.transactions.unshift({
       id: "tx_" + Date.now(),
       type: "EXPENSE",
@@ -1442,7 +1343,7 @@ if (formLoan) {
     });
 
     await syncToMongoDB();
-    showToast("Lent transaction recorded successfully!");
+    showToast("Lent transaction recorded!");
     if (modalLoan) modalLoan.classList.add("hidden");
     formLoan.reset();
   };
@@ -1456,7 +1357,7 @@ window.deleteLoan = async (id) => {
 };
 
 // ==========================================
-// TRANSACTIONS & BALANCE IMPACT DISPLAY
+// TRANSACTIONS & BALANCE FLOW
 // ==========================================
 function renderTransactions() {
   if (!txTableBodyEl) return;
@@ -1484,42 +1385,24 @@ function renderTransactions() {
 
     return `
       <tr class="hover:bg-slate-50 dark:hover:bg-darkbg-elevated/50 transition border-b border-slate-100 dark:border-darkbg-border">
-        <td class="p-3.5 pl-4">
-          <span class="px-2 py-0.5 rounded text-[10px] font-black ${isIncome ? 'bg-emerald-500/10 text-emerald-500' : 'bg-rose-500/10 text-rose-500'}">
-            ${isIncome ? 'Income' : 'Expense'}
-          </span>
-        </td>
+        <td class="p-3.5 pl-4"><span class="px-2 py-0.5 rounded text-[10px] font-black ${isIncome ? 'bg-emerald-500/10 text-emerald-500' : 'bg-rose-500/10 text-rose-500'}">${isIncome ? 'Income' : 'Expense'}</span></td>
         <td class="p-3.5 font-semibold text-slate-800 dark:text-slate-200">${t.note}</td>
-        <td class="p-3.5 text-xs text-slate-400">${acc ? `${acc.name} [${acc.type}]` : "N/A"}</td>
-        <td class="p-3.5 text-xs text-slate-400">${proj ? proj.name : '<span class="text-slate-600">-</span>'}</td>
-        <td class="p-3.5 font-black text-right ${isIncome ? 'text-emerald-500' : 'text-rose-500'}">
-          ${isIncome ? '+' : '-'}${formatBDT(t.amount)}
-        </td>
-        
+        <td class="p-3.5 text-xs text-slate-400">${acc ? acc.name : "N/A"}</td>
+        <td class="p-3.5 text-xs text-slate-400">${proj ? proj.name : '-'}</td>
+        <td class="p-3.5 font-black text-right ${isIncome ? 'text-emerald-500' : 'text-rose-500'}">${isIncome ? '+' : '-'}${formatBDT(t.amount)}</td>
         <td class="p-3.5 font-mono text-right text-xs">
           ${hasFlow ? `
             <div class="inline-flex flex-col items-end leading-tight space-y-0.5">
               <span class="text-slate-400 text-[10px]">Prev: ${formatBDT(t.prevBalance)}</span>
-              <span class="${isIncome ? 'text-emerald-500 font-bold' : 'text-rose-500 font-bold'} text-[11px]">
-                ${isIncome ? '+' : '-'}${formatBDT(t.amount)}
-              </span>
-              <span class="font-black text-slate-900 dark:text-white text-xs border-t border-slate-200 dark:border-darkbg-border pt-0.5">
-                = ${formatBDT(t.newBalance)}
-              </span>
+              <span class="${isIncome ? 'text-emerald-500 font-bold' : 'text-rose-500 font-bold'} text-[11px]">${isIncome ? '+' : '-'}${formatBDT(t.amount)}</span>
+              <span class="font-black text-slate-900 dark:text-white text-xs border-t pt-0.5">= ${formatBDT(t.newBalance)}</span>
             </div>
-          ` : `
-            <span class="text-slate-400 text-xs">—</span>
-          `}
+          ` : `—`}
         </td>
-
         <td class="p-3.5 text-xs text-slate-400">${t.date}</td>
         <td class="p-3.5 pr-4 text-right space-x-1 no-print">
-          <button onclick="window.editTransaction('${t.id}')" class="text-slate-400 hover:text-brand-400 text-xs p-1" title="Edit">
-            <i class="fa-regular fa-pen-to-square"></i>
-          </button>
-          <button onclick="window.deleteTransaction('${t.id}', '${t.type}', ${t.amount}, '${t.accountId}')" class="text-slate-400 hover:text-rose-500 text-xs p-1" title="Delete">
-            <i class="fa-regular fa-trash-can"></i>
-          </button>
+          <button onclick="window.editTransaction('${t.id}')" class="text-slate-400 hover:text-brand-400 text-xs p-1" title="Edit"><i class="fa-regular fa-pen-to-square"></i></button>
+          <button onclick="window.deleteTransaction('${t.id}', '${t.type}', ${t.amount}, '${t.accountId}')" class="text-slate-400 hover:text-rose-500 text-xs p-1" title="Delete"><i class="fa-regular fa-trash-can"></i></button>
         </td>
       </tr>
     `;
@@ -1565,23 +1448,12 @@ if (formTx) {
         oldTx.date = date;
       }
     } else {
-      appData.transactions.unshift({
-        id: "tx_" + Date.now(),
-        type,
-        accountId,
-        projectId,
-        amount,
-        prevBalance: prevBal,
-        newBalance: newBal,
-        note,
-        date
-      });
+      appData.transactions.unshift({ id: "tx_" + Date.now(), type, accountId, projectId, amount, prevBalance: prevBal, newBalance: newBal, note, date });
     }
 
     targetAccount.balance = newBal;
-
     await syncToMongoDB();
-    showToast(editId ? "Transaction updated!" : "Transaction saved!");
+    showToast("Transaction saved!");
     if (modalTx) modalTx.classList.add("hidden");
     resetTxForm();
   };
@@ -1611,7 +1483,7 @@ window.editTransaction = (id) => {
 };
 
 window.deleteTransaction = async (txId, type, amount, accountId) => {
-  if (!confirm("Delete transaction? Account balance will revert.")) return;
+  if (!confirm("Delete transaction? Balance will revert.")) return;
   const target = appData.accounts.find(a => a.id === accountId);
   if (target) {
     target.balance = type === "INCOME" ? Number(target.balance) - Number(amount) : Number(target.balance) + Number(amount);
@@ -1624,29 +1496,16 @@ window.deleteTransaction = async (txId, type, amount, accountId) => {
 window.switchView = (viewName) => {
   window.currentActiveView = viewName;
   document.querySelectorAll(".app-view").forEach(el => el.classList.add("hidden"));
-  document.querySelectorAll("#appSidebar nav button").forEach(btn => {
-    btn.classList.remove("bg-brand-500/10", "text-brand-500");
-  });
+  document.querySelectorAll("#appSidebar nav button").forEach(btn => btn.classList.remove("bg-brand-500/10", "text-brand-500"));
 
-  const targetMap = {
-    overview: "viewOverview",
-    accounts: "viewAccounts",
-    projects: "viewProjects",
-    loans: "viewLoans",
-    transactions: "viewTransactions"
-  };
-
-  const targetId = targetMap[viewName] || "viewOverview";
-  const targetEl = document.getElementById(targetId);
+  const targetMap = { overview: "viewOverview", accounts: "viewAccounts", projects: "viewProjects", loans: "viewLoans", transactions: "viewTransactions" };
+  const targetEl = document.getElementById(targetMap[viewName] || "viewOverview");
   if (targetEl) targetEl.classList.remove("hidden");
 
   const activeBtn = document.getElementById(`nav-${viewName}`);
   if (activeBtn) activeBtn.classList.add("bg-brand-500/10", "text-brand-500");
 
-  if (viewName === "overview") {
-    setTimeout(renderCharts, 50);
-  }
-
+  if (viewName === "overview") setTimeout(renderCharts, 50);
   window.closeSidebar();
   window.scrollTo({ top: 0, behavior: "smooth" });
 };

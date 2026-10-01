@@ -141,7 +141,7 @@
       </div>
     </div>
 
-    <!-- App Header (Compact Mobile Design) -->
+    <!-- App Header -->
     <header class="no-print bg-white/80 dark:bg-darkbg-card/80 backdrop-blur-xl border-b border-slate-200/80 dark:border-darkbg-border sticky top-0 z-40 px-3 sm:px-6 md:px-8 py-2.5 transition-colors">
       <div class="max-w-7xl mx-auto flex justify-between items-center">
         
@@ -195,7 +195,7 @@
       </div>
     </header>
 
-    <!-- COLLAPSIBLE SIDEBAR MENU DRAWER (SPA ROUTER) -->
+    <!-- SIDEBAR DRAWER -->
     <div id="sidebarBackdrop" class="fixed inset-0 z-50 bg-slate-950/70 backdrop-blur-sm hidden transition-opacity duration-300"></div>
     <aside id="appSidebar" class="fixed top-0 left-0 bottom-0 z-50 w-72 sm:w-80 bg-white dark:bg-darkbg-card border-r border-slate-200 dark:border-darkbg-border p-6 transform -translate-x-full transition-transform duration-300 ease-out flex flex-col justify-between shadow-2xl">
       <div class="space-y-6">
@@ -240,16 +240,6 @@
             <span>Transaction History</span>
           </button>
         </nav>
-
-        <div class="pt-3 border-t border-slate-100 dark:border-darkbg-border space-y-2">
-          <p class="text-[10px] font-black uppercase tracking-wider text-slate-400 px-3.5">Quick Actions</p>
-          <button onclick="window.closeSidebar(); document.getElementById('btnOpenTransferModal').click();" class="w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl bg-slate-100 dark:bg-darkbg-elevated text-slate-700 dark:text-slate-200 hover:text-brand-500 text-xs font-bold transition">
-            <i class="fa-solid fa-arrow-right-arrow-left text-brand-500"></i> Transfer Balance
-          </button>
-          <button onclick="window.closeSidebar(); document.getElementById('btnOpenProfileModal').click();" class="w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl bg-slate-100 dark:bg-darkbg-elevated text-slate-700 dark:text-slate-200 hover:text-brand-500 text-xs font-bold transition">
-            <i class="fa-solid fa-user-gear text-brand-500"></i> Profile & Security PIN
-          </button>
-        </div>
       </div>
 
       <div class="pt-4 border-t border-slate-100 dark:border-darkbg-border flex items-center justify-between text-xs font-bold text-slate-400">
@@ -360,7 +350,7 @@
         </div>
       </div>
 
-      <!-- VIEW 2: ACCOUNTS & WALLETS -->
+      <!-- VIEW 2: ACCOUNTS -->
       <div id="viewAccounts" class="app-view hidden space-y-5">
         <div class="flex items-center justify-between pb-3 border-b border-slate-200 dark:border-darkbg-border">
           <div>
@@ -368,11 +358,11 @@
             <p class="text-xs text-slate-400">MFS, Bangladesh Govt & Private Banks, and Cash wallets.</p>
           </div>
           <div class="flex items-center gap-2">
-            <button id="btnOpenTransferModal" class="inline-flex items-center gap-1.5 bg-slate-100 dark:bg-darkbg-elevated hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 px-3 py-1.5 sm:px-3.5 sm:py-2 rounded-xl text-xs font-bold border border-slate-200 dark:border-darkbg-border transition">
+            <button id="btnOpenTransferModal" class="inline-flex items-center gap-1.5 bg-slate-100 dark:bg-darkbg-elevated hover:bg-slate-200 text-slate-700 dark:text-slate-200 px-3.5 py-2 rounded-xl text-xs font-bold border border-slate-200 dark:border-darkbg-border transition">
               <i class="fa-solid fa-arrow-right-arrow-left text-brand-500"></i>
-              <span>Transfer</span>
+              <span>Transfer / Shift Funds</span>
             </button>
-            <button id="btnOpenAccountModal" class="inline-flex items-center gap-1.5 bg-brand-500/10 hover:bg-brand-500/20 text-brand-600 dark:text-brand-400 px-3 py-1.5 sm:px-3.5 sm:py-2 rounded-xl text-xs font-bold border border-brand-500/30 transition">
+            <button id="btnOpenAccountModal" class="inline-flex items-center gap-1.5 bg-brand-500/10 hover:bg-brand-500/20 text-brand-600 dark:text-brand-400 px-3.5 py-2 rounded-xl text-xs font-bold border border-brand-500/30 transition">
               <i class="fa-solid fa-plus"></i>
               <span>Add Account</span>
             </button>
@@ -381,7 +371,7 @@
         <div id="accountsGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3.5"></div>
       </div>
 
-      <!-- VIEW 3: ACTIVE PROJECTS -->
+      <!-- VIEW 3: PROJECTS -->
       <div id="viewProjects" class="app-view hidden space-y-5">
         <div class="flex items-center justify-between pb-3 border-b border-slate-200 dark:border-darkbg-border">
           <div>
@@ -396,7 +386,7 @@
         <div id="projectsGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3.5"></div>
       </div>
 
-      <!-- VIEW 4: LENT (DEBT TRACKER) -->
+      <!-- VIEW 4: LENT -->
       <div id="viewLoans" class="app-view hidden space-y-5">
         <div class="flex items-center justify-between pb-3 border-b border-slate-200 dark:border-darkbg-border">
           <div>
@@ -426,7 +416,7 @@
         </div>
       </div>
 
-      <!-- VIEW 5: TRANSACTION HISTORY -->
+      <!-- VIEW 5: TRANSACTIONS -->
       <div id="viewTransactions" class="app-view hidden space-y-5 print-section">
         <div class="flex flex-col md:flex-row justify-between md:items-center gap-3 pb-3 border-b border-slate-200 dark:border-darkbg-border">
           <div>
@@ -467,10 +457,9 @@
       </div>
     </main>
 
-    <!-- ULTRA-CLEAN 1-CLICK ACTION FOOTER -->
+    <!-- FOOTER -->
     <footer class="no-print mt-8 py-5 border-t border-slate-200/80 dark:border-darkbg-border bg-white/50 dark:bg-darkbg-card/50 backdrop-blur-md">
       <div class="max-w-7xl mx-auto px-4 md:px-8 flex flex-col sm:flex-row items-center justify-between gap-3">
-        
         <div class="flex items-center gap-2">
           <div class="w-6 h-6 rounded-lg bg-slate-900 border border-brand-500/40 flex items-center justify-center">
             <svg class="w-3.5 h-3.5 text-brand-400" viewBox="0 0 200 200" fill="currentColor">
@@ -484,35 +473,31 @@
         </div>
 
         <div class="flex items-center gap-2.5">
-          <a href="https://wa.me/8801621110120" target="_blank" rel="noopener noreferrer" class="w-9 h-9 rounded-xl bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-500 border border-emerald-500/30 flex items-center justify-center transition active:scale-90" title="Message on WhatsApp">
+          <a href="https://wa.me/8801621110120" target="_blank" rel="noopener noreferrer" class="w-9 h-9 rounded-xl bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-500 border border-emerald-500/30 flex items-center justify-center transition" title="WhatsApp">
             <i class="fa-brands fa-whatsapp text-lg"></i>
           </a>
-
-          <a href="https://t.me/+8801621110120" target="_blank" rel="noopener noreferrer" class="w-9 h-9 rounded-xl bg-sky-500/10 hover:bg-sky-500/20 text-sky-400 border border-sky-500/30 flex items-center justify-center transition active:scale-90" title="Message on Telegram">
+          <a href="https://t.me/+8801621110120" target="_blank" rel="noopener noreferrer" class="w-9 h-9 rounded-xl bg-sky-500/10 hover:bg-sky-500/20 text-sky-400 border border-sky-500/30 flex items-center justify-center transition" title="Telegram">
             <i class="fa-brands fa-telegram text-lg"></i>
           </a>
-
-          <button onclick="window.copyDiscordHandle()" class="w-9 h-9 rounded-xl bg-indigo-500/10 hover:bg-indigo-500/20 text-indigo-400 border border-indigo-500/30 flex items-center justify-center transition active:scale-90" title="Copy Discord ID (_kofs_)">
+          <button onclick="window.copyDiscordHandle()" class="w-9 h-9 rounded-xl bg-indigo-500/10 hover:bg-indigo-500/20 text-indigo-400 border border-indigo-500/30 flex items-center justify-center transition" title="Discord">
             <i class="fa-brands fa-discord text-lg"></i>
           </button>
-
-          <a href="mailto:omrfys@gmail.com?subject=Inquiry%20via%20KofsLedger" class="w-9 h-9 rounded-xl bg-brand-500/10 hover:bg-brand-500/20 text-brand-400 border border-brand-500/30 flex items-center justify-center transition active:scale-90" title="Send Email to omrfys@gmail.com">
+          <a href="mailto:omrfys@gmail.com" class="w-9 h-9 rounded-xl bg-brand-500/10 hover:bg-brand-500/20 text-brand-400 border border-brand-500/30 flex items-center justify-center transition" title="Email">
             <i class="fa-solid fa-envelope text-base"></i>
           </a>
         </div>
-
       </div>
     </footer>
   </div>
 
   <div id="toastContainer" class="fixed bottom-6 right-6 z-50 flex flex-col space-y-2 pointer-events-none"></div>
 
-  <!-- MODAL: QUICK DEPOSIT -->
+  <!-- MODAL: ADD FUNDS -->
   <div id="modalAddFunds" class="modal-backdrop hidden fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-md p-4">
     <div class="bg-white dark:bg-darkbg-card border border-slate-200 dark:border-darkbg-border rounded-3xl p-6 sm:p-7 w-full max-w-md shadow-2xl space-y-4">
       <div class="flex justify-between items-center pb-3 border-b border-slate-100 dark:border-darkbg-border">
         <h3 class="text-lg font-black text-slate-900 dark:text-white">Add Funds / Deposit</h3>
-        <button class="modal-close w-8 h-8 rounded-full bg-slate-100 dark:bg-darkbg-elevated text-slate-400 hover:text-slate-200 flex items-center justify-center font-bold">&times;</button>
+        <button class="modal-close w-8 h-8 rounded-full bg-slate-100 dark:bg-darkbg-elevated text-slate-400 flex items-center justify-center font-bold">&times;</button>
       </div>
       <form id="formAddFunds" class="space-y-4">
         <input type="hidden" id="depositTargetAccountId" />
@@ -526,20 +511,18 @@
         </div>
         <div>
           <label class="block text-xs font-bold text-slate-600 dark:text-slate-300 mb-1">Source / Note</label>
-          <input type="text" id="depositNote" placeholder="e.g. Cash In, Salary, Bank Transfer" class="w-full bg-slate-50 dark:bg-darkbg-elevated border border-slate-200 dark:border-darkbg-border rounded-xl p-3 text-sm font-medium text-slate-800 dark:text-white" required />
+          <input type="text" id="depositNote" placeholder="e.g. Cash In, Salary" class="w-full bg-slate-50 dark:bg-darkbg-elevated border border-slate-200 dark:border-darkbg-border rounded-xl p-3 text-sm font-medium text-slate-800 dark:text-white" required />
         </div>
         <div>
           <label class="block text-xs font-bold text-slate-600 dark:text-slate-300 mb-1">Date</label>
           <input type="date" id="depositDate" class="w-full bg-slate-50 dark:bg-darkbg-elevated border border-slate-200 dark:border-darkbg-border rounded-xl p-3 text-sm font-medium text-slate-800 dark:text-white" required />
         </div>
-        <button type="submit" class="w-full bg-gradient-to-r from-emerald-500 to-teal-500 text-slate-950 font-black py-3 rounded-xl text-sm transition shadow-lg shadow-emerald-500/20 active:scale-95">
-          Confirm Deposit
-        </button>
+        <button type="submit" class="w-full bg-gradient-to-r from-emerald-500 to-teal-500 text-slate-950 font-black py-3 rounded-xl text-sm transition shadow-lg shadow-emerald-500/20 active:scale-95">Confirm Deposit</button>
       </form>
     </div>
   </div>
 
-  <!-- MODAL: LENT BORROWER HISTORY LEDGER -->
+  <!-- MODAL: LENT HISTORY -->
   <div id="modalLentHistory" class="modal-backdrop hidden fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-md p-4">
     <div class="bg-white dark:bg-darkbg-card border border-slate-200 dark:border-darkbg-border rounded-3xl p-6 sm:p-8 w-full max-w-3xl shadow-2xl space-y-6 max-h-[90vh] overflow-y-auto">
       <div class="flex justify-between items-start pb-4 border-b border-slate-100 dark:border-darkbg-border">
@@ -548,7 +531,7 @@
           <h3 class="text-2xl font-black text-slate-900 dark:text-white mt-2" id="lentHistFriendName">Person Name</h3>
           <p class="text-xs text-slate-400 mt-0.5">Unique Phone Identifier: <strong id="lentHistPhone" class="text-brand-500"></strong></p>
         </div>
-        <button class="modal-close w-8 h-8 rounded-full bg-slate-100 dark:bg-darkbg-elevated text-slate-400 hover:text-slate-200 flex items-center justify-center font-bold">&times;</button>
+        <button class="modal-close w-8 h-8 rounded-full bg-slate-100 dark:bg-darkbg-elevated text-slate-400 flex items-center justify-center font-bold">&times;</button>
       </div>
 
       <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
@@ -586,12 +569,12 @@
     </div>
   </div>
 
-  <!-- MODAL: EDIT LENT RECORD (WITH AMOUNT ADJUSTMENT) -->
+  <!-- MODAL: EDIT LENT RECORD & AMOUNT -->
   <div id="modalEditLoan" class="modal-backdrop hidden fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-md p-4">
     <div class="bg-white dark:bg-darkbg-card border border-slate-200 dark:border-darkbg-border rounded-3xl p-6 sm:p-7 w-full max-w-md shadow-2xl">
       <div class="flex justify-between items-center mb-5 pb-3 border-b border-slate-100 dark:border-darkbg-border">
         <h3 class="text-lg font-black text-slate-900 dark:text-white">Edit Lent Record & Amount</h3>
-        <button class="modal-close w-8 h-8 rounded-full bg-slate-100 dark:bg-darkbg-elevated text-slate-400 hover:text-slate-200 flex items-center justify-center font-bold">&times;</button>
+        <button class="modal-close w-8 h-8 rounded-full bg-slate-100 dark:bg-darkbg-elevated text-slate-400 flex items-center justify-center font-bold">&times;</button>
       </div>
       <form id="formEditLoan" class="space-y-4">
         <input type="hidden" id="editLoanId" />
@@ -606,14 +589,14 @@
         <div>
           <label class="block text-xs font-bold text-slate-600 dark:text-slate-300 mb-1">Total Lent Amount (৳ BDT)</label>
           <input type="number" step="0.01" min="0.01" id="editLoanAmount" class="w-full bg-slate-50 dark:bg-darkbg-elevated border border-slate-200 dark:border-darkbg-border rounded-xl p-3 text-sm font-black text-amber-500" required />
-          <p class="text-[10px] text-slate-400 mt-1">Changing this will automatically update the total given & remaining due.</p>
+          <p class="text-[10px] text-slate-400 mt-1">Adjust total lent amount (add or decrease).</p>
         </div>
-        <button type="submit" class="w-full bg-brand-500 hover:bg-brand-400 text-slate-950 font-black py-3 rounded-xl text-sm transition shadow-lg shadow-brand-500/25 active:scale-95">Update Record</button>
+        <button type="submit" class="w-full bg-brand-500 hover:bg-brand-400 text-slate-950 font-black py-3 rounded-xl text-sm transition shadow-lg active:scale-95">Update Record</button>
       </form>
     </div>
   </div>
 
-  <!-- MODAL: PROFILE & SETTINGS -->
+  <!-- MODAL: PROFILE -->
   <div id="modalProfile" class="modal-backdrop hidden fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-md p-4">
     <div class="bg-white dark:bg-darkbg-card border border-slate-200 dark:border-darkbg-border rounded-3xl p-6 sm:p-8 w-full max-w-lg shadow-2xl space-y-5">
       <div class="flex justify-between items-center pb-3 border-b border-slate-100 dark:border-darkbg-border">
@@ -626,9 +609,8 @@
             <p class="text-xs text-slate-400">Manage identity, photo & security PIN</p>
           </div>
         </div>
-        <button class="modal-close w-8 h-8 rounded-full bg-slate-100 dark:bg-darkbg-elevated text-slate-400 hover:text-slate-200 flex items-center justify-center font-bold">&times;</button>
+        <button class="modal-close w-8 h-8 rounded-full bg-slate-100 dark:bg-darkbg-elevated text-slate-400 flex items-center justify-center font-bold">&times;</button>
       </div>
-
       <form id="formProfile" class="space-y-4">
         <div class="flex items-center gap-4 p-3 bg-slate-50 dark:bg-darkbg-elevated rounded-2xl border border-slate-200 dark:border-darkbg-border">
           <div id="modalAvatarPreview" class="w-16 h-16 rounded-2xl overflow-hidden bg-brand-500 text-slate-950 font-black text-xl flex items-center justify-center border-2 border-brand-500/50 shadow-md">
@@ -640,7 +622,6 @@
             <input type="hidden" id="profAvatarBase64" />
           </div>
         </div>
-
         <div>
           <label class="block text-xs font-bold text-slate-600 dark:text-slate-300 mb-1">Full Name</label>
           <input type="text" id="profName" class="w-full bg-slate-50 dark:bg-darkbg-elevated border border-slate-200 dark:border-darkbg-border rounded-xl p-3 text-sm font-medium text-slate-800 dark:text-white" required />
@@ -661,17 +642,14 @@
         </div>
         <div>
           <label class="block text-xs font-bold text-slate-600 dark:text-slate-300 mb-1">Address</label>
-          <textarea id="profAddress" rows="2" class="w-full bg-slate-50 dark:bg-darkbg-elevated border border-slate-200 dark:border-darkbg-border rounded-xl p-3 text-sm font-medium text-slate-800 dark:text-white" placeholder="Location details..."></textarea>
+          <textarea id="profAddress" rows="2" class="w-full bg-slate-50 dark:bg-darkbg-elevated border border-slate-200 dark:border-darkbg-border rounded-xl p-3 text-sm font-medium text-slate-800 dark:text-white" placeholder="Location..."></textarea>
         </div>
-
-        <button type="submit" id="btnSaveProfile" class="w-full bg-gradient-to-r from-brand-500 to-cyan-400 hover:from-brand-600 hover:to-cyan-500 text-slate-950 font-black py-3 rounded-xl text-sm transition shadow-lg shadow-brand-500/20 active:scale-95">
-          Save Profile Changes
-        </button>
+        <button type="submit" id="btnSaveProfile" class="w-full bg-gradient-to-r from-brand-500 to-cyan-400 hover:from-brand-600 hover:to-cyan-500 text-slate-950 font-black py-3 rounded-xl text-sm transition shadow-lg active:scale-95">Save Profile Changes</button>
       </form>
     </div>
   </div>
 
-  <!-- MODAL: FORGOT / RESET PASSWORD -->
+  <!-- MODAL: FORGOT PASSWORD -->
   <div id="modalForgotPass" class="modal-backdrop hidden fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-md p-4">
     <div class="bg-white dark:bg-darkbg-card border border-slate-200 dark:border-darkbg-border rounded-3xl p-6 sm:p-8 w-full max-w-md shadow-2xl space-y-4">
       <div class="flex justify-between items-center pb-3 border-b border-slate-100 dark:border-darkbg-border">
@@ -679,36 +657,27 @@
           <h3 class="text-lg font-black text-slate-900 dark:text-white">Reset Account Password</h3>
           <p class="text-xs text-slate-400">Verify using your 6-digit Secret PIN</p>
         </div>
-        <button class="modal-close w-8 h-8 rounded-full bg-slate-100 dark:bg-darkbg-elevated text-slate-400 hover:text-slate-200 flex items-center justify-center font-bold">&times;</button>
+        <button class="modal-close w-8 h-8 rounded-full bg-slate-100 dark:bg-darkbg-elevated flex items-center justify-center font-bold">&times;</button>
       </div>
-
       <form id="formForgotPass" class="space-y-4">
         <div>
           <label class="block text-xs font-bold text-slate-600 dark:text-slate-300 mb-1">Registered Email</label>
-          <input type="email" id="resetEmail" class="w-full bg-slate-50 dark:bg-darkbg-elevated border border-slate-200 dark:border-darkbg-border rounded-xl p-3 text-sm font-medium text-slate-800 dark:text-white" placeholder="name@example.com" required />
+          <input type="email" id="resetEmail" class="w-full bg-slate-50 dark:bg-darkbg-elevated border border-slate-200 dark:border-darkbg-border rounded-xl p-3 text-sm font-medium text-slate-800 dark:text-white" required />
         </div>
         <div>
           <label class="block text-xs font-bold text-slate-600 dark:text-slate-300 mb-1">Secret Recovery PIN (6 Digits)</label>
-          <input type="text" id="resetPin" maxlength="6" class="w-full bg-slate-50 dark:bg-darkbg-elevated border border-slate-200 dark:border-darkbg-border rounded-xl p-3 text-sm font-bold text-brand-500" placeholder="123456" required />
+          <input type="text" id="resetPin" maxlength="6" class="w-full bg-slate-50 dark:bg-darkbg-elevated border border-slate-200 dark:border-darkbg-border rounded-xl p-3 text-sm font-bold text-brand-500" required />
         </div>
         <div>
           <label class="block text-xs font-bold text-slate-600 dark:text-slate-300 mb-1">New Password</label>
-          <div class="relative">
-            <input type="password" id="resetNewPass" class="w-full bg-slate-50 dark:bg-darkbg-elevated border border-slate-200 dark:border-darkbg-border rounded-xl p-3 pr-10 text-sm font-medium text-slate-800 dark:text-white" placeholder="••••••••" required />
-            <button type="button" onclick="window.togglePasswordVisibility('resetNewPass', 'eyeResetPass')" class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-200 text-sm p-1">
-              <i id="eyeResetPass" class="fa-regular fa-eye"></i>
-            </button>
-          </div>
+          <input type="password" id="resetNewPass" class="w-full bg-slate-50 dark:bg-darkbg-elevated border border-slate-200 dark:border-darkbg-border rounded-xl p-3 text-sm font-medium text-slate-800 dark:text-white" required />
         </div>
-
-        <button type="submit" id="btnSubmitReset" class="w-full bg-gradient-to-r from-emerald-500 to-teal-500 text-slate-950 font-black py-3 rounded-xl text-sm transition shadow-lg shadow-emerald-500/20 active:scale-95">
-          Reset Password
-        </button>
+        <button type="submit" id="btnSubmitReset" class="w-full bg-gradient-to-r from-emerald-500 to-teal-500 text-slate-950 font-black py-3 rounded-xl text-sm transition shadow-lg active:scale-95">Reset Password</button>
       </form>
     </div>
   </div>
 
-  <!-- MODAL: PROJECT DETAILS & PURPOSE LEDGER -->
+  <!-- MODAL: PROJECT DETAILS -->
   <div id="modalProjectDetails" class="modal-backdrop hidden fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-md p-4">
     <div class="bg-white dark:bg-darkbg-card border border-slate-200 dark:border-darkbg-border rounded-3xl p-6 sm:p-8 w-full max-w-4xl shadow-2xl space-y-6 max-h-[90vh] overflow-y-auto">
       <div class="flex justify-between items-start pb-4 border-b border-slate-100 dark:border-darkbg-border">
@@ -717,7 +686,7 @@
           <h3 class="text-2xl font-black text-slate-900 dark:text-white mt-2" id="pDetailName">Project Name</h3>
           <p class="text-xs text-slate-400 mt-0.5" id="pDetailNotes">Project notes</p>
         </div>
-        <button class="modal-close w-8 h-8 rounded-full bg-slate-100 dark:bg-darkbg-elevated text-slate-400 hover:text-slate-200 flex items-center justify-center font-bold">&times;</button>
+        <button class="modal-close w-8 h-8 rounded-full bg-slate-100 dark:bg-darkbg-elevated flex items-center justify-center font-bold">&times;</button>
       </div>
 
       <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
@@ -746,7 +715,7 @@
             <button id="pDetailBtnAddInflow" class="text-xs bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 border border-emerald-500/30 font-black px-3 py-1.5 rounded-xl transition flex items-center gap-1 active:scale-95">
               <i class="fa-solid fa-arrow-down-to-bracket text-xs"></i> + Fund Project
             </button>
-            <button id="pDetailBtnAddTx" class="text-xs bg-brand-500 hover:bg-brand-400 text-slate-950 font-black px-3.5 py-1.5 rounded-xl transition shadow-md shadow-brand-500/20 flex items-center gap-1 active:scale-95">
+            <button id="pDetailBtnAddTx" class="text-xs bg-brand-500 hover:bg-brand-400 text-slate-950 font-black px-3.5 py-1.5 rounded-xl transition shadow-md flex items-center gap-1 active:scale-95">
               <i class="fa-solid fa-plus text-xs"></i> - Add Expense
             </button>
           </div>
@@ -775,7 +744,7 @@
     <div class="bg-white dark:bg-darkbg-card border border-slate-200 dark:border-darkbg-border rounded-3xl p-6 sm:p-7 w-full max-w-md shadow-2xl space-y-4">
       <div class="flex justify-between items-center pb-3 border-b border-slate-100 dark:border-darkbg-border">
         <h3 class="text-lg font-black text-slate-900 dark:text-white">Receive Loan Repayment</h3>
-        <button class="modal-close w-8 h-8 rounded-full bg-slate-100 dark:bg-darkbg-elevated text-slate-400 hover:text-slate-200 flex items-center justify-center font-bold">&times;</button>
+        <button class="modal-close w-8 h-8 rounded-full bg-slate-100 dark:bg-darkbg-elevated flex items-center justify-center font-bold">&times;</button>
       </div>
       <form id="formLoanSettle" class="space-y-4">
         <input type="hidden" id="settleLoanId" />
@@ -813,9 +782,7 @@
           <input type="date" id="settleDate" class="w-full bg-slate-50 dark:bg-darkbg-elevated border border-slate-200 dark:border-darkbg-border rounded-xl p-3 text-sm font-medium text-slate-800 dark:text-white" required />
         </div>
 
-        <button type="submit" class="w-full bg-gradient-to-r from-emerald-500 to-teal-500 text-slate-950 font-black py-3 rounded-xl text-sm transition shadow-lg shadow-emerald-500/20 active:scale-95">
-          Confirm Repayment
-        </button>
+        <button type="submit" class="w-full bg-gradient-to-r from-emerald-500 to-teal-500 text-slate-950 font-black py-3 rounded-xl text-sm transition shadow-lg active:scale-95">Confirm Repayment</button>
       </form>
     </div>
   </div>
@@ -825,7 +792,7 @@
     <div class="bg-white dark:bg-darkbg-card border border-slate-200 dark:border-darkbg-border rounded-3xl p-6 sm:p-7 w-full max-w-md shadow-2xl">
       <div class="flex justify-between items-center mb-5 pb-3 border-b border-slate-100 dark:border-darkbg-border">
         <h3 class="text-lg font-black text-slate-900 dark:text-white" id="txModalTitle">Add Transaction</h3>
-        <button class="modal-close w-8 h-8 rounded-full bg-slate-100 dark:bg-darkbg-elevated text-slate-400 hover:text-slate-200 flex items-center justify-center font-bold">&times;</button>
+        <button class="modal-close w-8 h-8 rounded-full bg-slate-100 dark:bg-darkbg-elevated flex items-center justify-center font-bold">&times;</button>
       </div>
       <form id="formTx" class="space-y-4">
         <input type="hidden" id="editTxId" />
@@ -850,23 +817,23 @@
         </div>
         <div>
           <label class="block text-xs font-bold text-slate-600 dark:text-slate-300 mb-1">Purpose / Note</label>
-          <input type="text" id="txNote" class="w-full bg-slate-50 dark:bg-darkbg-elevated border border-slate-200 dark:border-darkbg-border rounded-xl p-3 text-sm font-medium text-slate-800 dark:text-white" placeholder="e.g. Server hosting, domain fee" required />
+          <input type="text" id="txNote" class="w-full bg-slate-50 dark:bg-darkbg-elevated border border-slate-200 dark:border-darkbg-border rounded-xl p-3 text-sm font-medium text-slate-800 dark:text-white" placeholder="e.g. Server hosting" required />
         </div>
         <div>
           <label class="block text-xs font-bold text-slate-600 dark:text-slate-300 mb-1">Date</label>
           <input type="date" id="txDate" class="w-full bg-slate-50 dark:bg-darkbg-elevated border border-slate-200 dark:border-darkbg-border rounded-xl p-3 text-sm font-medium text-slate-800 dark:text-white" required />
         </div>
-        <button type="submit" class="w-full bg-brand-500 hover:bg-brand-400 text-slate-950 font-black py-3 rounded-xl text-sm transition shadow-lg shadow-brand-500/25 active:scale-95">Save Transaction</button>
+        <button type="submit" class="w-full bg-brand-500 hover:bg-brand-400 text-slate-950 font-black py-3 rounded-xl text-sm transition shadow-lg active:scale-95">Save Transaction</button>
       </form>
     </div>
   </div>
 
-  <!-- MODAL: TRANSFER -->
+  <!-- MODAL: TRANSFER / SHIFT FUNDS -->
   <div id="modalTransfer" class="modal-backdrop hidden fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-md p-4">
     <div class="bg-white dark:bg-darkbg-card border border-slate-200 dark:border-darkbg-border rounded-3xl p-6 sm:p-7 w-full max-w-md shadow-2xl">
       <div class="flex justify-between items-center mb-5 pb-3 border-b border-slate-100 dark:border-darkbg-border">
-        <h3 class="text-lg font-black text-slate-900 dark:text-white">Transfer Money</h3>
-        <button class="modal-close w-8 h-8 rounded-full bg-slate-100 dark:bg-darkbg-elevated text-slate-400 hover:text-slate-200 flex items-center justify-center font-bold">&times;</button>
+        <h3 class="text-lg font-black text-slate-900 dark:text-white">Transfer Money / Shift Funds</h3>
+        <button class="modal-close w-8 h-8 rounded-full bg-slate-100 dark:bg-darkbg-elevated flex items-center justify-center font-bold">&times;</button>
       </div>
       <form id="formTransfer" class="space-y-4">
         <div>
@@ -877,9 +844,21 @@
           <label class="block text-xs font-bold text-slate-600 dark:text-slate-300 mb-1">To Account (Credit)</label>
           <select id="transferTo" class="w-full bg-slate-50 dark:bg-darkbg-elevated border border-slate-200 dark:border-darkbg-border rounded-xl p-3 text-sm font-semibold text-slate-800 dark:text-white" required></select>
         </div>
+
+        <div class="grid grid-cols-2 gap-2">
+          <div>
+            <label class="block text-xs font-bold text-slate-600 dark:text-slate-300 mb-1">From Project (Optional)</label>
+            <select id="transferFromProject" class="w-full bg-slate-50 dark:bg-darkbg-elevated border border-slate-200 dark:border-darkbg-border rounded-xl p-2.5 text-xs font-semibold text-slate-800 dark:text-white"></select>
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-slate-600 dark:text-slate-300 mb-1">To Project (Optional)</label>
+            <select id="transferToProject" class="w-full bg-slate-50 dark:bg-darkbg-elevated border border-slate-200 dark:border-darkbg-border rounded-xl p-2.5 text-xs font-semibold text-slate-800 dark:text-white"></select>
+          </div>
+        </div>
+
         <div id="externalRecipientGroup" class="hidden">
           <label class="block text-xs font-bold text-slate-600 dark:text-slate-300 mb-1">External Recipient Name</label>
-          <input type="text" id="transferExternalName" class="w-full bg-slate-50 dark:bg-darkbg-elevated border border-slate-200 dark:border-darkbg-border rounded-xl p-3 text-sm font-medium text-slate-800 dark:text-white" placeholder="e.g. Tanvir bKash" />
+          <input type="text" id="transferExternalName" class="w-full bg-slate-50 dark:bg-darkbg-elevated border border-slate-200 dark:border-darkbg-border rounded-xl p-3 text-sm font-medium text-slate-800 dark:text-white" placeholder="e.g. Tanvir" />
         </div>
         <div>
           <label class="block text-xs font-bold text-slate-600 dark:text-slate-300 mb-1">Amount (৳ BDT)</label>
@@ -889,7 +868,7 @@
           <label class="block text-xs font-bold text-slate-600 dark:text-slate-300 mb-1">Date</label>
           <input type="date" id="transferDate" class="w-full bg-slate-50 dark:bg-darkbg-elevated border border-slate-200 dark:border-darkbg-border rounded-xl p-3 text-sm font-medium text-slate-800 dark:text-white" required />
         </div>
-        <button type="submit" class="w-full bg-brand-500 hover:bg-brand-400 text-slate-950 font-black py-3 rounded-xl text-sm transition shadow-lg shadow-brand-500/25 active:scale-95">Confirm Transfer</button>
+        <button type="submit" class="w-full bg-brand-500 hover:bg-brand-400 text-slate-950 font-black py-3 rounded-xl text-sm transition shadow-lg active:scale-95">Confirm Transfer & Shift Funds</button>
       </form>
     </div>
   </div>
@@ -899,97 +878,64 @@
     <div class="bg-white dark:bg-darkbg-card border border-slate-200 dark:border-darkbg-border rounded-3xl p-6 sm:p-7 w-full max-w-md shadow-2xl">
       <div class="flex justify-between items-center mb-5 pb-3 border-b border-slate-100 dark:border-darkbg-border">
         <h3 class="text-lg font-black text-slate-900 dark:text-white" id="accountModalTitle">Add Account / Wallet</h3>
-        <button class="modal-close w-8 h-8 rounded-full bg-slate-100 dark:bg-darkbg-elevated text-slate-400 hover:text-slate-200 flex items-center justify-center font-bold">&times;</button>
+        <button class="modal-close w-8 h-8 rounded-full bg-slate-100 dark:bg-darkbg-elevated flex items-center justify-center font-bold">&times;</button>
       </div>
       <form id="formAccount" class="space-y-4">
         <input type="hidden" id="editAccountId" />
         <div>
           <label class="block text-xs font-bold text-slate-600 dark:text-slate-300 mb-1">Account / Wallet Name</label>
-          <input type="text" id="accName" class="w-full bg-slate-50 dark:bg-darkbg-elevated border border-slate-200 dark:border-darkbg-border rounded-xl p-3 text-sm font-medium text-slate-800 dark:text-white" placeholder="e.g. City Bank Salary, Personal bKash" required />
+          <input type="text" id="accName" class="w-full bg-slate-50 dark:bg-darkbg-elevated border border-slate-200 dark:border-darkbg-border rounded-xl p-3 text-sm font-medium text-slate-800 dark:text-white" placeholder="e.g. UCB Bank" required />
         </div>
         <div>
-          <label class="block text-xs font-bold text-slate-600 dark:text-slate-300 mb-1">Provider Type (Banks & MFS)</label>
+          <label class="block text-xs font-bold text-slate-600 dark:text-slate-300 mb-1">Provider Type</label>
           <select id="accType" class="w-full bg-slate-50 dark:bg-darkbg-elevated border border-slate-200 dark:border-darkbg-border rounded-xl p-3 text-sm font-semibold text-slate-800 dark:text-white" required>
-            <optgroup label="Mobile Financial Services (MFS)">
-              <option value="bKash">bKash</option>
-              <option value="Nagad">Nagad</option>
-              <option value="Rocket">Rocket (DBBL)</option>
-              <option value="Upay">Upay (UCB)</option>
-              <option value="Cellfin">Cellfin (IBBL)</option>
-              <option value="Tap">Tap</option>
-              <option value="mCash">mCash (Islami Bank)</option>
-            </optgroup>
-
-            <optgroup label="Private Commercial Banks (Bangladesh)">
-              <option value="Islami Bank">Islami Bank Bangladesh (IBBL)</option>
-              <option value="Dutch-Bangla Bank">Dutch-Bangla Bank (DBBL)</option>
-              <option value="BRAC Bank">BRAC Bank</option>
-              <option value="City Bank">The City Bank</option>
-              <option value="Eastern Bank">Eastern Bank (EBL)</option>
-              <option value="Mutual Trust Bank">Mutual Trust Bank (MTB)</option>
-              <option value="Prime Bank">Prime Bank</option>
-              <option value="Southeast Bank">Southeast Bank</option>
-              <option value="UCB Bank">United Commercial Bank (UCB)</option>
-              <option value="Standard Chartered">Standard Chartered Bangladesh</option>
-              <option value="Bank Asia">Bank Asia</option>
-              <option value="Pubali Bank">Pubali Bank</option>
-              <option value="Other Bank">Other Private Bank</option>
-            </optgroup>
-
-            <optgroup label="State-Owned Banks (Govt)">
-              <option value="Sonali Bank">Sonali Bank PLC</option>
-              <option value="Janata Bank">Janata Bank PLC</option>
-              <option value="Agrani Bank">Agrani Bank PLC</option>
-              <option value="Rupali Bank">Rupali Bank PLC</option>
-            </optgroup>
-
-            <optgroup label="Cash & Savings">
-              <option value="Cash">Cash in Hand</option>
-              <option value="Savings">Savings / Fixed Deposit</option>
-              <option value="Other">Other Wallet</option>
-            </optgroup>
+            <option value="bKash">bKash</option>
+            <option value="Nagad">Nagad</option>
+            <option value="Rocket">Rocket (DBBL)</option>
+            <option value="UCB Bank">UCB Bank</option>
+            <option value="City Bank">The City Bank</option>
+            <option value="Islami Bank">Islami Bank (IBBL)</option>
+            <option value="Cash">Cash in Hand</option>
+            <option value="Other">Other Wallet</option>
           </select>
         </div>
         <div>
           <label class="block text-xs font-bold text-slate-600 dark:text-slate-300 mb-1">Balance (৳ BDT)</label>
           <input type="number" step="0.01" id="accBalance" class="w-full bg-slate-50 dark:bg-darkbg-elevated border border-slate-200 dark:border-darkbg-border rounded-xl p-3 text-sm font-black text-brand-500" placeholder="0.00" required />
         </div>
-        <button type="submit" class="w-full bg-brand-500 hover:bg-brand-400 text-slate-950 font-black py-3 rounded-xl text-sm transition shadow-lg shadow-brand-500/25 active:scale-95">Save Account</button>
+        <button type="submit" class="w-full bg-brand-500 hover:bg-brand-400 text-slate-950 font-black py-3 rounded-xl text-sm transition shadow-lg active:scale-95">Save Account</button>
       </form>
     </div>
   </div>
 
-  <!-- MODAL: ADD / EDIT PROJECT -->
+  <!-- MODAL: PROJECT -->
   <div id="modalProject" class="modal-backdrop hidden fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-md p-4">
     <div class="bg-white dark:bg-darkbg-card border border-slate-200 dark:border-darkbg-border rounded-3xl p-6 sm:p-7 w-full max-w-md shadow-2xl">
       <div class="flex justify-between items-center mb-5 pb-3 border-b border-slate-100 dark:border-darkbg-border">
         <h3 class="text-lg font-black text-slate-900 dark:text-white" id="projectModalTitle">Create Project</h3>
-        <button class="modal-close w-8 h-8 rounded-full bg-slate-100 dark:bg-darkbg-elevated text-slate-400 hover:text-slate-200 flex items-center justify-center font-bold">&times;</button>
+        <button class="modal-close w-8 h-8 rounded-full bg-slate-100 dark:bg-darkbg-elevated flex items-center justify-center font-bold">&times;</button>
       </div>
       <form id="formProject" class="space-y-4">
         <input type="hidden" id="editProjectId" />
         <div>
           <label class="block text-xs font-bold text-slate-600 dark:text-slate-300 mb-1">Project Name</label>
-          <input type="text" id="projName" class="w-full bg-slate-50 dark:bg-darkbg-elevated border border-slate-200 dark:border-darkbg-border rounded-xl p-3 text-sm font-medium text-slate-800 dark:text-white" placeholder="Client Web App, Renovation" required />
+          <input type="text" id="projName" class="w-full bg-slate-50 dark:bg-darkbg-elevated border border-slate-200 dark:border-darkbg-border rounded-xl p-3 text-sm font-medium text-slate-800 dark:text-white" placeholder="October Project" required />
         </div>
         <div>
           <label class="block text-xs font-bold text-slate-600 dark:text-slate-300 mb-1">Allocated Budget (৳ BDT)</label>
           <input type="number" step="0.01" id="projBudget" class="w-full bg-slate-50 dark:bg-darkbg-elevated border border-slate-200 dark:border-darkbg-border rounded-xl p-3 text-sm font-black text-brand-500" placeholder="0.00" />
         </div>
-        
         <div id="projFundingAccountGroup">
           <label class="block text-xs font-bold text-slate-600 dark:text-slate-300 mb-1">Deduct / Fund from Bank Account</label>
           <select id="projFundAccount" class="w-full bg-slate-50 dark:bg-darkbg-elevated border border-slate-200 dark:border-darkbg-border rounded-xl p-3 text-sm font-semibold text-slate-800 dark:text-white">
-            <option value="NONE">None (Just an estimate ceiling, do not deduct bank)</option>
+            <option value="NONE">None (Just an estimate ceiling)</option>
           </select>
-          <p class="text-[10px] text-slate-400 mt-1">If an account is chosen, the budget amount will immediately deduct from that bank/wallet.</p>
         </div>
-
         <div>
           <label class="block text-xs font-bold text-slate-600 dark:text-slate-300 mb-1">Notes / Description</label>
-          <input type="text" id="projNotes" class="w-full bg-slate-50 dark:bg-darkbg-elevated border border-slate-200 dark:border-darkbg-border rounded-xl p-3 text-sm font-medium text-slate-800 dark:text-white" placeholder="Key objectives..." />
+          <input type="text" id="projNotes" class="w-full bg-slate-50 dark:bg-darkbg-elevated border border-slate-200 dark:border-darkbg-border rounded-xl p-3 text-sm font-medium text-slate-800 dark:text-white" placeholder="Objectives..." />
         </div>
-        <button type="submit" class="w-full bg-brand-500 hover:bg-brand-400 text-slate-950 font-black py-3 rounded-xl text-sm transition shadow-lg shadow-brand-500/25 active:scale-95">Save Project</button>
+        <button type="submit" class="w-full bg-brand-500 hover:bg-brand-400 text-slate-950 font-black py-3 rounded-xl text-sm transition shadow-lg active:scale-95">Save Project</button>
       </form>
     </div>
   </div>
@@ -999,20 +945,20 @@
     <div class="bg-white dark:bg-darkbg-card border border-slate-200 dark:border-darkbg-border rounded-3xl p-6 sm:p-7 w-full max-w-md shadow-2xl">
       <div class="flex justify-between items-center mb-5 pb-3 border-b border-slate-100 dark:border-darkbg-border">
         <h3 class="text-lg font-black text-slate-900 dark:text-white">Lend Money</h3>
-        <button class="modal-close w-8 h-8 rounded-full bg-slate-100 dark:bg-darkbg-elevated text-slate-400 hover:text-slate-200 flex items-center justify-center font-bold">&times;</button>
+        <button class="modal-close w-8 h-8 rounded-full bg-slate-100 dark:bg-darkbg-elevated flex items-center justify-center font-bold">&times;</button>
       </div>
       <form id="formLoan" class="space-y-4">
         <div>
           <label class="block text-xs font-bold text-slate-600 dark:text-slate-300 mb-1">Borrower's Name</label>
-          <input type="text" id="loanFriendName" class="w-full bg-slate-50 dark:bg-darkbg-elevated border border-slate-200 dark:border-darkbg-border rounded-xl p-3 text-sm font-medium text-slate-800 dark:text-white" placeholder="e.g. Tanvir Ahmed" required />
+          <input type="text" id="loanFriendName" class="w-full bg-slate-50 dark:bg-darkbg-elevated border border-slate-200 dark:border-darkbg-border rounded-xl p-3 text-sm font-medium text-slate-800 dark:text-white" required />
         </div>
         <div>
           <label class="block text-xs font-bold text-slate-600 dark:text-slate-300 mb-1">Phone Number (Unique ID)</label>
-          <input type="text" id="loanFriendPhone" class="w-full bg-slate-50 dark:bg-darkbg-elevated border border-slate-200 dark:border-darkbg-border rounded-xl p-3 text-sm font-bold text-brand-500" placeholder="e.g. 01700000000" required />
+          <input type="text" id="loanFriendPhone" class="w-full bg-slate-50 dark:bg-darkbg-elevated border border-slate-200 dark:border-darkbg-border rounded-xl p-3 text-sm font-bold text-brand-500" required />
         </div>
         <div>
           <label class="block text-xs font-bold text-slate-600 dark:text-slate-300 mb-1">Amount Given (৳ BDT)</label>
-          <input type="number" step="0.01" min="0.01" id="loanAmount" class="w-full bg-slate-50 dark:bg-darkbg-elevated border border-slate-200 dark:border-darkbg-border rounded-xl p-3 text-sm font-black text-amber-500" placeholder="0.00" required />
+          <input type="number" step="0.01" min="0.01" id="loanAmount" class="w-full bg-slate-50 dark:bg-darkbg-elevated border border-slate-200 dark:border-darkbg-border rounded-xl p-3 text-sm font-black text-amber-500" required />
         </div>
         <div>
           <label class="block text-xs font-bold text-slate-600 dark:text-slate-300 mb-1">Deduct From Account</label>
@@ -1022,7 +968,7 @@
           <label class="block text-xs font-bold text-slate-600 dark:text-slate-300 mb-1">Date</label>
           <input type="date" id="loanDate" class="w-full bg-slate-50 dark:bg-darkbg-elevated border border-slate-200 dark:border-darkbg-border rounded-xl p-3 text-sm font-medium text-slate-800 dark:text-white" required />
         </div>
-        <button type="submit" class="w-full bg-amber-500 hover:bg-amber-400 text-slate-950 font-black py-3 rounded-xl text-sm transition shadow-lg shadow-amber-500/25 active:scale-95">Record Lent Money</button>
+        <button type="submit" class="w-full bg-amber-500 hover:bg-amber-400 text-slate-950 font-black py-3 rounded-xl text-sm transition shadow-lg active:scale-95">Record Lent Money</button>
       </form>
     </div>
   </div>
