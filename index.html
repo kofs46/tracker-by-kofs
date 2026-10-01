@@ -59,7 +59,7 @@
         <h2 class="text-2xl font-black tracking-tight text-slate-900 dark:text-white flex items-center justify-center gap-1.5">
           <span>KOFS</span><span class="text-brand-500 dark:text-brand-400">Ledger</span>
         </h2>
-        <p class="text-xs text-slate-400 mt-1" id="authSubTitle">Secure Financial & Project Operating System</p>
+        <p class="text-xs text-slate-400 mt-1">Smart Financial & Project Operating System</p>
       </div>
 
       <div class="flex bg-slate-100 dark:bg-darkbg-elevated p-1 rounded-xl mb-5">
@@ -69,17 +69,17 @@
 
       <form id="formAuth" class="space-y-4">
         <div id="authNameGroup" class="hidden">
-          <label class="block text-xs font-bold text-slate-600 dark:text-slate-300 mb-1" data-i18n="your_name">Full Name</label>
+          <label class="block text-xs font-bold text-slate-600 dark:text-slate-300 mb-1">Full Name</label>
           <input type="text" id="authName" class="w-full bg-slate-50 dark:bg-darkbg-elevated border border-slate-200 dark:border-darkbg-border rounded-xl p-3 text-sm font-medium focus:ring-2 focus:ring-brand-500 text-slate-800 dark:text-white" placeholder="e.g. Omr Fy" />
         </div>
         <div>
-          <label class="block text-xs font-bold text-slate-600 dark:text-slate-300 mb-1" data-i18n="email_addr">Email Address</label>
+          <label class="block text-xs font-bold text-slate-600 dark:text-slate-300 mb-1">Email Address</label>
           <input type="email" id="authEmail" class="w-full bg-slate-50 dark:bg-darkbg-elevated border border-slate-200 dark:border-darkbg-border rounded-xl p-3 text-sm font-medium focus:ring-2 focus:ring-brand-500 text-slate-800 dark:text-white" placeholder="name@example.com" required />
         </div>
         <div>
           <div class="flex justify-between items-center mb-1">
-            <label class="block text-xs font-bold text-slate-600 dark:text-slate-300" data-i18n="password">Password</label>
-            <button type="button" id="btnForgotPassTrigger" class="text-[11px] font-bold text-brand-500 hover:text-brand-400 transition" data-i18n="forgot_pass">Forgot Password?</button>
+            <label class="block text-xs font-bold text-slate-600 dark:text-slate-300">Password</label>
+            <button type="button" id="btnForgotPassTrigger" class="text-[11px] font-bold text-brand-500 hover:text-brand-400 transition">Forgot Password?</button>
           </div>
           <div class="relative">
             <input type="password" id="authPassword" class="w-full bg-slate-50 dark:bg-darkbg-elevated border border-slate-200 dark:border-darkbg-border rounded-xl p-3 pr-10 text-sm font-medium focus:ring-2 focus:ring-brand-500 text-slate-800 dark:text-white" placeholder="••••••••" required />
@@ -141,19 +141,14 @@
                 </h1>
                 <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[9px] font-black uppercase tracking-wider bg-brand-500/10 text-brand-600 dark:text-brand-400 border border-brand-500/30">PRO</span>
               </div>
-              <p class="text-[11px] text-slate-400 font-medium hidden sm:block" data-i18n="tagline">Smart Multi-Wallet & Project OS</p>
+              <p class="text-[11px] text-slate-400 font-medium hidden sm:block">Smart Multi-Wallet & Project OS</p>
             </div>
           </div>
         </div>
 
-        <!-- Controls: Language, Theme, Profile, CTA -->
+        <!-- Controls: Theme, Profile, CTA -->
         <div class="flex items-center space-x-2 sm:space-x-3">
           
-          <button id="btnToggleLang" class="flex items-center gap-1 bg-slate-100 dark:bg-darkbg-elevated hover:bg-slate-200 dark:hover:bg-slate-700/60 text-slate-700 dark:text-slate-300 px-3 py-1.5 rounded-xl text-xs font-bold border border-slate-200 dark:border-darkbg-border transition" title="Change Language">
-            <i class="fa-solid fa-language text-brand-500"></i>
-            <span id="langLabel">বাংলা</span>
-          </button>
-
           <button id="btnToggleTheme" class="w-9 h-9 rounded-xl bg-slate-100 dark:bg-darkbg-elevated hover:bg-slate-200 dark:hover:bg-slate-700/60 text-slate-700 dark:text-brand-400 flex items-center justify-center text-sm border border-slate-200 dark:border-darkbg-border transition" title="Toggle Theme">
             <i id="themeIcon" class="fa-solid fa-moon"></i>
           </button>
@@ -172,7 +167,7 @@
 
           <button id="btnOpenTxModal" class="bg-gradient-to-r from-brand-500 to-cyan-400 hover:from-brand-600 hover:to-cyan-500 text-slate-950 px-3.5 sm:px-4 py-2 rounded-xl text-xs sm:text-sm font-black transition shadow-lg shadow-brand-500/20 flex items-center gap-1.5 active:scale-95">
             <i class="fa-solid fa-plus text-xs"></i>
-            <span data-i18n="add_tx_btn">Add Tx</span>
+            <span>Add Tx</span>
           </button>
         </div>
       </div>
@@ -252,7 +247,7 @@
     <main class="max-w-7xl mx-auto p-4 md:p-6 lg:p-8 space-y-8 pb-20">
 
       <!-- ==================================================== -->
-      <!-- VIEW 1: DASHBOARD OVERVIEW (FIRST/DEFAULT ACTIVE VIEW)-->
+      <!-- VIEW 1: DASHBOARD OVERVIEW (DEFAULT INITIAL VIEW)    -->
       <!-- ==================================================== -->
       <div id="viewOverview" class="app-view space-y-8">
         
@@ -260,7 +255,7 @@
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5">
           <div onclick="window.switchView('accounts')" class="cursor-pointer group bg-white dark:bg-darkbg-card p-6 rounded-3xl border border-slate-200/80 dark:border-darkbg-border shadow-sm hover:border-brand-500/40 transition-all duration-300">
             <div class="flex justify-between items-start">
-              <span class="text-xs font-bold uppercase tracking-wider text-slate-400" data-i18n="net_worth">Total Net Worth</span>
+              <span class="text-xs font-bold uppercase tracking-wider text-slate-400">Total Net Worth</span>
               <div class="w-10 h-10 rounded-2xl bg-brand-500/10 text-brand-500 flex items-center justify-center text-base group-hover:scale-110 transition-transform">
                 <i class="fa-solid fa-vault"></i>
               </div>
@@ -274,7 +269,7 @@
 
           <div onclick="window.switchView('projects')" class="cursor-pointer group bg-white dark:bg-darkbg-card p-6 rounded-3xl border border-slate-200/80 dark:border-darkbg-border shadow-sm hover:border-emerald-500/40 transition-all duration-300">
             <div class="flex justify-between items-start">
-              <span class="text-xs font-bold uppercase tracking-wider text-slate-400" data-i18n="proj_inflow">Project Inflow</span>
+              <span class="text-xs font-bold uppercase tracking-wider text-slate-400">Project Inflow</span>
               <div class="w-10 h-10 rounded-2xl bg-emerald-500/10 text-emerald-500 flex items-center justify-center text-base group-hover:scale-110 transition-transform">
                 <i class="fa-solid fa-circle-arrow-up"></i>
               </div>
@@ -282,13 +277,13 @@
             <h2 id="totalProjectInflow" class="text-2xl sm:text-3xl font-black mt-3 text-emerald-500 tracking-tight">৳0.00</h2>
             <p class="text-xs text-slate-400 mt-2 flex items-center gap-1.5">
               <i class="fa-solid fa-arrow-trend-up text-emerald-500"></i>
-              <span data-i18n="inflow_desc">Revenue & funds added</span>
+              <span>Revenue & funds added</span>
             </p>
           </div>
 
           <div onclick="window.switchView('projects')" class="cursor-pointer group bg-white dark:bg-darkbg-card p-6 rounded-3xl border border-slate-200/80 dark:border-darkbg-border shadow-sm hover:border-rose-500/40 transition-all duration-300">
             <div class="flex justify-between items-start">
-              <span class="text-xs font-bold uppercase tracking-wider text-slate-400" data-i18n="proj_cost">Project Cost</span>
+              <span class="text-xs font-bold uppercase tracking-wider text-slate-400">Project Cost</span>
               <div class="w-10 h-10 rounded-2xl bg-rose-500/10 text-rose-500 flex items-center justify-center text-base group-hover:scale-110 transition-transform">
                 <i class="fa-solid fa-circle-arrow-down"></i>
               </div>
@@ -296,13 +291,13 @@
             <h2 id="totalProjectExpense" class="text-2xl sm:text-3xl font-black mt-3 text-rose-500 tracking-tight">৳0.00</h2>
             <p class="text-xs text-slate-400 mt-2 flex items-center gap-1.5">
               <i class="fa-solid fa-chart-line-down text-rose-500"></i>
-              <span data-i18n="cost_desc">Total expenses on projects</span>
+              <span>Total expenses on projects</span>
             </p>
           </div>
 
           <div onclick="window.switchView('loans')" class="cursor-pointer group bg-white dark:bg-darkbg-card p-6 rounded-3xl border border-slate-200/80 dark:border-darkbg-border shadow-sm hover:border-amber-500/40 transition-all duration-300">
             <div class="flex justify-between items-start">
-              <span class="text-xs font-bold uppercase tracking-wider text-slate-400" data-i18n="lent_friends">Lent to Friends</span>
+              <span class="text-xs font-bold uppercase tracking-wider text-slate-400">Lent to Friends</span>
               <div class="w-10 h-10 rounded-2xl bg-amber-500/10 text-amber-500 flex items-center justify-center text-base group-hover:scale-110 transition-transform">
                 <i class="fa-solid fa-hand-holding-dollar"></i>
               </div>
@@ -310,7 +305,7 @@
             <h2 id="totalLentPending" class="text-2xl sm:text-3xl font-black mt-3 text-amber-500 tracking-tight">৳0.00</h2>
             <p class="text-xs text-slate-400 mt-2 flex items-center gap-1.5">
               <i class="fa-regular fa-clock text-amber-500"></i>
-              <span data-i18n="pending_due">Pending receivables</span>
+              <span>Pending receivables</span>
             </p>
           </div>
         </div>
@@ -321,9 +316,9 @@
             <div class="flex items-center justify-between mb-4">
               <h3 class="font-extrabold text-slate-900 dark:text-white text-sm flex items-center gap-2">
                 <i class="fa-solid fa-pie-chart text-brand-500"></i>
-                <span data-i18n="chart_pie_title">Project Cost Breakdown</span>
+                <span>Project Cost Breakdown</span>
               </h3>
-              <span class="text-[11px] text-slate-400 font-semibold" data-i18n="distribution">Distribution</span>
+              <span class="text-[11px] text-slate-400 font-semibold">Distribution</span>
             </div>
             <div class="relative h-64 flex items-center justify-center">
               <canvas id="projectChart"></canvas>
@@ -335,9 +330,9 @@
             <div class="flex items-center justify-between mb-4">
               <h3 class="font-extrabold text-slate-900 dark:text-white text-sm flex items-center gap-2">
                 <i class="fa-solid fa-chart-column text-emerald-500"></i>
-                <span data-i18n="chart_bar_title">Cash Flow & Monthly Burn</span>
+                <span>Cash Flow & Monthly Burn</span>
               </h3>
-              <span class="text-[11px] text-slate-400 font-semibold" data-i18n="last_6_months">Last 6 Months</span>
+              <span class="text-[11px] text-slate-400 font-semibold">Last 6 Months</span>
             </div>
             <div class="relative h-64">
               <canvas id="trendChart"></canvas>
@@ -347,22 +342,22 @@
       </div>
 
       <!-- ==================================================== -->
-      <!-- VIEW 2: ACCOUNTS & WALLETS (HIDDEN UNTIL CLICKED)     -->
+      <!-- VIEW 2: ACCOUNTS & WALLETS                           -->
       <!-- ==================================================== -->
       <div id="viewAccounts" class="app-view hidden space-y-6">
         <div class="flex items-center justify-between pb-3 border-b border-slate-200 dark:border-darkbg-border">
           <div>
-            <h2 class="text-xl font-black text-slate-900 dark:text-white tracking-tight" data-i18n="sec_accounts">Accounts & Wallets</h2>
-            <p class="text-xs text-slate-400" data-i18n="sec_accounts_sub">bKash, Nagad, Rocket, Bank accounts & Cash balances.</p>
+            <h2 class="text-xl font-black text-slate-900 dark:text-white tracking-tight">Accounts & Wallets</h2>
+            <p class="text-xs text-slate-400">bKash, Nagad, Rocket, Bank accounts & Cash balances.</p>
           </div>
           <div class="flex items-center gap-2">
             <button id="btnOpenTransferModal" class="inline-flex items-center gap-1.5 bg-slate-100 dark:bg-darkbg-elevated hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 px-3.5 py-2 rounded-xl text-xs font-bold border border-slate-200 dark:border-darkbg-border transition">
               <i class="fa-solid fa-arrow-right-arrow-left text-brand-500"></i>
-              <span data-i18n="btn_transfer">Transfer</span>
+              <span>Transfer</span>
             </button>
             <button id="btnOpenAccountModal" class="inline-flex items-center gap-1.5 bg-brand-500/10 hover:bg-brand-500/20 text-brand-600 dark:text-brand-400 px-3.5 py-2 rounded-xl text-xs font-bold border border-brand-500/30 transition">
               <i class="fa-solid fa-plus"></i>
-              <span data-i18n="btn_add_account">Add Account</span>
+              <span>Add Account</span>
             </button>
           </div>
         </div>
@@ -370,47 +365,47 @@
       </div>
 
       <!-- ==================================================== -->
-      <!-- VIEW 3: ACTIVE PROJECTS (HIDDEN UNTIL CLICKED)        -->
+      <!-- VIEW 3: ACTIVE PROJECTS                              -->
       <!-- ==================================================== -->
       <div id="viewProjects" class="app-view hidden space-y-6">
         <div class="flex items-center justify-between pb-3 border-b border-slate-200 dark:border-darkbg-border">
           <div>
-            <h2 class="text-xl font-black text-slate-900 dark:text-white tracking-tight" data-i18n="sec_projects">Active Projects & Purpose Ledger</h2>
-            <p class="text-xs text-slate-400" data-i18n="sec_projects_sub">Track budget ceilings, debits, credits, and purpose-wise line-item costs.</p>
+            <h2 class="text-xl font-black text-slate-900 dark:text-white tracking-tight">Active Projects & Purpose Ledger</h2>
+            <p class="text-xs text-slate-400">Track budget ceilings, debits, credits, and purpose-wise line-item costs.</p>
           </div>
           <button id="btnOpenProjectModal" class="inline-flex items-center gap-1.5 bg-brand-500/10 hover:bg-brand-500/20 text-brand-600 dark:text-brand-400 px-3.5 py-2 rounded-xl text-xs font-bold border border-brand-500/30 transition">
             <i class="fa-solid fa-folder-plus"></i>
-            <span data-i18n="btn_new_project">New Project</span>
+            <span>New Project</span>
           </button>
         </div>
         <div id="projectsGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4"></div>
       </div>
 
       <!-- ==================================================== -->
-      <!-- VIEW 4: LENT TO FRIENDS (HIDDEN UNTIL CLICKED)        -->
+      <!-- VIEW 4: LENT TO FRIENDS (DEBTS)                      -->
       <!-- ==================================================== -->
       <div id="viewLoans" class="app-view hidden space-y-6">
         <div class="flex items-center justify-between pb-3 border-b border-slate-200 dark:border-darkbg-border">
           <div>
-            <h2 class="text-xl font-black text-slate-900 dark:text-white tracking-tight" data-i18n="sec_loans">Lent to Friends (ধার/লোন)</h2>
-            <p class="text-xs text-slate-400" data-i18n="sec_loans_sub">Track personal debt balances with real-time partial or full repayment receipt.</p>
+            <h2 class="text-xl font-black text-slate-900 dark:text-white tracking-tight">Lent to Friends (Debts)</h2>
+            <p class="text-xs text-slate-400">Track personal debt balances with real-time partial or full repayment receipt.</p>
           </div>
           <button id="btnOpenLoanModal" class="inline-flex items-center gap-1.5 bg-amber-500/10 hover:bg-amber-500/20 text-amber-600 dark:text-amber-400 px-3.5 py-2 rounded-xl text-xs font-bold border border-amber-500/30 transition">
             <i class="fa-solid fa-handshake"></i>
-            <span data-i18n="btn_lend_money">Lend Money</span>
+            <span>Lend Money</span>
           </button>
         </div>
         <div class="overflow-x-auto rounded-2xl border border-slate-200 dark:border-darkbg-border bg-white dark:bg-darkbg-card">
           <table class="w-full text-left text-sm">
             <thead class="text-[11px] uppercase tracking-wider text-slate-400 bg-slate-50/70 dark:bg-darkbg-elevated border-b border-slate-100 dark:border-darkbg-border">
               <tr>
-                <th class="p-3.5 pl-4 font-bold" data-i18n="tbl_friend">Friend</th>
-                <th class="p-3.5 font-bold" data-i18n="tbl_remaining">Remaining Due</th>
-                <th class="p-3.5 font-bold" data-i18n="tbl_total_lent">Total Lent</th>
-                <th class="p-3.5 font-bold" data-i18n="tbl_source">Source Account</th>
-                <th class="p-3.5 font-bold" data-i18n="tbl_date">Date</th>
-                <th class="p-3.5 font-bold" data-i18n="tbl_status">Status</th>
-                <th class="p-3.5 pr-4 text-right font-bold" data-i18n="tbl_actions">Actions</th>
+                <th class="p-3.5 pl-4 font-bold">Friend</th>
+                <th class="p-3.5 font-bold">Remaining Due</th>
+                <th class="p-3.5 font-bold">Total Lent</th>
+                <th class="p-3.5 font-bold">Source Account</th>
+                <th class="p-3.5 font-bold">Date</th>
+                <th class="p-3.5 font-bold">Status</th>
+                <th class="p-3.5 pr-4 text-right font-bold">Actions</th>
               </tr>
             </thead>
             <tbody id="loansTableBody" class="divide-y divide-slate-100 dark:divide-darkbg-border text-slate-700 dark:text-slate-300"></tbody>
@@ -419,25 +414,25 @@
       </div>
 
       <!-- ==================================================== -->
-      <!-- VIEW 5: TRANSACTION HISTORY (HIDDEN UNTIL CLICKED)    -->
+      <!-- VIEW 5: TRANSACTION HISTORY                          -->
       <!-- ==================================================== -->
       <div id="viewTransactions" class="app-view hidden space-y-6 print-section">
         <div class="flex flex-col md:flex-row justify-between md:items-center gap-4 pb-3 border-b border-slate-200 dark:border-darkbg-border">
           <div>
-            <h2 class="text-xl font-black text-slate-900 dark:text-white tracking-tight" data-i18n="sec_tx_history">Transaction History</h2>
-            <p class="text-xs text-slate-400" data-i18n="sec_tx_sub">All credits, debit expenses, and account transfers.</p>
+            <h2 class="text-xl font-black text-slate-900 dark:text-white tracking-tight">Transaction History</h2>
+            <p class="text-xs text-slate-400">All credits, debit expenses, and account transfers.</p>
           </div>
           <div class="no-print flex flex-wrap items-center gap-2.5">
             <div class="relative">
               <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-xs"></i>
-              <input type="text" id="txSearch" placeholder="Search..." class="pl-8 bg-slate-50 dark:bg-darkbg-elevated border border-slate-200 dark:border-darkbg-border text-xs rounded-xl px-3 py-2 text-slate-800 dark:text-white focus:ring-2 focus:ring-brand-500 w-32 sm:w-44 font-medium transition" />
+              <input type="text" id="txSearch" placeholder="Search notes..." class="pl-8 bg-slate-50 dark:bg-darkbg-elevated border border-slate-200 dark:border-darkbg-border text-xs rounded-xl px-3 py-2 text-slate-800 dark:text-white focus:ring-2 focus:ring-brand-500 w-32 sm:w-44 font-medium transition" />
             </div>
             <select id="filterProject" class="bg-slate-50 dark:bg-darkbg-elevated border border-slate-200 dark:border-darkbg-border text-xs rounded-xl px-3 py-2 font-medium text-slate-800 dark:text-white"></select>
             <select id="filterAccount" class="bg-slate-50 dark:bg-darkbg-elevated border border-slate-200 dark:border-darkbg-border text-xs rounded-xl px-3 py-2 font-medium text-slate-800 dark:text-white"></select>
             
             <button onclick="window.print()" class="bg-slate-900 dark:bg-slate-100 hover:bg-slate-800 dark:hover:bg-white text-white dark:text-slate-950 text-xs px-3.5 py-2 rounded-xl font-black flex items-center gap-2 transition shadow-sm active:scale-95" title="Print Transaction History">
               <i class="fa-solid fa-print"></i>
-              <span data-i18n="btn_print_history">Print Statement</span>
+              <span>Print Statement</span>
             </button>
           </div>
         </div>
@@ -445,13 +440,13 @@
           <table class="w-full text-left text-sm" id="mainPrintTable">
             <thead class="text-[11px] uppercase tracking-wider text-slate-400 bg-slate-50/70 dark:bg-darkbg-elevated border-b border-slate-100 dark:border-darkbg-border">
               <tr>
-                <th class="p-3.5 pl-4 font-bold" data-i18n="tbl_type">Type</th>
-                <th class="p-3.5 font-bold" data-i18n="tbl_purpose">Purpose / Note</th>
-                <th class="p-3.5 font-bold" data-i18n="tbl_account">Account</th>
-                <th class="p-3.5 font-bold" data-i18n="tbl_project">Project</th>
-                <th class="p-3.5 text-right font-bold" data-i18n="tbl_amount">Amount (BDT)</th>
-                <th class="p-3.5 font-bold" data-i18n="tbl_date">Date</th>
-                <th class="p-3.5 pr-4 text-right no-print font-bold" data-i18n="tbl_actions">Actions</th>
+                <th class="p-3.5 pl-4 font-bold">Type</th>
+                <th class="p-3.5 font-bold">Purpose / Note</th>
+                <th class="p-3.5 font-bold">Account</th>
+                <th class="p-3.5 font-bold">Project</th>
+                <th class="p-3.5 text-right font-bold">Amount (BDT)</th>
+                <th class="p-3.5 font-bold">Date</th>
+                <th class="p-3.5 pr-4 text-right no-print font-bold">Actions</th>
               </tr>
             </thead>
             <tbody id="txTableBody" class="divide-y divide-slate-100 dark:divide-darkbg-border text-slate-700 dark:text-slate-300"></tbody>
@@ -461,10 +456,10 @@
     </main>
   </div>
 
-  <!-- Toast Notification -->
+  <!-- Toast Container -->
   <div id="toastContainer" class="fixed bottom-6 right-6 z-50 flex flex-col space-y-2 pointer-events-none"></div>
 
-  <!-- MODAL: PROFILE & AVATAR PHOTO SETTINGS -->
+  <!-- MODAL: PROFILE & SETTINGS -->
   <div id="modalProfile" class="modal-backdrop hidden fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-md p-4">
     <div class="bg-white dark:bg-darkbg-card border border-slate-200 dark:border-darkbg-border rounded-3xl p-6 sm:p-8 w-full max-w-lg shadow-2xl space-y-5">
       <div class="flex justify-between items-center pb-3 border-b border-slate-100 dark:border-darkbg-border">
@@ -473,8 +468,8 @@
             <i class="fa-solid fa-user-gear"></i>
           </div>
           <div>
-            <h3 class="text-lg font-black text-slate-900 dark:text-white" data-i18n="prof_settings">Profile & Settings</h3>
-            <p class="text-xs text-slate-400" data-i18n="prof_sub">Manage identity, photo & security PIN</p>
+            <h3 class="text-lg font-black text-slate-900 dark:text-white">Profile & Settings</h3>
+            <p class="text-xs text-slate-400">Manage identity, photo & security PIN</p>
           </div>
         </div>
         <button class="modal-close w-8 h-8 rounded-full bg-slate-100 dark:bg-darkbg-elevated text-slate-400 hover:text-slate-200 flex items-center justify-center font-bold">&times;</button>
@@ -486,36 +481,36 @@
             <span id="modalAvatarInitial">U</span>
           </div>
           <div class="space-y-1">
-            <label class="block text-xs font-bold text-slate-700 dark:text-slate-200 cursor-pointer" data-i18n="upload_photo">Profile Photo</label>
+            <label class="block text-xs font-bold text-slate-700 dark:text-slate-200 cursor-pointer">Profile Photo</label>
             <input type="file" id="profAvatarInput" accept="image/*" class="text-xs text-slate-400 file:mr-2 file:py-1 file:px-2.5 file:rounded-lg file:border-0 file:text-xs file:font-bold file:bg-brand-500 file:text-slate-950 hover:file:bg-brand-400 cursor-pointer" />
             <input type="hidden" id="profAvatarBase64" />
           </div>
         </div>
 
         <div>
-          <label class="block text-xs font-bold text-slate-600 dark:text-slate-300 mb-1" data-i18n="your_name">Full Name</label>
+          <label class="block text-xs font-bold text-slate-600 dark:text-slate-300 mb-1">Full Name</label>
           <input type="text" id="profName" class="w-full bg-slate-50 dark:bg-darkbg-elevated border border-slate-200 dark:border-darkbg-border rounded-xl p-3 text-sm font-medium text-slate-800 dark:text-white" required />
         </div>
         <div>
-          <label class="block text-xs font-bold text-slate-600 dark:text-slate-300 mb-1" data-i18n="email_addr">Registered Email</label>
+          <label class="block text-xs font-bold text-slate-600 dark:text-slate-300 mb-1">Registered Email</label>
           <input type="email" id="profEmail" class="w-full bg-slate-100 dark:bg-slate-800/40 text-slate-400 border border-slate-200 dark:border-darkbg-border rounded-xl p-3 text-sm font-medium cursor-not-allowed" readonly />
         </div>
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
           <div>
-            <label class="block text-xs font-bold text-slate-600 dark:text-slate-300 mb-1" data-i18n="phone_number">Phone Number</label>
+            <label class="block text-xs font-bold text-slate-600 dark:text-slate-300 mb-1">Phone Number</label>
             <input type="text" id="profPhone" class="w-full bg-slate-50 dark:bg-darkbg-elevated border border-slate-200 dark:border-darkbg-border rounded-xl p-3 text-sm font-medium text-slate-800 dark:text-white" placeholder="01700000000" />
           </div>
           <div>
-            <label class="block text-xs font-bold text-slate-600 dark:text-slate-300 mb-1" data-i18n="recovery_pin">Secret Recovery PIN (6 Digits)</label>
+            <label class="block text-xs font-bold text-slate-600 dark:text-slate-300 mb-1">Secret Recovery PIN (6 Digits)</label>
             <input type="text" id="profRecoveryPin" maxlength="6" class="w-full bg-slate-50 dark:bg-darkbg-elevated border border-slate-200 dark:border-darkbg-border rounded-xl p-3 text-sm font-bold text-brand-500" required />
           </div>
         </div>
         <div>
-          <label class="block text-xs font-bold text-slate-600 dark:text-slate-300 mb-1" data-i18n="address">Address</label>
+          <label class="block text-xs font-bold text-slate-600 dark:text-slate-300 mb-1">Address</label>
           <textarea id="profAddress" rows="2" class="w-full bg-slate-50 dark:bg-darkbg-elevated border border-slate-200 dark:border-darkbg-border rounded-xl p-3 text-sm font-medium text-slate-800 dark:text-white" placeholder="Location details..."></textarea>
         </div>
 
-        <button type="submit" id="btnSaveProfile" class="w-full bg-gradient-to-r from-brand-500 to-cyan-400 hover:from-brand-600 hover:to-cyan-500 text-slate-950 font-black py-3 rounded-xl text-sm transition shadow-lg shadow-brand-500/20 active:scale-95" data-i18n="save_profile">
+        <button type="submit" id="btnSaveProfile" class="w-full bg-gradient-to-r from-brand-500 to-cyan-400 hover:from-brand-600 hover:to-cyan-500 text-slate-950 font-black py-3 rounded-xl text-sm transition shadow-lg shadow-brand-500/20 active:scale-95">
           Save Profile Changes
         </button>
       </form>
@@ -527,23 +522,23 @@
     <div class="bg-white dark:bg-darkbg-card border border-slate-200 dark:border-darkbg-border rounded-3xl p-6 sm:p-8 w-full max-w-md shadow-2xl space-y-4">
       <div class="flex justify-between items-center pb-3 border-b border-slate-100 dark:border-darkbg-border">
         <div>
-          <h3 class="text-lg font-black text-slate-900 dark:text-white" data-i18n="reset_pass_title">Reset Account Password</h3>
-          <p class="text-xs text-slate-400" data-i18n="reset_pass_sub">Verify using your 6-digit Secret PIN</p>
+          <h3 class="text-lg font-black text-slate-900 dark:text-white">Reset Account Password</h3>
+          <p class="text-xs text-slate-400">Verify using your 6-digit Secret PIN</p>
         </div>
         <button class="modal-close w-8 h-8 rounded-full bg-slate-100 dark:bg-darkbg-elevated text-slate-400 hover:text-slate-200 flex items-center justify-center font-bold">&times;</button>
       </div>
 
       <form id="formForgotPass" class="space-y-4">
         <div>
-          <label class="block text-xs font-bold text-slate-600 dark:text-slate-300 mb-1" data-i18n="email_addr">Registered Email</label>
+          <label class="block text-xs font-bold text-slate-600 dark:text-slate-300 mb-1">Registered Email</label>
           <input type="email" id="resetEmail" class="w-full bg-slate-50 dark:bg-darkbg-elevated border border-slate-200 dark:border-darkbg-border rounded-xl p-3 text-sm font-medium text-slate-800 dark:text-white" placeholder="name@example.com" required />
         </div>
         <div>
-          <label class="block text-xs font-bold text-slate-600 dark:text-slate-300 mb-1" data-i18n="recovery_pin">Secret Recovery PIN (6 Digits)</label>
+          <label class="block text-xs font-bold text-slate-600 dark:text-slate-300 mb-1">Secret Recovery PIN (6 Digits)</label>
           <input type="text" id="resetPin" maxlength="6" class="w-full bg-slate-50 dark:bg-darkbg-elevated border border-slate-200 dark:border-darkbg-border rounded-xl p-3 text-sm font-bold text-brand-500" placeholder="123456" required />
         </div>
         <div>
-          <label class="block text-xs font-bold text-slate-600 dark:text-slate-300 mb-1" data-i18n="new_pass">New Password</label>
+          <label class="block text-xs font-bold text-slate-600 dark:text-slate-300 mb-1">New Password</label>
           <div class="relative">
             <input type="password" id="resetNewPass" class="w-full bg-slate-50 dark:bg-darkbg-elevated border border-slate-200 dark:border-darkbg-border rounded-xl p-3 pr-10 text-sm font-medium text-slate-800 dark:text-white" placeholder="••••••••" required />
             <button type="button" onclick="window.togglePasswordVisibility('resetNewPass', 'eyeResetPass')" class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-200 text-sm p-1">
@@ -552,7 +547,7 @@
           </div>
         </div>
 
-        <button type="submit" id="btnSubmitReset" class="w-full bg-gradient-to-r from-emerald-500 to-teal-500 text-slate-950 font-black py-3 rounded-xl text-sm transition shadow-lg shadow-emerald-500/20 active:scale-95" data-i18n="confirm_reset">
+        <button type="submit" id="btnSubmitReset" class="w-full bg-gradient-to-r from-emerald-500 to-teal-500 text-slate-950 font-black py-3 rounded-xl text-sm transition shadow-lg shadow-emerald-500/20 active:scale-95">
           Reset Password
         </button>
       </form>
@@ -678,8 +673,8 @@
         <div>
           <label class="block text-xs font-bold text-slate-600 dark:text-slate-300 mb-1">Transaction Type</label>
           <select id="txType" class="w-full bg-slate-50 dark:bg-darkbg-elevated border border-slate-200 dark:border-darkbg-border rounded-xl p-3 text-sm font-semibold text-slate-800 dark:text-white">
-            <option value="EXPENSE">Expense / Debit (টাকা খরচ)</option>
-            <option value="INCOME">Income / Credit (টাকা জমা)</option>
+            <option value="EXPENSE">Expense / Debit</option>
+            <option value="INCOME">Income / Credit</option>
           </select>
         </div>
         <div>
@@ -696,7 +691,7 @@
         </div>
         <div>
           <label class="block text-xs font-bold text-slate-600 dark:text-slate-300 mb-1">Purpose / Note</label>
-          <input type="text" id="txNote" class="w-full bg-slate-50 dark:bg-darkbg-elevated border border-slate-200 dark:border-darkbg-border rounded-xl p-3 text-sm font-medium text-slate-800 dark:text-white" placeholder="e.g. Hosting bill, design asset" required />
+          <input type="text" id="txNote" class="w-full bg-slate-50 dark:bg-darkbg-elevated border border-slate-200 dark:border-darkbg-border rounded-xl p-3 text-sm font-medium text-slate-800 dark:text-white" placeholder="e.g. Server hosting, domain fee" required />
         </div>
         <div>
           <label class="block text-xs font-bold text-slate-600 dark:text-slate-300 mb-1">Date</label>

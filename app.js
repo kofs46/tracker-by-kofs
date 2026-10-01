@@ -3,7 +3,6 @@ const API_URL = "/api";
 // App State
 let currentUser = null;
 let token = localStorage.getItem("KOFS_AUTH_TOKEN") || null;
-let currentLang = localStorage.getItem("KOFS_LANG") || "en";
 let currentTheme = localStorage.getItem("KOFS_THEME") || "dark";
 
 let appData = {
@@ -14,140 +13,7 @@ let appData = {
 };
 
 let activeDetailProjectId = null;
-
-// ==========================================
-// TRANSLATION DICTIONARY (i18n)
-// ==========================================
-const translations = {
-  en: {
-    tagline: "Smart Multi-Wallet & Project OS",
-    your_name: "Full Name",
-    email_addr: "Email Address",
-    password: "Password",
-    forgot_pass: "Forgot Password?",
-    add_tx_btn: "Add Tx",
-    net_worth: "Total Net Worth",
-    proj_inflow: "Project Inflow",
-    inflow_desc: "Revenue & funds added",
-    proj_cost: "Project Cost",
-    cost_desc: "Total expenses on projects",
-    lent_friends: "Lent to Friends",
-    pending_due: "Pending receivables",
-    chart_pie_title: "Project Cost Breakdown",
-    distribution: "Distribution",
-    chart_bar_title: "Cash Flow & Monthly Burn",
-    last_6_months: "Last 6 Months",
-    sec_accounts: "Accounts & Wallets",
-    sec_accounts_sub: "bKash, Nagad, Rocket, Bank accounts & Cash balances.",
-    btn_transfer: "Transfer",
-    btn_add_account: "Add Account",
-    sec_projects: "Active Projects & Purpose Ledger",
-    sec_projects_sub: "Track budget ceilings, debits, credits, and purpose-wise line-item costs.",
-    btn_new_project: "New Project",
-    sec_loans: "Lent to Friends (Personal Debts)",
-    sec_loans_sub: "Track personal debt balances with real-time partial or full repayment receipt.",
-    btn_lend_money: "Lend Money",
-    tbl_friend: "Friend",
-    tbl_remaining: "Remaining Due",
-    tbl_total_lent: "Total Lent",
-    tbl_source: "Source Account",
-    tbl_date: "Date",
-    tbl_status: "Status",
-    tbl_actions: "Actions",
-    sec_tx_history: "Transaction History",
-    sec_tx_sub: "All credits, debit expenses, and account transfers.",
-    btn_print_history: "Print Statement",
-    tbl_type: "Type",
-    tbl_purpose: "Purpose / Note",
-    tbl_account: "Account",
-    tbl_project: "Project",
-    tbl_amount: "Amount (BDT)",
-    prof_settings: "Profile & Settings",
-    prof_sub: "Manage identity, photo & security PIN",
-    upload_photo: "Profile Photo",
-    phone_number: "Phone Number",
-    recovery_pin: "Secret Recovery PIN (6 Digits)",
-    address: "Address",
-    save_profile: "Save Profile Changes",
-    reset_pass_title: "Reset Account Password",
-    reset_pass_sub: "Verify using your 6-digit Secret PIN",
-    new_pass: "New Password",
-    confirm_reset: "Reset Password"
-  },
-  bn: {
-    tagline: "স্মার্ট মাল্টি-ওয়ালেট ও প্রজেক্ট ওএস",
-    your_name: "পূর্ণ নাম",
-    email_addr: "ইমেইল এড্রেস",
-    password: "পাসওয়ার্ড",
-    forgot_pass: "পাসওয়ার্ড ভুলে গেছেন?",
-    add_tx_btn: "লেনদেন যোগ",
-    net_worth: "মোট সম্পদ (Net Worth)",
-    proj_inflow: "প্রজেক্ট আয় (Inflow)",
-    inflow_desc: "মোট জমা ও আয়ের পরিমাণ",
-    proj_cost: "প্রজেক্ট খরচ (Cost)",
-    cost_desc: "প্রজেক্ট বাবদ মোট ব্যয়",
-    lent_friends: "বন্ধুদের ধার (Lent)",
-    pending_due: "বাকি পাওনা টাকা",
-    chart_pie_title: "প্রজেক্ট ব্যয়ের পরিসংখ্যান",
-    distribution: "অনুপাত",
-    chart_bar_title: "মাসিক ক্যাশ-ফ্লো ও খরচ",
-    last_6_months: "বিগত ৬ মাস",
-    sec_accounts: "অ্যাকাউন্ট ও ওয়ালেট",
-    sec_accounts_sub: "বিকাশ, নগদ, রকেট, ব্যাংক ও ক্যাশ ব্যালেন্স।",
-    btn_transfer: "ট্রান্সফার",
-    btn_add_account: "অ্যাকাউন্ট যোগ",
-    sec_projects: "চলমান প্রজেক্ট ও লেজার",
-    sec_projects_sub: "বাজেট, জমা, খরচ এবং বিস্তারিত হিসাব ট্র্যাক করুন।",
-    btn_new_project: "নতুন প্রজেক্ট",
-    sec_loans: "বন্ধুদের ধার (ঋণ হিসাব)",
-    sec_loans_sub: "আংশিক বা সম্পূর্ণ টাকা ফেরতের হিসাব রাখুন।",
-    btn_lend_money: "টাকা ধার দিন",
-    tbl_friend: "বন্ধুর নাম",
-    tbl_remaining: "বাকি পাওনা",
-    tbl_total_lent: "মোট ধার",
-    tbl_source: "প্রদানকারী ওয়ালেট",
-    tbl_date: "তারিখ",
-    tbl_status: "অবস্থা",
-    tbl_actions: "পদক্ষেপ",
-    sec_tx_history: "লেনদেনের ইতিহাস",
-    sec_tx_sub: "সকল আয়, ব্যয় এবং এক ওয়ালেট থেকে অন্য ওয়ালেটের ট্রান্সফার।",
-    btn_print_history: "স্টেটমেন্ট প্রিন্ট",
-    tbl_type: "ধরণ",
-    tbl_purpose: "বিবরণ / উদ্দেশ্য",
-    tbl_account: "অ্যাকাউন্ট",
-    tbl_project: "প্রজেক্ট",
-    tbl_amount: "পরিমাণ (টাকা)",
-    prof_settings: "প্রোফাইল সেটিংস",
-    prof_sub: "ব্যক্তিগত তথ্য, ছবি ও সিকিউরিটি পিন",
-    upload_photo: "প্রোফাইল ছবি",
-    phone_number: "ফোন নম্বর",
-    recovery_pin: "সিক্রেট রিকভারি পিন (৬ ডিজিট)",
-    address: "ঠিকানা",
-    save_profile: "পরিবর্তন সংরক্ষণ করুন",
-    reset_pass_title: "পাসওয়ার্ড রিসেট করুন",
-    reset_pass_sub: "৬ ডিজিটের সিক্রেট পিন দিয়ে রিকভার করুন",
-    new_pass: "নতুন পাসওয়ার্ড",
-    confirm_reset: "পাসওয়ার্ড রিসেট নিশ্চিত করুন"
-  }
-};
-
-function applyTranslations(lang) {
-  currentLang = lang;
-  localStorage.setItem("KOFS_LANG", lang);
-  document.getElementById("langLabel").textContent = lang === "en" ? "বাংলা" : "English";
-  
-  document.querySelectorAll("[data-i18n]").forEach(el => {
-    const key = el.getAttribute("data-i18n");
-    if (translations[lang] && translations[lang][key]) {
-      el.textContent = translations[lang][key];
-    }
-  });
-}
-
-document.getElementById("btnToggleLang").onclick = () => {
-  const nextLang = currentLang === "en" ? "bn" : "en";
-  applyTranslations(nextLang);
-};
+window.currentActiveView = "overview";
 
 // ==========================================
 // THEME CONTROLLER (Dark / Light Mode)
@@ -158,19 +24,22 @@ function applyTheme(theme) {
   const icon = document.getElementById("themeIcon");
   if (theme === "dark") {
     document.documentElement.classList.add("dark");
-    icon.className = "fa-solid fa-sun text-brand-400";
+    if (icon) icon.className = "fa-solid fa-sun text-brand-400";
   } else {
     document.documentElement.classList.remove("dark");
-    icon.className = "fa-solid fa-moon text-slate-700";
+    if (icon) icon.className = "fa-solid fa-moon text-slate-700";
   }
   if (currentUser) renderCharts();
 }
 
-document.getElementById("btnToggleTheme").onclick = () => {
-  applyTheme(currentTheme === "dark" ? "light" : "dark");
-};
+const btnToggleTheme = document.getElementById("btnToggleTheme");
+if (btnToggleTheme) {
+  btnToggleTheme.onclick = () => {
+    applyTheme(currentTheme === "dark" ? "light" : "dark");
+  };
+}
 
-// Safe API Client
+// Safe API Fetch Client
 async function apiFetch(endpoint, options = {}) {
   try {
     const res = await fetch(endpoint, options);
@@ -179,7 +48,7 @@ async function apiFetch(endpoint, options = {}) {
     try {
       data = JSON.parse(text);
     } catch (e) {
-      throw new Error(`Server Error (${res.status}): ${text || "Empty response from server."}`);
+      throw new Error(`Server Error (${res.status}): ${text || "Empty response from server. Check MongoDB IP Access."}`);
     }
     if (!res.ok) throw new Error(data.error || `Request failed with status ${res.status}`);
     return data;
@@ -278,7 +147,7 @@ function formatBDT(amount) {
 }
 
 // ==========================================
-// STRICT GATEKEEPER & AUTH
+// STRICT GATEKEEPER & AUTHENTICATION
 // ==========================================
 let isRegisterMode = false;
 const tabLogin = document.getElementById("tabLogin");
@@ -295,12 +164,12 @@ function setAuthMode(register) {
     tabRegister.className = "flex-1 py-2 text-xs font-bold rounded-lg transition bg-white dark:bg-brand-500 dark:text-slate-950 text-brand-600 shadow-sm";
     tabLogin.className = "flex-1 py-2 text-xs font-bold rounded-lg transition text-slate-500 dark:text-slate-400";
     authNameGroup.classList.remove("hidden");
-    btnAuthSubmit.querySelector("span").textContent = currentLang === "en" ? "Register" : "রেজিস্টার করুন";
+    btnAuthSubmit.querySelector("span").textContent = "Register";
   } else {
     tabLogin.className = "flex-1 py-2 text-xs font-bold rounded-lg transition bg-white dark:bg-brand-500 dark:text-slate-950 text-brand-600 shadow-sm";
     tabRegister.className = "flex-1 py-2 text-xs font-bold rounded-lg transition text-slate-500 dark:text-slate-400";
     authNameGroup.classList.add("hidden");
-    btnAuthSubmit.querySelector("span").textContent = currentLang === "en" ? "Login" : "লগইন করুন";
+    btnAuthSubmit.querySelector("span").textContent = "Login";
   }
 }
 
@@ -329,13 +198,13 @@ document.getElementById("formAuth").onsubmit = async (e) => {
     localStorage.setItem("KOFS_AUTH_USER", JSON.stringify(currentUser));
 
     unlockApplication();
-    showToast(`Welcome, ${currentUser.name}!`);
+    showToast(`Welcome back, ${currentUser.name}!`);
     loadUserData();
   } catch (err) {
     alert(err.message);
   } finally {
     btnAuthSubmit.disabled = false;
-    btnAuthSubmit.querySelector("span").textContent = isRegisterMode ? (currentLang === "en" ? "Register" : "রেজিস্টার করুন") : (currentLang === "en" ? "Login" : "লগইন করুন");
+    btnAuthSubmit.querySelector("span").textContent = isRegisterMode ? "Register" : "Login";
   }
 };
 
@@ -343,6 +212,7 @@ function unlockApplication() {
   authGatekeeper.classList.add("hidden");
   appContainer.classList.remove("hidden");
   updateUserDisplay();
+  window.switchView("overview");
 }
 
 function lockApplication() {
@@ -351,7 +221,7 @@ function lockApplication() {
 }
 
 document.getElementById("btnLogout").onclick = () => {
-  if (confirm(currentLang === "en" ? "Logout from KofsLedger?" : "KofsLedger থেকে লগআউট করতে চান?")) {
+  if (confirm("Logout from KofsLedger?")) {
     localStorage.removeItem("KOFS_AUTH_TOKEN");
     localStorage.removeItem("KOFS_AUTH_USER");
     token = null;
@@ -369,7 +239,6 @@ function updateUserDisplay() {
   document.getElementById("printUserName").textContent = currentUser.name;
   document.getElementById("printDate").textContent = new Date().toLocaleDateString("en-BD");
 
-  // Avatar rendering in header & preview
   const headerAvatarContainer = document.getElementById("headerAvatarContainer");
   const modalAvatarPreview = document.getElementById("modalAvatarPreview");
 
@@ -397,14 +266,12 @@ function openProfileModal() {
   openModal(modalProfile);
 }
 
-// Convert chosen photo to base64
 document.getElementById("profAvatarInput").onchange = (e) => {
   const file = e.target.files[0];
   if (!file) return;
 
-  // Max 1.5MB validation
   if (file.size > 1.5 * 1024 * 1024) {
-    return alert(currentLang === "en" ? "Image size should be under 1.5MB" : "ছবির সাইজ ১.৫ মেগাবাইট (MB) এর কম হতে হবে।");
+    return alert("Image size must be under 1.5MB");
   }
 
   const reader = new FileReader();
@@ -447,7 +314,7 @@ document.getElementById("formProfile").onsubmit = async (e) => {
     alert(err.message);
   } finally {
     btnSave.disabled = false;
-    btnSave.textContent = currentLang === "en" ? "Save Profile Changes" : "পরিবর্তন সংরক্ষণ করুন";
+    btnSave.textContent = "Save Profile Changes";
   }
 };
 
@@ -476,7 +343,7 @@ document.getElementById("formForgotPass").onsubmit = async (e) => {
     alert(err.message);
   } finally {
     btnReset.disabled = false;
-    btnReset.textContent = currentLang === "en" ? "Reset Password" : "পাসওয়ার্ড রিসেট করুন";
+    btnReset.textContent = "Reset Password";
   }
 };
 
@@ -528,7 +395,7 @@ async function syncToMongoDB() {
 }
 
 // ==========================================
-// CHARTS & STATS (Dark / Light Adaptive)
+// CHARTS & STATS
 // ==========================================
 let projectChartInstance = null;
 let trendChartInstance = null;
@@ -541,7 +408,7 @@ function renderCharts() {
   const projExpenseMap = {};
   appData.transactions.filter(t => t.type === "EXPENSE").forEach(t => {
     const proj = appData.projects.find(p => p.id === t.projectId);
-    const name = proj ? proj.name : (currentLang === "en" ? "General / Personal" : "সাধারণ / ব্যক্তিগত");
+    const name = proj ? proj.name : "General / Personal";
     projExpenseMap[name] = (projExpenseMap[name] || 0) + Number(t.amount);
   });
 
@@ -552,9 +419,9 @@ function renderCharts() {
   if (projectChartInstance) projectChartInstance.destroy();
 
   if (labels.length === 0) {
-    noChartMsg.classList.remove("hidden");
+    if (noChartMsg) noChartMsg.classList.remove("hidden");
   } else {
-    noChartMsg.classList.add("hidden");
+    if (noChartMsg) noChartMsg.classList.add("hidden");
     const ctx = document.getElementById("projectChart").getContext("2d");
     projectChartInstance = new Chart(ctx, {
       type: "doughnut",
@@ -597,8 +464,8 @@ function renderCharts() {
     data: {
       labels: monthLabels,
       datasets: [
-        { label: currentLang === "en" ? "Income" : "আয়", data: incomeData, backgroundColor: "#10b981", borderRadius: 6 },
-        { label: currentLang === "en" ? "Expense" : "ব্যয়", data: expenseData, backgroundColor: "#f43f5e", borderRadius: 6 }
+        { label: "Income", data: incomeData, backgroundColor: "#10b981", borderRadius: 6 },
+        { label: "Expense", data: expenseData, backgroundColor: "#f43f5e", borderRadius: 6 }
       ]
     },
     options: {
@@ -616,9 +483,7 @@ function renderCharts() {
 function render() {
   const netWorth = appData.accounts.reduce((acc, a) => acc + (Number(a.balance) || 0), 0);
   totalNetWorthEl.textContent = formatBDT(netWorth);
-  document.getElementById("accountCountLabel").textContent = currentLang === "en" 
-    ? `Across ${appData.accounts.length} accounts` 
-    : `${appData.accounts.length} টি অ্যাকাউন্টের মোট ব্যালেন্স`;
+  document.getElementById("accountCountLabel").textContent = `Across ${appData.accounts.length} accounts`;
 
   let projIn = 0, projOut = 0;
   appData.transactions.forEach(t => {
@@ -651,13 +516,13 @@ function updateDropdowns() {
   document.getElementById("transferFrom").innerHTML = accOpts;
   document.getElementById("settleDepositAccount").innerHTML = accOpts;
 
-  document.getElementById("transferTo").innerHTML = accOpts + `<option value="EXTERNAL">+ ${currentLang === 'en' ? 'Send to External Person' : 'অন্য কাউকে পাঠান'}</option>`;
-  filterAccountEl.innerHTML = `<option value="ALL">${currentLang === 'en' ? 'All Accounts' : 'সব অ্যাকাউন্ট'}</option>` + appData.accounts.map(a => `<option value="${a.id}">${a.name}</option>`).join("");
+  document.getElementById("transferTo").innerHTML = accOpts + `<option value="EXTERNAL">+ Send to External Recipient</option>`;
+  filterAccountEl.innerHTML = `<option value="ALL">All Accounts</option>` + appData.accounts.map(a => `<option value="${a.id}">${a.name}</option>`).join("");
 
-  const projOpts = `<option value="NONE">${currentLang === 'en' ? 'General / Personal (No Project)' : 'সাধারণ / ব্যক্তিগত'}</option>` + 
+  const projOpts = `<option value="NONE">General / Personal (No Project)</option>` + 
     appData.projects.map(p => `<option value="${p.id}">${p.name}</option>`).join("");
   document.getElementById("txProject").innerHTML = projOpts;
-  filterProjectEl.innerHTML = `<option value="ALL">${currentLang === 'en' ? 'All Projects' : 'সব প্রজেক্ট'}</option>` + appData.projects.map(p => `<option value="${p.id}">${p.name}</option>`).join("");
+  filterProjectEl.innerHTML = `<option value="ALL">All Projects</option>` + appData.projects.map(p => `<option value="${p.id}">${p.name}</option>`).join("");
 }
 
 document.getElementById("transferTo").onchange = (e) => {
@@ -738,11 +603,11 @@ function renderProjects() {
 
           <div class="grid grid-cols-2 gap-2 mt-4 pt-3 border-t border-slate-100 dark:border-darkbg-border text-xs">
             <div>
-              <span class="text-slate-400">${currentLang === 'en' ? 'Inflow' : 'মোট আয়'}:</span>
+              <span class="text-slate-400">Total Inflow:</span>
               <p class="font-bold text-emerald-500">+${formatBDT(pIn)}</p>
             </div>
             <div>
-              <span class="text-slate-400">${currentLang === 'en' ? 'Spent' : 'মোট খরচ'}:</span>
+              <span class="text-slate-400">Total Spent:</span>
               <p class="font-bold text-rose-500">-${formatBDT(pOut)}</p>
             </div>
           </div>
@@ -756,7 +621,7 @@ function renderProjects() {
             </p>
           </div>
           <button onclick="window.openProjectDetails('${p.id}')" class="bg-brand-500/10 hover:bg-brand-500/20 text-brand-600 dark:text-brand-400 text-xs font-bold px-3 py-1.5 rounded-xl border border-brand-500/30 transition flex items-center gap-1.5">
-            <i class="fa-solid fa-list-check"></i> ${currentLang === 'en' ? 'View Ledger' : 'লেজার দেখুন'}
+            <i class="fa-solid fa-list-check"></i> View Ledger
           </button>
         </div>
       </div>
@@ -832,7 +697,7 @@ function refreshProjectDetails(projectId) {
 
 function renderLoans() {
   if (appData.loans.length === 0) {
-    loansTableBodyEl.innerHTML = `<tr><td colspan="7" class="p-6 text-center text-slate-400 text-xs">কোনো ধারের রেকর্ড নেই (No debt records).</td></tr>`;
+    loansTableBodyEl.innerHTML = `<tr><td colspan="7" class="p-6 text-center text-slate-400 text-xs">No debt records.</td></tr>`;
     return;
   }
   loansTableBodyEl.innerHTML = appData.loans.map(l => {
@@ -843,13 +708,13 @@ function renderLoans() {
     const isPartial = !isRepaid && remainingDue < totalAmount;
 
     let badgeClass = "bg-amber-500/10 text-amber-500 border border-amber-500/20";
-    let statusText = currentLang === 'en' ? "Pending" : "বাকি";
+    let statusText = "Pending";
     if (isRepaid) {
       badgeClass = "bg-emerald-500/10 text-emerald-500 border border-emerald-500/20";
-      statusText = currentLang === 'en' ? "Fully Repaid" : "পরিশোধিত";
+      statusText = "Fully Repaid";
     } else if (isPartial) {
       badgeClass = "bg-cyan-500/10 text-cyan-500 border border-cyan-500/20";
-      statusText = currentLang === 'en' ? "Partially Paid" : "আংশিক শোধ";
+      statusText = "Partially Paid";
     }
 
     return `
@@ -981,7 +846,7 @@ function renderTransactions() {
       <tr class="hover:bg-slate-50 dark:hover:bg-darkbg-elevated/50 transition border-b border-slate-100 dark:border-darkbg-border">
         <td class="p-3.5 pl-4">
           <span class="px-2 py-0.5 rounded text-[10px] font-black ${isIncome ? 'bg-emerald-500/10 text-emerald-500' : 'bg-rose-500/10 text-rose-500'}">
-            ${isIncome ? (currentLang === 'en' ? 'Income' : 'আয়') : (currentLang === 'en' ? 'Expense' : 'ব্যয়')}
+            ${isIncome ? 'Income' : 'Expense'}
           </span>
         </td>
         <td class="p-3.5 font-semibold text-slate-800 dark:text-slate-200">${t.note}</td>
@@ -1274,57 +1139,17 @@ window.deleteLoan = async (id) => {
 };
 
 // ==========================================
-// INITIAL BOOTSTRAP
-// ==========================================
-applyTheme(currentTheme);
-applyTranslations(currentLang);
-
-if (token) {
-  unlockApplication();
-  loadUserData();
-} else {
-  lockApplication();
-}
-
-// Sidebar Drawer Handlers
-const appSidebar = document.getElementById("appSidebar");
-const sidebarBackdrop = document.getElementById("sidebarBackdrop");
-const btnOpenSidebar = document.getElementById("btnOpenSidebar");
-const btnCloseSidebar = document.getElementById("btnCloseSidebar");
-
-window.openSidebar = () => {
-  if (!appSidebar || !sidebarBackdrop) return;
-  sidebarBackdrop.classList.remove("hidden");
-  setTimeout(() => appSidebar.classList.remove("-translate-x-full"), 10);
-};
-
-window.closeSidebar = () => {
-  if (!appSidebar || !sidebarBackdrop) return;
-  appSidebar.classList.add("-translate-x-full");
-  setTimeout(() => sidebarBackdrop.classList.add("hidden"), 300);
-};
-
-if (btnOpenSidebar) btnOpenSidebar.onclick = window.openSidebar;
-if (btnCloseSidebar) btnCloseSidebar.onclick = window.closeSidebar;
-if (sidebarBackdrop) sidebarBackdrop.onclick = window.closeSidebar;
-
-// ==========================================
 // SPA VIEW SWITCHER SYSTEM
 // ==========================================
-window.currentActiveView = "overview";
-
 window.switchView = (viewName) => {
   window.currentActiveView = viewName;
   
-  // Hide all views
   document.querySelectorAll(".app-view").forEach(el => el.classList.add("hidden"));
   
-  // Reset active classes on sidebar links
   document.querySelectorAll("#appSidebar nav button").forEach(btn => {
     btn.classList.remove("bg-brand-500/10", "text-brand-500");
   });
 
-  // Show target view
   const targetMap = {
     overview: "viewOverview",
     accounts: "viewAccounts",
@@ -1337,21 +1162,18 @@ window.switchView = (viewName) => {
   const targetEl = document.getElementById(targetId);
   if (targetEl) targetEl.classList.remove("hidden");
 
-  // Highlight active link in sidebar
   const activeBtn = document.getElementById(`nav-${viewName}`);
   if (activeBtn) activeBtn.classList.add("bg-brand-500/10", "text-brand-500");
 
-  // Re-render chart if overview is activated
   if (viewName === "overview") {
     setTimeout(renderCharts, 50);
   }
 
-  // Auto close sidebar if open
   window.closeSidebar();
   window.scrollTo({ top: 0, behavior: "smooth" });
 };
 
-// Sidebar Handlers
+// Sidebar Handlers (Declared exactly once)
 const appSidebar = document.getElementById("appSidebar");
 const sidebarBackdrop = document.getElementById("sidebarBackdrop");
 const btnOpenSidebar = document.getElementById("btnOpenSidebar");
@@ -1372,3 +1194,15 @@ window.closeSidebar = () => {
 if (btnOpenSidebar) btnOpenSidebar.onclick = window.openSidebar;
 if (btnCloseSidebar) btnCloseSidebar.onclick = window.closeSidebar;
 if (sidebarBackdrop) sidebarBackdrop.onclick = window.closeSidebar;
+
+// ==========================================
+// INITIAL BOOTSTRAP
+// ==========================================
+applyTheme(currentTheme);
+
+if (token) {
+  unlockApplication();
+  loadUserData();
+} else {
+  lockApplication();
+}
