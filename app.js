@@ -103,6 +103,8 @@ const loansTableBodyEl = document.getElementById("loansTableBody");
 const txTableBodyEl = document.getElementById("txTableBody");
 const filterProjectEl = document.getElementById("filterProject");
 const filterAccountEl = document.getElementById("filterAccount");
+const filterStartDateEl = document.getElementById("filterStartDate");
+const filterEndDateEl = document.getElementById("filterEndDate");
 const txSearchEl = document.getElementById("txSearch");
 const displayUserNameEl = document.getElementById("displayUserName");
 
@@ -1370,23 +1372,27 @@ window.deleteLoan = async (id) => {
 };
 
 // ==========================================
-// TRANSACTIONS & BALANCE FLOW
+// TRANSACTIONS & BALANCE FLOW (WITH DATE RANGE)
 // ==========================================
 function renderTransactions() {
   if (!txTableBodyEl) return;
   const pFilter = filterProjectEl ? filterProjectEl.value : "ALL";
   const aFilter = filterAccountEl ? filterAccountEl.value : "ALL";
+  const startDate = filterStartDateEl ? filterStartDateEl.value : "";
+  const endDate = filterEndDateEl ? filterEndDateEl.value : "";
   const search = (txSearchEl ? txSearchEl.value.trim().toLowerCase() : "");
 
   const filtered = appData.transactions.filter(t => {
     if (pFilter !== "ALL" && t.projectId !== pFilter) return false;
     if (aFilter !== "ALL" && t.accountId !== aFilter) return false;
+    if (startDate && t.date < startDate) return false;
+    if (endDate && t.date > endDate) return false;
     if (search && !t.note.toLowerCase().includes(search)) return false;
     return true;
   });
 
   if (filtered.length === 0) {
-    txTableBodyEl.innerHTML = `<tr><td colspan="8" class="p-6 text-center text-slate-400 text-xs">No transactions found.</td></tr>`;
+    txTableBodyEl.innerHTML = `<tr><td colspan="8" class="p-6 text-center text-slate-400 text-xs">No transactions found for the selected filter range.</td></tr>`;
     return;
   }
 
@@ -1424,6 +1430,8 @@ function renderTransactions() {
 
 if (filterProjectEl) filterProjectEl.onchange = renderTransactions;
 if (filterAccountEl) filterAccountEl.onchange = renderTransactions;
+if (filterStartDateEl) filterStartDateEl.onchange = renderTransactions;
+if (filterEndDateEl) filterEndDateEl.onchange = renderTransactions;
 if (txSearchEl) txSearchEl.oninput = renderTransactions;
 
 const formTx = document.getElementById("formTx");

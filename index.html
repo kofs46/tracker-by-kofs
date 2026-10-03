@@ -2,15 +2,12 @@
 <html lang="en" class="dark">
 <head>
   <meta charset="UTF-8" />
-  <!-- Responsive Viewport Meta tag for device scaling -->
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>KofsLedger • Smart Financial & Project OS</title>
   
-  <!-- PWA Manifest & Theme Color Settings -->
   <link rel="manifest" href="manifest.json">
   <meta name="theme-color" content="#06b6d4">
 
-  <!-- Custom KofsLedger Brand SVG Favicon -->
   <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 200'%3E%3Crect width='200' height='200' rx='45' fill='%230b0f19'/%3E%3Cpath d='M40 30 L85 30 L85 170 L40 170 Z' fill='%23334155'/%3E%3Cpath d='M75 105 L145 35 L175 35 L105 105 Z' fill='%2300d2ff'/%3E%3Cpath d='M95 100 L170 175 L135 175 L65 105 Z' fill='%230284c7'/%3E%3C/svg%3E" />
 
   <script src="https://cdn.tailwindcss.com"></script>
@@ -52,7 +49,6 @@
   <!-- ============================================== -->
   <div id="authGatekeeper" class="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/95 dark:bg-[#060911]/98 backdrop-blur-2xl p-4 overflow-y-auto">
     <div class="bg-white dark:bg-darkbg-card border border-slate-200 dark:border-darkbg-border rounded-3xl p-6 sm:p-9 w-full max-w-md shadow-2xl shadow-cyan-500/10 transition-all">
-      
       <div class="text-center mb-6">
         <div class="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-tr from-slate-900 via-slate-800 to-slate-950 border border-brand-500/40 shadow-xl shadow-brand-500/20 mb-3 group">
           <svg class="w-10 h-10 text-brand-400 group-hover:scale-105 transition-transform" viewBox="0 0 200 200" fill="currentColor">
@@ -146,16 +142,13 @@
       </div>
     </div>
 
-    <!-- App Header (Optimized for Mobile Screen Fit) -->
+    <!-- App Header -->
     <header class="no-print bg-white/90 dark:bg-darkbg-card/90 backdrop-blur-xl border-b border-slate-200/80 dark:border-darkbg-border sticky top-0 z-40 px-3 py-2.5 transition-colors">
       <div class="max-w-7xl mx-auto flex justify-between items-center gap-2">
-        
-        <!-- Left: Sidebar Toggle & Brand Logo -->
         <div class="flex items-center space-x-2 min-w-0">
-          <button id="btnOpenSidebar" class="w-9 h-9 rounded-xl bg-slate-100 dark:bg-darkbg-elevated hover:bg-slate-200 dark:hover:bg-slate-700/60 text-slate-700 dark:text-brand-400 flex items-center justify-center text-sm border border-slate-200 dark:border-darkbg-border transition active:scale-95 shrink-0 shadow-sm">
+          <button id="btnOpenSidebar" class="w-9 h-9 rounded-xl bg-slate-100 dark:bg-darkbg-elevated hover:bg-slate-200 text-slate-700 dark:text-brand-400 flex items-center justify-center text-sm border border-slate-200 dark:border-darkbg-border transition active:scale-95 shrink-0 shadow-sm">
             <i class="fa-solid fa-bars-staggered"></i>
           </button>
-
           <div onclick="window.switchView('overview')" class="flex items-center space-x-2 cursor-pointer group min-w-0">
             <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-slate-900 to-slate-950 flex items-center justify-center border border-brand-500/30 shadow-md shrink-0">
               <svg class="w-5 h-5 text-brand-400 group-hover:scale-105 transition-transform" viewBox="0 0 200 200" fill="currentColor">
@@ -175,7 +168,6 @@
           </div>
         </div>
 
-        <!-- Right: Actions & Controls -->
         <div class="flex items-center space-x-1.5 shrink-0">
           <button id="btnToggleTheme" class="w-8 h-8 rounded-xl bg-slate-100 dark:bg-darkbg-elevated hover:bg-slate-200 text-slate-700 dark:text-brand-400 flex items-center justify-center text-xs border border-slate-200 dark:border-darkbg-border transition shadow-sm" title="Toggle Mode">
             <i id="themeIcon" class="fa-solid fa-moon"></i>
@@ -218,7 +210,7 @@
               <span class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Navigation Center</span>
             </div>
           </div>
-          <button id="btnCloseSidebar" class="w-8 h-8 rounded-full bg-slate-100 dark:bg-darkbg-elevated text-slate-400 hover:text-slate-800 dark:hover:text-white flex items-center justify-center transition">
+          <button id="btnCloseSidebar" class="w-8 h-8 rounded-full bg-slate-100 dark:bg-darkbg-elevated text-slate-400 hover:text-slate-800 flex items-center justify-center transition">
             <i class="fa-solid fa-xmark text-sm"></i>
           </button>
         </div>
@@ -270,10 +262,8 @@
 
       <!-- VIEW 1: DASHBOARD OVERVIEW -->
       <div id="viewOverview" class="app-view space-y-6 sm:space-y-8">
-        
-        <!-- Summary Cards Grid -->
         <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-5">
-          <div onclick="window.switchView('accounts')" class="cursor-pointer group bg-white dark:bg-darkbg-card p-4 sm:p-6 rounded-3xl border border-slate-200/80 dark:border-darkbg-border shadow-sm hover:border-brand-500/50 hover:shadow-cyan-500/5 transition-all">
+          <div onclick="window.switchView('accounts')" class="cursor-pointer group bg-white dark:bg-darkbg-card p-4 sm:p-6 rounded-3xl border border-slate-200/80 dark:border-darkbg-border shadow-sm hover:border-brand-500/50 transition-all">
             <div class="flex justify-between items-start">
               <span class="text-[11px] font-bold uppercase tracking-wider text-slate-400 truncate">Net Worth</span>
               <div class="w-8 h-8 sm:w-9 sm:h-9 rounded-2xl bg-brand-500/10 text-brand-500 flex items-center justify-center text-sm">
@@ -287,7 +277,7 @@
             </div>
           </div>
 
-          <div onclick="window.switchView('projects')" class="cursor-pointer group bg-white dark:bg-darkbg-card p-4 sm:p-6 rounded-3xl border border-slate-200/80 dark:border-darkbg-border shadow-sm hover:border-emerald-500/50 hover:shadow-emerald-500/5 transition-all">
+          <div onclick="window.switchView('projects')" class="cursor-pointer group bg-white dark:bg-darkbg-card p-4 sm:p-6 rounded-3xl border border-slate-200/80 dark:border-darkbg-border shadow-sm hover:border-emerald-500/50 transition-all">
             <div class="flex justify-between items-start">
               <span class="text-[11px] font-bold uppercase tracking-wider text-slate-400 truncate">Inflow</span>
               <div class="w-8 h-8 sm:w-9 sm:h-9 rounded-2xl bg-emerald-500/10 text-emerald-500 flex items-center justify-center text-sm">
@@ -301,7 +291,7 @@
             </div>
           </div>
 
-          <div onclick="window.switchView('projects')" class="cursor-pointer group bg-white dark:bg-darkbg-card p-4 sm:p-6 rounded-3xl border border-slate-200/80 dark:border-darkbg-border shadow-sm hover:border-rose-500/50 hover:shadow-rose-500/5 transition-all">
+          <div onclick="window.switchView('projects')" class="cursor-pointer group bg-white dark:bg-darkbg-card p-4 sm:p-6 rounded-3xl border border-slate-200/80 dark:border-darkbg-border shadow-sm hover:border-rose-500/50 transition-all">
             <div class="flex justify-between items-start">
               <span class="text-[11px] font-bold uppercase tracking-wider text-slate-400 truncate">Cost</span>
               <div class="w-8 h-8 sm:w-9 sm:h-9 rounded-2xl bg-rose-500/10 text-rose-500 flex items-center justify-center text-sm">
@@ -315,7 +305,7 @@
             </div>
           </div>
 
-          <div onclick="window.switchView('loans')" class="cursor-pointer group bg-white dark:bg-darkbg-card p-4 sm:p-6 rounded-3xl border border-slate-200/80 dark:border-darkbg-border shadow-sm hover:border-amber-500/50 hover:shadow-amber-500/5 transition-all">
+          <div onclick="window.switchView('loans')" class="cursor-pointer group bg-white dark:bg-darkbg-card p-4 sm:p-6 rounded-3xl border border-slate-200/80 dark:border-darkbg-border shadow-sm hover:border-amber-500/50 transition-all">
             <div class="flex justify-between items-start">
               <span class="text-[11px] font-bold uppercase tracking-wider text-slate-400 truncate">Lent</span>
               <div class="w-8 h-8 sm:w-9 sm:h-9 rounded-2xl bg-amber-500/10 text-amber-500 flex items-center justify-center text-sm">
@@ -330,7 +320,6 @@
           </div>
         </div>
 
-        <!-- Charts Grid -->
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
           <div class="bg-white dark:bg-darkbg-card p-5 sm:p-6 rounded-3xl border border-slate-200/80 dark:border-darkbg-border shadow-sm">
             <div class="flex items-center justify-between mb-4">
@@ -338,7 +327,6 @@
                 <i class="fa-solid fa-pie-chart text-brand-500"></i>
                 <span>Project Cost Breakdown</span>
               </h3>
-              <span class="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Distribution</span>
             </div>
             <div class="relative h-60 flex items-center justify-center">
               <canvas id="projectChart"></canvas>
@@ -352,10 +340,8 @@
                 <i class="fa-solid fa-chart-column text-emerald-500"></i>
                 <span id="trendChartTitle">Cash Flow & Monthly Burn</span>
               </h3>
-              
               <div class="flex items-center gap-2">
-                <label for="trendTimeframeSelect" class="text-[11px] font-bold text-slate-400 hidden sm:inline">View:</label>
-                <select id="trendTimeframeSelect" class="bg-slate-50 dark:bg-darkbg-elevated border border-slate-200 dark:border-darkbg-border text-xs rounded-xl px-3 py-1.5 font-bold text-slate-700 dark:text-slate-200 focus:outline-none focus:ring-1 focus:ring-brand-500 transition cursor-pointer">
+                <select id="trendTimeframeSelect" class="bg-slate-50 dark:bg-darkbg-elevated border border-slate-200 dark:border-darkbg-border text-xs rounded-xl px-3 py-1.5 font-bold text-slate-700 dark:text-slate-200 cursor-pointer">
                   <option value="6M">Last 6 Months (Monthly)</option>
                 </select>
               </div>
@@ -375,11 +361,11 @@
             <p class="text-xs text-slate-400">MFS, Bangladesh Govt & Private Banks, and Cash wallets.</p>
           </div>
           <div class="flex items-center gap-2">
-            <button id="btnOpenTransferModal" class="inline-flex items-center gap-1.5 bg-slate-100 dark:bg-darkbg-elevated hover:bg-slate-200 text-slate-700 dark:text-slate-200 px-3.5 py-2 rounded-xl text-xs font-bold border border-slate-200 dark:border-darkbg-border transition">
+            <button id="btnOpenTransferModal" class="inline-flex items-center gap-1.5 bg-slate-100 dark:bg-darkbg-elevated text-slate-700 dark:text-slate-200 px-3.5 py-2 rounded-xl text-xs font-bold border border-slate-200 dark:border-darkbg-border transition">
               <i class="fa-solid fa-arrow-right-arrow-left text-brand-500"></i>
               <span>Transfer / Shift Funds</span>
             </button>
-            <button id="btnOpenAccountModal" class="inline-flex items-center gap-1.5 bg-brand-500/10 hover:bg-brand-500/20 text-brand-600 dark:text-brand-400 px-3.5 py-2 rounded-xl text-xs font-bold border border-brand-500/30 transition">
+            <button id="btnOpenAccountModal" class="inline-flex items-center gap-1.5 bg-brand-500/10 text-brand-600 dark:text-brand-400 px-3.5 py-2 rounded-xl text-xs font-bold border border-brand-500/30 transition">
               <i class="fa-solid fa-plus"></i>
               <span>Add Account</span>
             </button>
@@ -395,7 +381,7 @@
             <h2 class="text-lg sm:text-xl font-black text-slate-900 dark:text-white tracking-tight">Active Projects & Purpose Ledger</h2>
             <p class="text-xs text-slate-400">Track budget ceilings, debits, credits, and purpose-wise line-item costs.</p>
           </div>
-          <button id="btnOpenProjectModal" class="inline-flex items-center gap-1.5 bg-brand-500/10 hover:bg-brand-500/20 text-brand-600 dark:text-brand-400 px-3.5 py-2 rounded-xl text-xs font-bold border border-brand-500/30 transition">
+          <button id="btnOpenProjectModal" class="inline-flex items-center gap-1.5 bg-brand-500/10 text-brand-600 dark:text-brand-400 px-3.5 py-2 rounded-xl text-xs font-bold border border-brand-500/30 transition">
             <i class="fa-solid fa-folder-plus"></i>
             <span>New Project</span>
           </button>
@@ -410,7 +396,7 @@
             <h2 class="text-lg sm:text-xl font-black text-slate-900 dark:text-white tracking-tight">Lent</h2>
             <p class="text-xs text-slate-400">Personal debt ledger tracked uniquely by borrower phone numbers.</p>
           </div>
-          <button id="btnOpenLoanModal" class="inline-flex items-center gap-1.5 bg-amber-500/10 hover:bg-amber-500/20 text-amber-600 dark:text-amber-400 px-3.5 py-2 rounded-xl text-xs font-bold border border-amber-500/30 transition">
+          <button id="btnOpenLoanModal" class="inline-flex items-center gap-1.5 bg-amber-500/10 text-amber-600 dark:text-amber-400 px-3.5 py-2 rounded-xl text-xs font-bold border border-amber-500/30 transition">
             <i class="fa-solid fa-handshake"></i>
             <span>Lend Money</span>
           </button>
@@ -433,22 +419,29 @@
         </div>
       </div>
 
-      <!-- VIEW 5: TRANSACTIONS -->
+      <!-- VIEW 5: TRANSACTIONS (WITH DATE RANGE & ACCOUNT FILTER) -->
       <div id="viewTransactions" class="app-view hidden space-y-5 print-section">
-        <div class="flex flex-col md:flex-row justify-between md:items-center gap-3 pb-3 border-b border-slate-200 dark:border-darkbg-border">
+        <div class="flex flex-col xl:flex-row justify-between xl:items-center gap-3 pb-3 border-b border-slate-200 dark:border-darkbg-border">
           <div>
             <h2 class="text-lg sm:text-xl font-black text-slate-900 dark:text-white tracking-tight">Transaction History</h2>
-            <p class="text-xs text-slate-400">All credits, debit expenses, and balance calculation statements.</p>
+            <p class="text-xs text-slate-400">Filter by Date Range, Account & Project to view statements.</p>
           </div>
           <div class="no-print flex flex-wrap items-center gap-2">
+            <!-- Date Range Filter Inputs -->
+            <div class="flex items-center gap-1.5 text-xs bg-slate-50 dark:bg-darkbg-elevated border border-slate-200 dark:border-darkbg-border rounded-xl px-2.5 py-1.5">
+              <input type="date" id="filterStartDate" class="bg-transparent text-slate-800 dark:text-white font-medium focus:outline-none text-xs" title="Start Date" />
+              <span class="text-slate-400 font-bold">to</span>
+              <input type="date" id="filterEndDate" class="bg-transparent text-slate-800 dark:text-white font-medium focus:outline-none text-xs" title="End Date" />
+            </div>
+
             <div class="relative">
               <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-xs"></i>
-              <input type="text" id="txSearch" placeholder="Search notes..." class="pl-8 bg-slate-50 dark:bg-darkbg-elevated border border-slate-200 dark:border-darkbg-border text-xs rounded-xl px-3 py-2 text-slate-800 dark:text-white focus:ring-2 focus:ring-brand-500 w-36 font-medium transition" />
+              <input type="text" id="txSearch" placeholder="Search notes..." class="pl-8 bg-slate-50 dark:bg-darkbg-elevated border border-slate-200 dark:border-darkbg-border text-xs rounded-xl px-3 py-2 text-slate-800 dark:text-white w-32 font-medium transition" />
             </div>
             <select id="filterProject" class="bg-slate-50 dark:bg-darkbg-elevated border border-slate-200 dark:border-darkbg-border text-xs rounded-xl px-3 py-2 font-medium text-slate-800 dark:text-white"></select>
             <select id="filterAccount" class="bg-slate-50 dark:bg-darkbg-elevated border border-slate-200 dark:border-darkbg-border text-xs rounded-xl px-3 py-2 font-medium text-slate-800 dark:text-white"></select>
             
-            <button onclick="window.print()" class="bg-slate-900 dark:bg-slate-100 hover:bg-slate-800 dark:hover:bg-white text-white dark:text-slate-950 text-xs px-3.5 py-2 rounded-xl font-black flex items-center gap-2 transition shadow-sm active:scale-95" title="Print Transaction History">
+            <button onclick="window.print()" class="bg-slate-900 dark:bg-slate-100 hover:bg-slate-800 text-white dark:text-slate-950 text-xs px-3.5 py-2 rounded-xl font-black flex items-center gap-2 transition shadow-sm active:scale-95" title="Print Statement">
               <i class="fa-solid fa-print"></i>
               <span>Print Statement</span>
             </button>
