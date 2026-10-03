@@ -6,9 +6,8 @@
 
 ## 📱 App Preview & Dashboard
 
-<p align="center">
-  <img src="Gemini_Generated_Image_37luda37luda37lu.jpg" alt="KOFSLedger Dashboard Preview" width="100%" style="border-radius: 16px; border: 1px solid #1b253b; box-shadow: 0 10px 30px rgba(0,0,0,0.5);" />
-</p>
+<img width="2816" height="1536" alt="Gemini_Generated_Image_37luda37luda37lu" src="https://github.com/user-attachments/assets/03c145b4-bc2e-4742-b449-e3f46f721096" />
+
 
 ---
 
