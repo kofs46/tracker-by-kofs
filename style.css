@@ -1,5 +1,17 @@
 @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap');
 
+/* Mobile Overflow & Viewport Fixes */
+html, body {
+  overflow-x: hidden !important;
+  width: 100%;
+  max-width: 100vw;
+  box-sizing: border-box;
+}
+
+*, *:before, *:after {
+  box-sizing: border-box;
+}
+
 body {
   font-family: 'Plus Jakarta Sans', sans-serif;
 }
@@ -33,6 +45,20 @@ body {
 
 .app-view {
   animation: fadeInScale 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* Ensure tables and containers never break screen width on mobile */
+.overflow-x-auto {
+  width: 100%;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Mobile responsive padding and adjustments */
+@media (max-width: 640px) {
+  main {
+    padding-left: 12px !important;
+    padding-right: 12px !important;
+  }
 }
 
 /* Custom Scrollbar for Modern Look */

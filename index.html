@@ -146,55 +146,55 @@
       </div>
     </div>
 
-    <!-- App Header -->
-    <header class="no-print bg-white/90 dark:bg-darkbg-card/90 backdrop-blur-xl border-b border-slate-200/80 dark:border-darkbg-border sticky top-0 z-40 px-4 sm:px-6 py-3 transition-colors">
-      <div class="max-w-7xl mx-auto flex justify-between items-center">
+    <!-- App Header (Optimized for Mobile Screen Fit) -->
+    <header class="no-print bg-white/90 dark:bg-darkbg-card/90 backdrop-blur-xl border-b border-slate-200/80 dark:border-darkbg-border sticky top-0 z-40 px-3 py-2.5 transition-colors">
+      <div class="max-w-7xl mx-auto flex justify-between items-center gap-2">
         
-        <div class="flex items-center space-x-3">
-          <button id="btnOpenSidebar" class="w-10 h-10 rounded-2xl bg-slate-100 dark:bg-darkbg-elevated hover:bg-slate-200 dark:hover:bg-slate-700/60 text-slate-700 dark:text-brand-400 flex items-center justify-center text-sm border border-slate-200 dark:border-darkbg-border transition active:scale-95 shadow-sm">
+        <!-- Left: Sidebar Toggle & Brand Logo -->
+        <div class="flex items-center space-x-2 min-w-0">
+          <button id="btnOpenSidebar" class="w-9 h-9 rounded-xl bg-slate-100 dark:bg-darkbg-elevated hover:bg-slate-200 dark:hover:bg-slate-700/60 text-slate-700 dark:text-brand-400 flex items-center justify-center text-sm border border-slate-200 dark:border-darkbg-border transition active:scale-95 shrink-0 shadow-sm">
             <i class="fa-solid fa-bars-staggered"></i>
           </button>
 
-          <div onclick="window.switchView('overview')" class="flex items-center space-x-3 cursor-pointer group">
-            <div class="w-10 h-10 rounded-2xl bg-gradient-to-tr from-slate-900 to-slate-950 flex items-center justify-center border border-brand-500/30 shadow-md">
-              <svg class="w-6 h-6 text-brand-400 group-hover:scale-105 transition-transform" viewBox="0 0 200 200" fill="currentColor">
+          <div onclick="window.switchView('overview')" class="flex items-center space-x-2 cursor-pointer group min-w-0">
+            <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-slate-900 to-slate-950 flex items-center justify-center border border-brand-500/30 shadow-md shrink-0">
+              <svg class="w-5 h-5 text-brand-400 group-hover:scale-105 transition-transform" viewBox="0 0 200 200" fill="currentColor">
                 <path d="M40 30 L85 30 L85 170 L40 170 Z" fill="#1e293b"/>
                 <path d="M75 105 L145 35 L175 35 L105 105 Z" fill="#00d2ff"/>
                 <path d="M95 100 L170 175 L135 175 L65 105 Z" fill="#0284c7"/>
               </svg>
             </div>
-            <div>
-              <div class="flex items-center gap-1.5">
-                <h1 class="font-black text-base sm:text-lg tracking-tight text-slate-900 dark:text-white leading-tight">
+            <div class="min-w-0">
+              <div class="flex items-center gap-1">
+                <h1 class="font-black text-sm sm:text-base tracking-tight text-slate-900 dark:text-white truncate">
                   KOFS<span class="text-brand-500 dark:text-brand-400">Ledger</span>
                 </h1>
-                <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[9px] font-black uppercase bg-brand-500/10 text-brand-400 border border-brand-500/30">PRO</span>
+                <span class="hidden md:inline-flex items-center px-1.5 py-0.2 rounded-full text-[8px] font-black uppercase bg-brand-500/10 text-brand-400 border border-brand-500/30">PRO</span>
               </div>
-              <p class="text-[10px] text-slate-400 font-medium hidden sm:block">Smart Financial & Project Operating System</p>
             </div>
           </div>
         </div>
 
-        <div class="flex items-center space-x-2 sm:space-x-3">
-          <button id="btnToggleTheme" class="w-9 h-9 sm:w-10 sm:h-10 rounded-2xl bg-slate-100 dark:bg-darkbg-elevated hover:bg-slate-200 dark:hover:bg-slate-700/60 text-slate-700 dark:text-brand-400 flex items-center justify-center text-sm border border-slate-200 dark:border-darkbg-border transition shadow-sm" title="Toggle Day/Night Mode">
+        <!-- Right: Actions & Controls -->
+        <div class="flex items-center space-x-1.5 shrink-0">
+          <button id="btnToggleTheme" class="w-8 h-8 rounded-xl bg-slate-100 dark:bg-darkbg-elevated hover:bg-slate-200 text-slate-700 dark:text-brand-400 flex items-center justify-center text-xs border border-slate-200 dark:border-darkbg-border transition shadow-sm" title="Toggle Mode">
             <i id="themeIcon" class="fa-solid fa-moon"></i>
           </button>
 
-          <button id="btnOpenProfileModal" class="flex items-center gap-2 bg-slate-100 dark:bg-darkbg-elevated hover:border-brand-500/50 border border-slate-200 dark:border-darkbg-border p-1.5 sm:px-3.5 sm:py-1.5 rounded-2xl text-xs font-bold transition group shadow-sm">
-            <div id="headerAvatarContainer" class="w-7 h-7 rounded-full overflow-hidden bg-brand-500 text-slate-950 flex items-center justify-center font-black text-[10px]">
+          <button id="btnOpenProfileModal" class="flex items-center gap-1 bg-slate-100 dark:bg-darkbg-elevated hover:border-brand-500/50 border border-slate-200 dark:border-darkbg-border p-1 rounded-full text-xs font-bold transition group">
+            <div id="headerAvatarContainer" class="w-6 h-6 rounded-full overflow-hidden bg-brand-500 text-slate-950 flex items-center justify-center font-black text-[10px]">
               <span id="headerAvatarInitial">U</span>
             </div>
-            <span id="displayUserName" class="hidden sm:inline-block text-slate-700 dark:text-slate-200 max-w-[100px] truncate">User</span>
-            <i class="hidden sm:inline-block fa-solid fa-chevron-down text-slate-400 group-hover:text-brand-400 text-[10px]"></i>
+            <span id="displayUserName" class="hidden lg:inline-block text-slate-700 dark:text-slate-200 max-w-[80px] truncate">User</span>
           </button>
 
-          <button id="btnLogout" class="text-slate-400 hover:text-rose-500 p-2 rounded-xl hover:bg-rose-500/10 transition" title="Logout">
-            <i class="fa-solid fa-power-off text-sm"></i>
+          <button id="btnLogout" class="text-slate-400 hover:text-rose-500 p-1.5 rounded-xl hover:bg-rose-500/10 transition" title="Logout">
+            <i class="fa-solid fa-power-off text-xs"></i>
           </button>
 
-          <button id="btnOpenTxModal" class="bg-gradient-to-r from-brand-500 to-cyan-400 hover:from-brand-600 hover:to-cyan-500 text-slate-950 px-3.5 py-2 rounded-xl text-xs sm:text-sm font-black transition shadow-lg shadow-brand-500/20 flex items-center gap-1.5 active:scale-95">
-            <i class="fa-solid fa-plus text-xs"></i>
-            <span class="hidden sm:inline">Add Tx</span>
+          <button id="btnOpenTxModal" class="bg-gradient-to-r from-brand-500 to-cyan-400 hover:from-brand-600 hover:to-cyan-500 text-slate-950 px-3 py-1.5 rounded-xl text-xs font-black transition shadow-md shadow-brand-500/25 flex items-center gap-1 active:scale-95 shrink-0">
+            <i class="fa-solid fa-plus text-[10px]"></i>
+            <span>Add Tx</span>
           </button>
         </div>
       </div>
